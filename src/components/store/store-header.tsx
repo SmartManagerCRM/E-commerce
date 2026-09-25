@@ -20,7 +20,15 @@ export function StoreHeader({ businessName, logoPath, locales }: StoreHeaderProp
       <Container className="flex h-16 items-center justify-between gap-4 sm:h-20">
         <Link href="/" className="flex min-w-0 items-center gap-3" aria-label={businessName}>
           {logo ? (
-            <Image src={logo} alt="" width={40} height={40} className="size-10 rounded-sm object-contain" priority />
+            <Image
+              src={logo}
+              alt=""
+              width={40}
+              height={40}
+              className="size-10 rounded-sm object-contain"
+              priority
+              unoptimized
+            />
           ) : null}
           <span className="truncate font-display text-xl font-semibold tracking-tight sm:text-2xl">{businessName}</span>
         </Link>

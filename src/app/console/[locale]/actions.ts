@@ -1,9 +1,11 @@
 "use server";
 
+import { redirect as redirectTo } from "next/navigation";
 import { getLocale } from "next-intl/server";
 import { z } from "zod";
 
 import { redirect } from "@/i18n/navigation";
+import { safeRelativePath } from "@/lib/safe-path";
 import { createUserClient } from "@/server/supabase/clients";
 
 const credentialsSchema = z.object({
@@ -27,6 +29,9 @@ export async function signIn(_previous: SignInState, formData: FormData): Promis
     return { error: error.status === 429 ? "rateLimited" : "invalid" };
   }
 
+  // `next` is a full public path including the locale (e.g. /en/invite/…).
+  const next = safeRelativePath(formData.get("next"), "");
+  if (next) redirectTo(next);
   redirect({ href: "/", locale: await getLocale() });
   return { error: null };
 }

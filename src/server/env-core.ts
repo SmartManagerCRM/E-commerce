@@ -25,6 +25,11 @@ const serverEnvSchema = z.object({
   SUPABASE_SECRET_KEY: z.string().min(20).optional(),
   /** Public origin scheme; `https` in production. */
   PUBLIC_URL_SCHEME: z.enum(["http", "https"]).default("https"),
+  /**
+   * What tenants point their custom domain at (shown in DNS instructions),
+   * e.g. the Hostinger server IP or hostname.
+   */
+  STOREFRONT_DNS_TARGET: z.string().trim().min(1).optional(),
   /** Optional port appended to generated URLs in development (e.g. `3000`). */
   PUBLIC_URL_PORT: z.string().regex(/^\d+$/).optional(),
 });

@@ -35,8 +35,9 @@ export const ADMIN_MODULES = [
   { key: "promotions", section: "marketing", feature: "promotions", permission: "marketing.read", available: false },
   { key: "loyalty", section: "marketing", feature: "loyalty", permission: "marketing.read", available: false },
   { key: "analytics", section: "business", feature: "basic_analytics", permission: "analytics.read", available: false },
-  { key: "appearance", section: "business", feature: null, permission: "appearance.read", available: false },
-  { key: "settings", section: "business", feature: null, permission: "settings.read", available: false },
+  { key: "appearance", section: "business", feature: null, permission: "appearance.read", available: true },
+  { key: "staff", section: "business", feature: null, permission: "staff.read", available: true },
+  { key: "settings", section: "business", feature: null, permission: "settings.read", available: true },
 ] as const satisfies readonly AdminModule[];
 
 export type AdminModuleKey = (typeof ADMIN_MODULES)[number]["key"];

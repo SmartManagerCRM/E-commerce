@@ -89,8 +89,8 @@ select throws_ok(
   $$ insert into public.branches (tenant_id, name, slug) values ('b0000000-0000-4000-8000-00000000000b', '{"en":"X"}', 'x') $$,
   '42501', null, 'Owner A cannot create a branch in Tenant B');
 select throws_ok(
-  $$ insert into public.tenant_domains (tenant_id, hostname) values ('a0000000-0000-4000-8000-00000000000a', 'evil.test') $$,
-  '42501', null, 'Tenant owners cannot attach domains directly');
+  $$ insert into public.tenant_domains (tenant_id, hostname, verified_at) values ('a0000000-0000-4000-8000-00000000000a', 'evil.test', now()) $$,
+  '42501', null, 'Tenant owners cannot attach an already-verified domain');
 select throws_ok(
   $$ select public.tenant_admin_context('b0000000-0000-4000-8000-00000000000b') $$,
   '42501', null, 'Owner A cannot load the Tenant B admin context');
@@ -182,9 +182,10 @@ reset role;
 -- ===========================================================================
 -- Platform admin
 -- ===========================================================================
+select count(*)::int as total_tenants from public.tenants \gset
 select tests.act_as('99999999-0000-4000-8000-000000000001');
 set local role authenticated;
-select is((select count(*)::int from public.tenants), 2, 'Platform admin sees all tenants');
+select is((select count(*)::int from public.tenants), :total_tenants, 'Platform admin sees all tenants');
 select is(tests.affected($$ update public.tenants set status = 'suspended' where slug = 'coffeehouse' $$), 1, 'Platform admin can suspend a tenant');
 select ok(not (public.resolve_storefront('coffeehouse.test') ? 'phone'), 'Suspended storefront exposes only minimal data');
 reset role;

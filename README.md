@@ -12,7 +12,8 @@ A multi-tenant SaaS e-commerce platform (storefront, ordering, booking, loyalty 
 |---|---|---|
 | 0 | Audit & architecture | ✅ Approved |
 | 1 | Foundation: tenancy schema, RLS, tenant resolver, i18n/RTL, design tokens, storefront & admin shells | ✅ Complete |
-| 2+ | Multi-tenancy management, storefront design system, catalog, checkout, payments… | Not started |
+| 2 | Multi-tenancy management: create businesses, settings, branding, staff invitations, custom domains, Super Admin | ✅ Complete |
+| 3+ | Storefront design system, catalog, checkout, payments… | Not started |
 
 ## Local development
 
@@ -52,6 +53,10 @@ npm run build && npm run test:e2e   # Playwright: desktop + mobile, RTL, accessi
 
 See [`.env.example`](.env.example). `SUPABASE_SECRET_KEY` is server-only: it is read only by modules guarded with `server-only` and is never sent to the browser.
 
-## Production (Hostinger)
+## Production (Hostinger Business)
 
-`npm run build` produces a standalone Node server in `.next/standalone` (copy `.next/static` and `public` next to it, then run `node server.js`). Put it behind a TLS reverse proxy that forwards `Host` and `X-Forwarded-Proto`. DNS needs `e-commerce.smartmanage.me` and `*.e-commerce.smartmanage.me`. Full deployment documentation is part of Phase 15.
+```bash
+npm run package:hostinger   # → dist/smartmanager-ecommerce-<commit>.zip
+```
+
+Upload the ZIP as a Node.js web app and set the environment variables in hPanel. The full guide, including domains, SSL and Supabase settings, is in [`docs/DEPLOYMENT-HOSTINGER.md`](docs/DEPLOYMENT-HOSTINGER.md).

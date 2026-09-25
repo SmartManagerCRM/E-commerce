@@ -78,6 +78,14 @@ export default async function TenantConsoleLayout({ children, params }: LayoutPr
           </Suspense>
         </header>
         <main id="main" className="flex-1 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+          {context.tenant.status !== "active" ? (
+            <p
+              role="status"
+              className="mx-auto mb-6 max-w-6xl rounded-md border border-warning/40 bg-warning/10 px-4 py-3 text-sm text-fg"
+            >
+              {t(`banner.${context.tenant.status as "onboarding" | "suspended" | "closed"}`)}
+            </p>
+          ) : null}
           {children}
         </main>
       </div>

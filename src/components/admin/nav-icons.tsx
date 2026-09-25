@@ -12,6 +12,7 @@ import {
   Settings,
   ShoppingBag,
   TicketPercent,
+  UserCog,
   Users,
   type LucideIcon,
 } from "lucide-react";
@@ -32,5 +33,6 @@ export const NAV_ICONS: Record<AdminModuleKey, LucideIcon> = {
   loyalty: Gift,
   analytics: BarChart3,
   appearance: Palette,
+  staff: UserCog,
   settings: Settings,
 };

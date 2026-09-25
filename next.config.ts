@@ -20,8 +20,6 @@ const securityHeaders = [
 ];
 
 const nextConfig: NextConfig = {
-  // Self-contained Node.js server for Hostinger (node .next/standalone/server.js).
-  output: "standalone",
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],

@@ -3,11 +3,12 @@ import { Building2 } from "lucide-react";
 import { notFound } from "next/navigation";
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 
+import { buttonClasses } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Link } from "@/i18n/navigation";
 import { isLocale } from "@/i18n/locales";
 import { pickLocalized } from "@/lib/localized";
-import { isPlatformAdmin, requireUser } from "@/server/auth/session";
+import { requirePlatformAdmin } from "@/server/auth/platform";
 import { createUserClient } from "@/server/supabase/clients";
 
 export async function generateMetadata({ params }: PageProps<"/console/[locale]/platform">): Promise<Metadata> {
@@ -26,8 +27,7 @@ export default async function PlatformAdminPage({ params }: PageProps<"/console/
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
   setRequestLocale(locale);
-  const user = await requireUser(locale);
-  if (!(await isPlatformAdmin(user.id))) notFound();
+  await requirePlatformAdmin(locale);
 
   const supabase = await createUserClient();
   const { data: tenants, error } = await supabase
@@ -45,7 +45,12 @@ export default async function PlatformAdminPage({ params }: PageProps<"/console/
         ← {t("tenants.title")}
       </Link>
       <h1 className="mt-4 text-2xl font-semibold tracking-tight">{t("platform.title")}</h1>
-      <h2 className="mt-8 text-lg font-semibold">{t("platform.businesses")}</h2>
+      <div className="mt-8 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold">{t("platform.businesses")}</h2>
+        <Link href="/platform/tenants/new" className={buttonClasses("primary", "sm")}>
+          {t("platform.newBusiness")}
+        </Link>
+      </div>
 
       {tenants.length === 0 ? (
         <EmptyState className="mt-4" icon={<Building2 />} title={t("platform.empty")} />
@@ -78,7 +83,11 @@ export default async function PlatformAdminPage({ params }: PageProps<"/console/
                 );
                 return (
                   <tr key={tenant.id}>
-                    <td className="px-4 py-3 font-medium">{tenant.business_name}</td>
+                    <td className="px-4 py-3 font-medium">
+                      <Link href={`/platform/tenants/${tenant.id}`} className="hover:underline">
+                        {tenant.business_name}
+                      </Link>
+                    </td>
                     <td className="px-4 py-3 text-muted" dir="ltr">
                       {tenant.slug}
                     </td>

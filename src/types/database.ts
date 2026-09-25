@@ -446,27 +446,36 @@ export type Database = {
       tenant_domains: {
         Row: {
           created_at: string;
+          hosting_connected_at: string | null;
           hostname: string;
           id: string;
           is_primary: boolean;
+          last_check_error: string | null;
+          last_checked_at: string | null;
           tenant_id: string;
           verification_token: string;
           verified_at: string | null;
         };
         Insert: {
           created_at?: string;
+          hosting_connected_at?: string | null;
           hostname: string;
           id?: string;
           is_primary?: boolean;
+          last_check_error?: string | null;
+          last_checked_at?: string | null;
           tenant_id: string;
           verification_token?: string;
           verified_at?: string | null;
         };
         Update: {
           created_at?: string;
+          hosting_connected_at?: string | null;
           hostname?: string;
           id?: string;
           is_primary?: boolean;
+          last_check_error?: string | null;
+          last_checked_at?: string | null;
           tenant_id?: string;
           verification_token?: string;
           verified_at?: string | null;
@@ -516,6 +525,77 @@ export type Database = {
           },
           {
             foreignKeyName: "tenant_feature_overrides_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      tenant_invitations: {
+        Row: {
+          accepted_at: string | null;
+          accepted_by: string | null;
+          created_at: string;
+          email: string;
+          expires_at: string;
+          id: string;
+          invited_by: string | null;
+          revoked_at: string | null;
+          role_id: string;
+          tenant_id: string;
+          token_hash: string;
+        };
+        Insert: {
+          accepted_at?: string | null;
+          accepted_by?: string | null;
+          created_at?: string;
+          email: string;
+          expires_at?: string;
+          id?: string;
+          invited_by?: string | null;
+          revoked_at?: string | null;
+          role_id: string;
+          tenant_id: string;
+          token_hash: string;
+        };
+        Update: {
+          accepted_at?: string | null;
+          accepted_by?: string | null;
+          created_at?: string;
+          email?: string;
+          expires_at?: string;
+          id?: string;
+          invited_by?: string | null;
+          revoked_at?: string | null;
+          role_id?: string;
+          tenant_id?: string;
+          token_hash?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "tenant_invitations_accepted_by_fkey";
+            columns: ["accepted_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "tenant_invitations_invited_by_fkey";
+            columns: ["invited_by"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "tenant_invitations_role_id_fkey";
+            columns: ["role_id"];
+            isOneToOne: false;
+            referencedRelation: "roles";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "tenant_invitations_tenant_id_fkey";
             columns: ["tenant_id"];
             isOneToOne: false;
             referencedRelation: "tenants";
@@ -762,6 +842,9 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      accept_invitation: { Args: { p_token: string }; Returns: string };
+      get_invitation: { Args: { p_token: string }; Returns: Json };
+      invite_member: { Args: { p_email: string; p_role_key: string; p_tenant: string }; Returns: string };
       my_memberships: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -774,8 +857,44 @@ export type Database = {
           tenant_status: string;
         }[];
       };
+      platform_create_tenant: {
+        Args: {
+          p_business_name: string;
+          p_business_type: string;
+          p_city: string;
+          p_country: string;
+          p_currency: string;
+          p_default_language: string;
+          p_enabled_languages: string[];
+          p_owner_email: string;
+          p_plan_key: string;
+          p_slug: string;
+          p_timezone: string;
+        };
+        Returns: Json;
+      };
+      platform_invite_owner: { Args: { p_email: string; p_tenant: string }; Returns: string };
+      platform_set_plan: { Args: { p_plan_key: string; p_status?: string; p_tenant: string }; Returns: undefined };
+      record_domain_check: {
+        Args: { p_actor: string; p_domain: string; p_error?: string; p_verified: boolean };
+        Returns: undefined;
+      };
       resolve_storefront: { Args: { p_hostname?: string; p_slug?: string }; Returns: Json };
+      revoke_invitation: { Args: { p_invitation: string }; Returns: undefined };
+      set_primary_domain: { Args: { p_domain: string }; Returns: undefined };
       tenant_admin_context: { Args: { p_tenant: string }; Returns: Json };
+      tenant_staff: {
+        Args: { p_tenant: string };
+        Returns: {
+          created_at: string;
+          email: string;
+          full_name: string;
+          role_key: string;
+          role_name: Json;
+          status: string;
+          user_id: string;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;

@@ -6,6 +6,11 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   {
+    rules: {
+      "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_" }],
+    },
+  },
+  {
     // Client components must never import privileged server modules.
     files: ["src/components/**/*.tsx", "src/app/**/*-form.tsx", "src/app/**/error.tsx"],
     rules: {

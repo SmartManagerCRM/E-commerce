@@ -32,7 +32,7 @@ Date: 2026-09-25
 | DB / Auth / Storage | **Supabase** (Postgres + RLS, Auth, Storage, Vault) via `@supabase/ssr` | Required by the spec. Cookie-based sessions. |
 | Validation | **Zod** at every server boundary, plus DB constraints | The client is never trusted. |
 | Data access | Typed **repositories** (`src/server/repositories/*`) with **services** above them (`src/server/services/*`). Generated Supabase types. | No business logic in components. |
-| Deployment | **Hostinger (Node.js).** Next.js `output: "standalone"` server (`node server.js`) behind a reverse proxy with TLS. A Hostinger **VPS** is recommended: tenant custom domains need on-demand TLS (e.g. Caddy `on_demand_tls` with an `ask` endpoint that checks `tenant_domains`) and a wildcard certificate for `*.e-commerce.smartmanage.me` (DNS-01). | Approved change. Managed Hostinger Node.js hosting works for platform subdomains, but each custom domain would need manual setup in hPanel. |
+| Deployment | **Hostinger Business — Node.js web app, ZIP upload** (confirmed). Hostinger runs `npm run build` / `npm start`; see `docs/DEPLOYMENT-HOSTINGER.md`. Each storefront hostname is attached once in hPanel (no wildcard SSL on Business). A VPS would enable fully automatic custom domains later: tenant custom domains need on-demand TLS (e.g. Caddy `on_demand_tls` with an `ask` endpoint that checks `tenant_domains`) and a wildcard certificate for `*.e-commerce.smartmanage.me` (DNS-01). | Approved change. Managed Hostinger Node.js hosting works for platform subdomains, but each custom domain would need manual setup in hPanel. |
 | Background work | **pg_cron** (schedules) + **pgmq** (queues). A secured `/api/jobs/*` worker is triggered by a server cron (Hostinger cron / systemd timer) or by `pg_net` from pg_cron. | Abandoned carts, daily brief, retention, aggregates, and notifications. |
 | Charts | Recharts (admin only; lazy-loaded) | Keeps storefront JS minimal. |
 | Tests | **Vitest** (unit/service), **pgTAP** (RLS and cross-tenant, run with `supabase test db`), **Playwright** (E2E, mobile viewports, RTL) | Required by §6 and §44 of the spec. |
@@ -923,3 +923,19 @@ Catalog, orders and the other domain tables are **not** created in Phase 1. They
 - `npm run test:db`: pgTAP (59 assertions) covering RLS coverage, privileges, and cross-tenant isolation for owner/manager/staff/outsider/anon/platform admin.
 - `npm test`: Vitest (hosts, locales, money, localisation, themes/contrast, module visibility, translation parity).
 - `npm run test:e2e`: Playwright (desktop, Android-size and iPhone-size viewports; RTL, tenant isolation, SEO tags, axe accessibility).
+
+---
+
+## 18. Phase 2 implementation notes (multi-tenancy management)
+
+**Migration `20260926000008_tenant_management`:**
+- `tenant_invitations`: 256-bit tokens, stored only as SHA-256 hashes (clients cannot read `token_hash`), 7-day expiry, one open invitation per email per tenant, audited.
+- `invite_member` / `revoke_invitation` / `get_invitation` (anon, token-gated) / `accept_invitation` (the signed-in user's email must match). The `max_staff` entitlement counts active members plus open invitations, and is also enforced when a disabled member is re-enabled.
+- Only owners can invite owners, and admins with `staff.write` can invite other roles. Membership changes stay owner-only (RLS plus the last-owner guard).
+- Platform RPCs (Super Admin only, checked inside): `platform_create_tenant` (tenant, trial subscription and owner invitation in one transaction), `platform_set_plan`, `platform_invite_owner`.
+- Custom domains: tenants with `settings.write` and the `custom_domain` entitlement can request unverified domains only. Verification is a server-side DNS TXT check (`_smartmanager-verify.<host>`), recorded by `record_domain_check` (service role only, with the actor attributed in the audit log). `hosting_connected_at` tracks the manual hPanel step.
+- Storage: public bucket `tenant-public` (5 MB, raster images only). Writes are limited to `<tenant_id>/…` folders for members holding `media.write`/`appearance.write`. Uploads are re-encoded with sharp; SVG is rejected.
+
+**Console modules:** Settings (profile, languages, contact, domains), Appearance (theme, contrast-checked colours, logo/favicon), Staff (invite, roles, disable, remove), invitation acceptance, and Super Admin (create business, status, plan, per-tenant feature overrides, hostname checklist, owner re-invite). Each page enforces permission and entitlement itself (`ModuleGate`); Server Actions re-check with `actionContext()`, and the database enforces RLS as the last line.
+
+**Email:** no provider is configured yet (Phase 7), so invitation links are shown to the inviter to share. Invitees create their account through the invitation (created server-side for the invited email only).
