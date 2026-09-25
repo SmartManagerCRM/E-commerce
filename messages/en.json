@@ -1,0 +1,143 @@
+{
+  "common": {
+    "skipToContent": "Skip to content",
+    "language": "Language",
+    "changeLanguage": "Change language",
+    "loading": "Loading…",
+    "retry": "Try again",
+    "backHome": "Back to home",
+    "close": "Close",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "errorTitle": "Something went wrong",
+    "errorBody": "Something went wrong. Please try again.",
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The page you are looking for doesn’t exist or has moved."
+  },
+  "store": {
+    "nav": {
+      "home": "Home",
+      "shop": "Shop",
+      "about": "About",
+      "contact": "Contact",
+      "mainNavigation": "Main navigation"
+    },
+    "home": {
+      "welcome": "Welcome to {name}",
+      "openingSoonTitle": "Our online store is being prepared",
+      "openingSoonBody": "Products and online ordering will appear here soon. In the meantime, visit us or get in touch.",
+      "visitUs": "Visit us",
+      "contactUs": "Contact us"
+    },
+    "footer": {
+      "contact": "Contact",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "rights": "© {year} {name}. All rights reserved.",
+      "poweredBy": "Powered by SmartManager"
+    },
+    "unavailable": {
+      "suspendedTitle": "This store is temporarily unavailable",
+      "suspendedBody": "Please check back later.",
+      "onboardingTitle": "Opening soon",
+      "onboardingBody": "{name} is preparing its online store. Please check back soon."
+    }
+  },
+  "platform": {
+    "tagline": "Online commerce for cafés, restaurants, shops and salons",
+    "intro": "Run your storefront, orders, bookings and loyalty from one place — in Arabic, English and French.",
+    "signIn": "Sign in to your dashboard",
+    "storeNotFoundTitle": "Store not found",
+    "storeNotFoundBody": "There is no store at this address. Check the link or contact the business directly."
+  },
+  "console": {
+    "brand": "SmartManager",
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Access your business dashboard",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "submitting": "Signing in…",
+      "invalid": "Incorrect email or password.",
+      "invalidInput": "Enter a valid email and password.",
+      "rateLimited": "Too many attempts. Please wait a moment and try again."
+    },
+    "signOut": "Sign out",
+    "account": "Account",
+    "tenants": {
+      "title": "Your businesses",
+      "subtitle": "Choose a business to manage",
+      "empty": "You don’t have access to any business yet.",
+      "emptyHint": "Ask the business owner to invite you, or contact SmartManager support.",
+      "role": "Role",
+      "status": {
+        "active": "Active",
+        "onboarding": "Onboarding",
+        "suspended": "Suspended",
+        "closed": "Closed"
+      }
+    },
+    "nav": {
+      "sections": {
+        "main": "Main",
+        "catalog": "Catalog",
+        "sales": "Sales & customers",
+        "marketing": "Marketing",
+        "business": "Business"
+      },
+      "dashboard": "Dashboard",
+      "orders": "Orders",
+      "products": "Products",
+      "categories": "Categories",
+      "inventory": "Inventory",
+      "customers": "Customers",
+      "bookings": "Bookings",
+      "coupons": "Coupons",
+      "promotions": "Promotions",
+      "loyalty": "Loyalty",
+      "subscriptions": "Subscriptions",
+      "analytics": "Analytics",
+      "appearance": "Appearance",
+      "settings": "Settings",
+      "switchBusiness": "Switch business",
+      "viewStore": "View store",
+      "platform": "Platform admin"
+    },
+    "dashboard": {
+      "title": "Dashboard",
+      "welcome": "Welcome back",
+      "kpi": {
+        "revenueToday": "Today’s revenue",
+        "ordersToday": "Orders today",
+        "customers": "Customers",
+        "bookingsToday": "Bookings today"
+      },
+      "noData": "No data yet",
+      "noOrdersTitle": "No orders yet",
+      "noOrdersBody": "Sales figures will appear here once your store starts taking orders."
+    },
+    "module": {
+      "notBuiltTitle": "{module} is not available yet",
+      "notBuiltBody": "This module is part of an upcoming release of SmartManager E-commerce. Nothing here is active yet.",
+      "notEntitledTitle": "{module} is not included in your plan",
+      "notEntitledBody": "Upgrade your plan to enable this module."
+    },
+    "platform": {
+      "title": "Platform administration",
+      "businesses": "Businesses",
+      "business": "Business",
+      "slug": "Address",
+      "plan": "Plan",
+      "status": "Status",
+      "created": "Created",
+      "noPlan": "No plan",
+      "empty": "No businesses yet."
+    },
+    "forbidden": {
+      "title": "You don’t have access",
+      "body": "Your account doesn’t have permission to view this page."
+    }
+  }
+}

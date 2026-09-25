@@ -1,6 +1,6 @@
 # SmartManager E-commerce — Architecture Plan (Phase 0)
 
-Status: **Proposed — awaiting approval before Phase 1.**
+Status: **Approved (2026-09-25) with one change: deployment on Hostinger instead of Cloudflare.** Platform domain: `e-commerce.smartmanage.me`. Phase 1 is implemented; see §17.
 Date: 2026-09-25
 
 ---
@@ -32,8 +32,8 @@ Date: 2026-09-25
 | DB / Auth / Storage | **Supabase** (Postgres + RLS, Auth, Storage, Vault) via `@supabase/ssr` | Required by the spec. Cookie-based sessions. |
 | Validation | **Zod** at every server boundary, plus DB constraints | The client is never trusted. |
 | Data access | Typed **repositories** (`src/server/repositories/*`) with **services** above them (`src/server/services/*`). Generated Supabase types. | No business logic in components. |
-| Deployment | **Cloudflare Workers via `@opennextjs/cloudflare`** | Cloudflare-compatible, and custom hostnames for tenant domains through Cloudflare for SaaS. Node-compat runtime. |
-| Background work | **pg_cron** (schedules) + **pgmq** (queues). A secured `/api/jobs/*` worker is triggered by Cloudflare Cron. | Abandoned carts, daily brief, retention, aggregates, and notifications. |
+| Deployment | **Hostinger (Node.js).** Next.js `output: "standalone"` server (`node server.js`) behind a reverse proxy with TLS. A Hostinger **VPS** is recommended: tenant custom domains need on-demand TLS (e.g. Caddy `on_demand_tls` with an `ask` endpoint that checks `tenant_domains`) and a wildcard certificate for `*.e-commerce.smartmanage.me` (DNS-01). | Approved change. Managed Hostinger Node.js hosting works for platform subdomains, but each custom domain would need manual setup in hPanel. |
+| Background work | **pg_cron** (schedules) + **pgmq** (queues). A secured `/api/jobs/*` worker is triggered by a server cron (Hostinger cron / systemd timer) or by `pg_net` from pg_cron. | Abandoned carts, daily brief, retention, aggregates, and notifications. |
 | Charts | Recharts (admin only; lazy-loaded) | Keeps storefront JS minimal. |
 | Tests | **Vitest** (unit/service), **pgTAP** (RLS and cross-tenant, run with `supabase test db`), **Playwright** (E2E, mobile viewports, RTL) | Required by §6 and §44 of the spec. |
 | AI assistant | Claude API with **tool use** over a fixed set of tenant-scoped query tools. The model never writes SQL. | Tenant isolation by construction (§11). |
@@ -45,11 +45,11 @@ Date: 2026-09-25
 ```
                  roasters.com  coffeehouse.com  cafe.smartmanager.app  app.smartmanager.app
                         \            |               /                      |
-                         Cloudflare (SSL, custom hostnames, cache)          |
+                    Reverse proxy on Hostinger (TLS, on-demand certs)       |
                                      |                                      |
-                         Next.js on Workers (OpenNext) ---------------------+
+                         Next.js standalone Node server ---------------------+
                          ┌───────────────────────────────────────────────────────┐
-  request ─► middleware: │ hostname → TenantResolver (cached) → x-tenant-id       │
+  request ─► proxy.ts:   │ hostname → TenantResolver (cached) → x-tenant-id       │
                          │ locale detection → /[locale]                            │
                          ├───────────────────────────────────────────────────────┤
                          │ Storefront (RSC)   │ Tenant Admin    │ Super Admin     │
@@ -111,7 +111,7 @@ Cart, checkout, order creation, booking creation and payment initiation run **on
 ## 5. Domain / tenant resolution
 
 ```
-request → middleware → normalize host (lowercase, strip port, strip "www.")
+request → proxy (src/proxy.ts) → normalize host (lowercase, strip port, strip "www.")
         → TenantResolver.resolve(host)
              1. edge cache / in-memory LRU (TTL 60s, tag-invalidated on domain change)
              2. SELECT tenant_id FROM tenant_domains WHERE hostname = $1 AND verified
@@ -121,7 +121,7 @@ request → middleware → normalize host (lowercase, strip port, strip "www.")
         → tenant.status = suspended → "store unavailable" page
         → sets request header x-tenant-id (overwrites any client-supplied value)
 ```
-- `tenant_domains (hostname unique, tenant_id, is_primary, verification_token, verified_at, ssl_status)`. The design supports Cloudflare for SaaS custom hostnames later (Phase 15).
+- `tenant_domains (hostname unique, tenant_id, is_primary, verification_token, verified_at, ssl_status)`. Custom-domain TLS on Hostinger uses on-demand certificates gated by this table (Phase 15).
 - The resolver is a server-only service with a narrow read-only query over `tenant_domains` and `tenants`. It does not use broad privileges.
 - The **tenant admin** is served from a central host (`app.<platform domain>`) with a tenant switcher. Reasons: a single login for staff who belong to several tenants, auth cookies are never scoped to customer-facing custom domains, and admin is never exposed on tenant domains. Visiting `/admin` on a tenant domain redirects there. **Super admin** is `app.<platform domain>/platform`, gated by `platform_admins`. *(Decision point D1 below.)*
 
@@ -766,7 +766,7 @@ Lifecycle: active → `archived_at` set (hidden from operational lists, still ex
 ## 8. Storage
 - Buckets: `tenant-public` (product and brand images, public read) and `tenant-private` (exports, invoices; signed URLs only).
 - Path convention: `{tenant_id}/{kind}/{uuid}.{ext}`. Storage RLS checks `(storage.foldername(name))[1]::uuid` against `app.has_permission(..., 'media.write')`.
-- Image pipeline: the original is uploaded server-side after validation (mime sniffing, size limit). Responsive AVIF/WebP delivery goes through a `next/image` custom loader backed by an image transformation service. The service choice is decision point **D4**.
+- Image pipeline: the original is uploaded server-side after validation (mime sniffing, size limit). Responsive AVIF/WebP delivery uses the built-in `next/image` optimizer (sharp) running on the Hostinger Node server, with its cache on local disk. Thumbnails are generated at upload time. This replaces D4 (Cloudflare Images) after the move to Hostinger.
 
 ---
 
@@ -814,7 +814,7 @@ interface PaymentProvider {
 - pgTAP suite: for each tenant-owned table, Tenant A's owner/staff/customer cannot SELECT, INSERT, UPDATE or DELETE Tenant B's rows. Anon cannot read private tables. Tenant staff cannot touch `platform_*` tables. Composite foreign keys reject cross-tenant links.
 - The service-role key is only imported in modules marked `import 'server-only'`. An ESLint rule blocks `SUPABASE_SERVICE_ROLE_KEY` from any client file, and env validation (`@t3-oss/env-nextjs` + Zod) separates server and client variables.
 - Price, discount, tax, stock, tenant, role and payment status are always computed or read server-side.
-- Webhook signature verification plus idempotency; rate limiting on auth, checkout, booking and coupon endpoints (Cloudflare rate limiting plus a DB-backed fallback).
+- Webhook signature verification plus idempotency; rate limiting on auth, checkout, booking and coupon endpoints (reverse-proxy rate limiting plus an application/DB-backed limiter; Supabase Auth already rate-limits sign-in).
 - Security headers (CSP with provider allowlist, HSTS, frame-ancestors, referrer-policy); SameSite=Lax, HttpOnly, Secure cookies; Server Actions' built-in origin check for CSRF, plus an origin check on route handlers.
 - Audit log for admin writes (DB triggers on sensitive tables plus service-level events).
 
@@ -834,7 +834,7 @@ interface PaymentProvider {
 | Email provider (Resend is connected to this workspace) + sending domain | Phase 7 | Order notifications, daily brief. |
 | WhatsApp Business provider | Phase 10 (optional) | Architecture only until credentials exist. |
 | Anthropic API key | Phase 13 | Server-only. |
-| Cloudflare account, API token, Workers/SaaS custom hostnames | Phase 15 | |
+| Hostinger plan details (VPS recommended), SSH/deploy access, DNS for `e-commerce.smartmanage.me` and `*.e-commerce.smartmanage.me` | Phase 15 | Wildcard DNS + certificate; on-demand TLS for custom domains. |
 | Supabase plan (image transformations and PITR backups need Pro) | Phases 4/15 | |
 
 ---
@@ -849,7 +849,7 @@ interface PaymentProvider {
 │  │  ├─ (admin)/[locale]/admin/...    tenant admin
 │  │  ├─ (platform)/[locale]/platform/ super admin
 │  │  └─ api/ (webhooks, jobs, health)
-│  ├─ middleware.ts                    tenant + locale resolution
+│  ├─ proxy.ts                         tenant + locale resolution (Next.js 16 "proxy")
 │  ├─ i18n/ (routing, request config)   messages/{en,fr,ar}.json at root
 │  ├─ design/ (tokens, primitives)      components/{ui,store,admin}/
 │  ├─ themes/ (registry + 5 themes)     sections/ (homepage section registry)
@@ -894,6 +894,32 @@ Catalog, orders and the other domain tables are **not** created in Phase 1. They
 - **D1: Admin host.** Proposed: central `app.<platform domain>` for tenant admin and `/platform` for super admin, with `/admin` on tenant domains redirecting there. Alternative: admin on each tenant domain.
 - **D2: First payment provider.** Proposed: **Moyasar** (KSA-native, Mada + Apple Pay + STC Pay). Alternatives: Tap, Stripe.
 - **D3: URL locale prefix.** Proposed: always prefixed (`/ar/...`), with the default locale redirected from `/` by tenant default and `Accept-Language`.
-- **D4: Image transformations.** Proposed: Cloudflare Images (fits the Cloudflare deployment). Alternative: Supabase image transformations (Pro plan).
+- **D4: Image transformations.** ~~Cloudflare Images~~ → built-in `next/image` optimizer on the Hostinger Node server (follows from the Hostinger decision).
 - **D5: Branches.** Proposed: every tenant gets a hidden default branch, so branch-scoped data is uniform. Multi-branch UI appears only with the entitlement.
 - **D6: Database workflow.** Proposed: migrations are versioned in `supabase/migrations`, tested locally with the Supabase CLI (Docker) plus pgTAP, then applied to the `E-commerce` project through the Supabase MCP. The remote project is treated as dev/staging; production gets a separate project in Phase 15.
+
+---
+
+## 17. Phase 1 implementation notes
+
+**Hosts** (configurable with `PLATFORM_ROOT_DOMAIN` / `CONSOLE_SUBDOMAIN`):
+
+| Host | Area | Internal route |
+|---|---|---|
+| `e-commerce.smartmanage.me` | Platform site | `/site/[locale]/…` |
+| `app.e-commerce.smartmanage.me` | Tenant admin console + Super Admin (`/platform`) | `/console/[locale]/…` |
+| `<slug>.e-commerce.smartmanage.me` | Storefront (tenant by slug) | `/store/[tenant]/[locale]/…` |
+| any verified custom domain | Storefront (tenant by `tenant_domains`) | `/store/[tenant]/[locale]/…` |
+| development | `localhost:3000`, `app.localhost:3000`, `<slug>.localhost:3000` | same |
+
+- `src/proxy.ts` is the only place where hostname → area/tenant is decided. It strips client-supplied internal headers (`x-tenant-id`, …) and rewrites to internal routes. Visitors cannot address `/store/<other-tenant>` directly, because every path is prefixed by the proxy. Redirects are built from the visitor's `Host` header and `X-Forwarded-Proto`, so they stay correct behind Hostinger's reverse proxy.
+- Locale: the URL prefix is authoritative. Without one, the proxy picks the `NEXT_LOCALE` cookie, then `Accept-Language`, then the tenant default, always restricted to the tenant's enabled languages.
+- App Router layouts and pages render in parallel, so every console page calls `requireTenantAdmin()` itself; access checks are never left only to a layout.
+- Themes: `src/themes/definitions.ts` (5 themes), `src/themes/tokens.ts` (CSS variables, validated tenant overrides, automatic contrast-safe `*-text` colours and readable foregrounds).
+
+**Database migrations:** `supabase/migrations/20260925000001…07`. They are applied to the hosted dev project with the same SQL, and the two dev tenants are seeded there (no users).
+
+**Tests:**
+- `npm run test:db`: pgTAP (59 assertions) covering RLS coverage, privileges, and cross-tenant isolation for owner/manager/staff/outsider/anon/platform admin.
+- `npm test`: Vitest (hosts, locales, money, localisation, themes/contrast, module visibility, translation parity).
+- `npm run test:e2e`: Playwright (desktop, Android-size and iPhone-size viewports; RTL, tenant isolation, SEO tags, axe accessibility).

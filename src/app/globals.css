@@ -1,0 +1,111 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens.
+ * Runtime values (--sm-*) come from the active theme + tenant overrides
+ * (src/themes/tokens.ts) and are set on <html>. Tailwind utilities map onto
+ * them, so components use semantic classes (bg-surface, text-muted, …) and
+ * never raw colors.
+ *
+ * Direction-sensitive spacing uses logical utilities only (ms-/me-, ps-/pe-,
+ * start-/end-, text-start/text-end) so RTL works without overrides.
+ */
+
+:root {
+  /* Defaults (console / fallback). Storefronts override these per theme. */
+  --sm-color-bg: #f8f8f7;
+  --sm-color-surface: #ffffff;
+  --sm-color-fg: #18181b;
+  --sm-color-muted: #5f5f66;
+  --sm-color-border: #e4e4e7;
+  --sm-color-primary: #1f3a5f;
+  --sm-color-primary-fg: #ffffff;
+  --sm-color-accent: #c47f2c;
+  --sm-color-accent-fg: #111111;
+  --sm-color-accent-text: #8a5a1c;
+  --sm-color-primary-text: #1f3a5f;
+  --sm-color-danger: #b42318;
+  --sm-color-success: #067647;
+  --sm-color-warning: #b54708;
+  /* Each var() needs a fallback: an undefined one invalidates the whole stack. */
+  --sm-font-display: var(--font-inter, system-ui), var(--font-arabic, system-ui), system-ui, sans-serif;
+  --sm-font-body: var(--font-inter, system-ui), var(--font-arabic, system-ui), system-ui, sans-serif;
+  --sm-radius-sm: 0.25rem;
+  --sm-radius-md: 0.5rem;
+  --sm-radius-lg: 0.75rem;
+  --sm-radius-button: 0.5rem;
+}
+
+@theme inline {
+  --color-bg: var(--sm-color-bg);
+  --color-surface: var(--sm-color-surface);
+  --color-fg: var(--sm-color-fg);
+  --color-muted: var(--sm-color-muted);
+  --color-border: var(--sm-color-border);
+  --color-primary: var(--sm-color-primary);
+  --color-primary-fg: var(--sm-color-primary-fg);
+  --color-accent: var(--sm-color-accent);
+  --color-accent-fg: var(--sm-color-accent-fg);
+  /* Use *-text tokens whenever a brand color is used for text or icons. */
+  --color-accent-text: var(--sm-color-accent-text);
+  --color-primary-text: var(--sm-color-primary-text);
+  --color-danger: var(--sm-color-danger);
+  --color-success: var(--sm-color-success);
+  --color-warning: var(--sm-color-warning);
+
+  --font-display: var(--sm-font-display);
+  --font-sans: var(--sm-font-body);
+
+  --radius-sm: var(--sm-radius-sm);
+  --radius-md: var(--sm-radius-md);
+  --radius-lg: var(--sm-radius-lg);
+  --radius-button: var(--sm-radius-button);
+
+  /* Type scale (fluid display sizes, fixed UI sizes). */
+  --text-display-xl: clamp(2.5rem, 1.6rem + 3.6vw, 4.75rem);
+  --text-display-xl--line-height: 1.05;
+  --text-display-lg: clamp(2rem, 1.5rem + 2vw, 3.25rem);
+  --text-display-lg--line-height: 1.1;
+  --text-display-md: clamp(1.5rem, 1.25rem + 1vw, 2.25rem);
+  --text-display-md--line-height: 1.2;
+
+  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.04), 0 4px 16px rgb(0 0 0 / 0.04);
+  --shadow-overlay: 0 12px 40px rgb(0 0 0 / 0.16);
+
+  --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Arabic script needs more line height and no letter spacing. */
+  :lang(ar) {
+    letter-spacing: 0 !important;
+    line-height: 1.7;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

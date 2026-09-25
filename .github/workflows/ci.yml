@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Typecheck, lint, unit tests
+    runs-on: ubuntu-latest
+    env:
+      NEXT_PUBLIC_SUPABASE_URL: http://127.0.0.1:54321
+      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_ci_placeholder_000000
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+
+  database-and-e2e:
+    name: Database security tests + end-to-end
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Start local Supabase (applies migrations + seed)
+        run: npm run db:start
+      - name: RLS / tenant isolation tests (pgTAP)
+        run: npm run test:db
+      - name: Configure app for the local stack
+        run: |
+          npx supabase status -o env \
+            --override-name api.url=NEXT_PUBLIC_SUPABASE_URL \
+            --override-name auth.publishable_key=NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY \
+            --override-name auth.secret_key=SUPABASE_SECRET_KEY | grep -E '^(NEXT_PUBLIC_SUPABASE_URL|NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY|SUPABASE_SECRET_KEY)=' > .env.local
+          printf 'PLATFORM_ROOT_DOMAIN=localhost\nCONSOLE_SUBDOMAIN=app\nPUBLIC_URL_SCHEME=http\nPUBLIC_URL_PORT=3000\n' >> .env.local
+      - name: Create test users
+        run: |
+          npm run dev:user -- --email owner@roasters.test --password 'Roasters-Owner-2026' --tenant roasters
+          npm run dev:user -- --email owner@coffeehouse.test --password 'Coffee-Owner-2026' --tenant coffeehouse
+          npm run dev:user -- --email staff@roasters.test --password 'Roasters-Staff-2026' --tenant roasters --role staff
+          npm run dev:user -- --email admin@smartmanager.test --password 'Platform-Admin-2026' --platform-admin
+      - run: npx playwright install --with-deps chromium
+      - run: npm run build
+      - run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: test-results/

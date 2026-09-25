@@ -1,10 +1,57 @@
 # SmartManager E-commerce
 
-Multi-tenant SaaS e-commerce platform (storefront, ordering, booking, loyalty, analytics) for cafés, restaurants, retail, beauty and other businesses. It is served from one codebase, with Postgres Row Level Security for tenant isolation.
+A multi-tenant SaaS e-commerce platform (storefront, ordering, booking, loyalty and analytics) for cafés, restaurants, retail, beauty and other businesses. One codebase serves many independent businesses, and Postgres Row Level Security isolates each tenant's data.
 
-- Languages: English, French, Arabic (RTL)
-- Stack: Next.js · TypeScript · Tailwind CSS · Supabase (Postgres, Auth, Storage, Vault) · Cloudflare
+- **Languages:** English, French, Arabic (full RTL)
+- **Stack:** Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · next-intl · Supabase (Postgres, Auth, Storage) · Hostinger (Node.js)
+- **Architecture, ERD and security model:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 
 ## Status
 
-Phase 0 (audit & architecture) is complete. See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the architecture plan, ERD, security model and phase plan. Phase 1 has not started yet and is waiting for approval.
+| Phase | Scope | State |
+|---|---|---|
+| 0 | Audit & architecture | ✅ Approved |
+| 1 | Foundation: tenancy schema, RLS, tenant resolver, i18n/RTL, design tokens, storefront & admin shells | ✅ Complete |
+| 2+ | Multi-tenancy management, storefront design system, catalog, checkout, payments… | Not started |
+
+## Local development
+
+Requirements: Node.js ≥ 20.9, Docker.
+
+```bash
+npm install
+npm run db:start            # local Supabase stack: applies migrations + dev seed
+cp .env.example .env.local  # then fill in the local keys printed by `npx supabase status`
+                            # and set PLATFORM_ROOT_DOMAIN=localhost, PUBLIC_URL_SCHEME=http, PUBLIC_URL_PORT=3000
+
+# staff accounts (no passwords are stored in the repo)
+npm run dev:user -- --email owner@roasters.test --tenant roasters
+npm run dev:user -- --email you@example.com --platform-admin
+
+npm run dev
+```
+
+| URL | What |
+|---|---|
+| http://roasters.localhost:3000 | Tenant A storefront (café, Arabic default, Professional plan) |
+| http://coffeehouse.localhost:3000 | Tenant B storefront (retail, French default, Starter plan) |
+| http://app.localhost:3000 | Admin console (sign in) and Super Admin at `/<locale>/platform` |
+| http://localhost:3000 | Platform site |
+
+## Quality checks
+
+```bash
+npm run typecheck   # next typegen + tsc
+npm run lint        # eslint, zero warnings
+npm test            # unit tests (Vitest)
+npm run test:db     # RLS / cross-tenant isolation tests (pgTAP) against the local stack
+npm run build && npm run test:e2e   # Playwright: desktop + mobile, RTL, accessibility (axe)
+```
+
+## Environment variables
+
+See [`.env.example`](.env.example). `SUPABASE_SECRET_KEY` is server-only: it is read only by modules guarded with `server-only` and is never sent to the browser.
+
+## Production (Hostinger)
+
+`npm run build` produces a standalone Node server in `.next/standalone` (copy `.next/static` and `public` next to it, then run `node server.js`). Put it behind a TLS reverse proxy that forwards `Host` and `X-Forwarded-Proto`. DNS needs `e-commerce.smartmanage.me` and `*.e-commerce.smartmanage.me`. Full deployment documentation is part of Phase 15.

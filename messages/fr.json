@@ -1,0 +1,143 @@
+{
+  "common": {
+    "skipToContent": "Aller au contenu",
+    "language": "Langue",
+    "changeLanguage": "Changer de langue",
+    "loading": "Chargement…",
+    "retry": "Réessayer",
+    "backHome": "Retour à l’accueil",
+    "close": "Fermer",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "errorTitle": "Une erreur est survenue",
+    "errorBody": "Une erreur est survenue. Veuillez réessayer.",
+    "notFoundTitle": "Page introuvable",
+    "notFoundBody": "La page que vous cherchez n’existe pas ou a été déplacée."
+  },
+  "store": {
+    "nav": {
+      "home": "Accueil",
+      "shop": "Boutique",
+      "about": "À propos",
+      "contact": "Contact",
+      "mainNavigation": "Navigation principale"
+    },
+    "home": {
+      "welcome": "Bienvenue chez {name}",
+      "openingSoonTitle": "Notre boutique en ligne est en préparation",
+      "openingSoonBody": "Les produits et la commande en ligne arrivent bientôt. En attendant, venez nous voir ou contactez-nous.",
+      "visitUs": "Nous rendre visite",
+      "contactUs": "Nous contacter"
+    },
+    "footer": {
+      "contact": "Contact",
+      "address": "Adresse",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "rights": "© {year} {name}. Tous droits réservés.",
+      "poweredBy": "Propulsé par SmartManager"
+    },
+    "unavailable": {
+      "suspendedTitle": "Cette boutique est temporairement indisponible",
+      "suspendedBody": "Merci de revenir plus tard.",
+      "onboardingTitle": "Ouverture prochaine",
+      "onboardingBody": "{name} prépare sa boutique en ligne. Revenez très bientôt."
+    }
+  },
+  "platform": {
+    "tagline": "Le commerce en ligne pour cafés, restaurants, boutiques et salons",
+    "intro": "Gérez votre boutique, vos commandes, réservations et programmes de fidélité au même endroit — en arabe, en anglais et en français.",
+    "signIn": "Accéder à votre tableau de bord",
+    "storeNotFoundTitle": "Boutique introuvable",
+    "storeNotFoundBody": "Aucune boutique n’existe à cette adresse. Vérifiez le lien ou contactez directement l’établissement."
+  },
+  "console": {
+    "brand": "SmartManager",
+    "login": {
+      "title": "Connexion",
+      "subtitle": "Accédez au tableau de bord de votre établissement",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "submitting": "Connexion…",
+      "invalid": "E-mail ou mot de passe incorrect.",
+      "invalidInput": "Saisissez un e-mail et un mot de passe valides.",
+      "rateLimited": "Trop de tentatives. Patientez un instant puis réessayez."
+    },
+    "signOut": "Se déconnecter",
+    "account": "Compte",
+    "tenants": {
+      "title": "Vos établissements",
+      "subtitle": "Choisissez l’établissement à gérer",
+      "empty": "Vous n’avez encore accès à aucun établissement.",
+      "emptyHint": "Demandez au propriétaire de vous inviter ou contactez le support SmartManager.",
+      "role": "Rôle",
+      "status": {
+        "active": "Actif",
+        "onboarding": "En configuration",
+        "suspended": "Suspendu",
+        "closed": "Fermé"
+      }
+    },
+    "nav": {
+      "sections": {
+        "main": "Principal",
+        "catalog": "Catalogue",
+        "sales": "Ventes et clients",
+        "marketing": "Marketing",
+        "business": "Établissement"
+      },
+      "dashboard": "Tableau de bord",
+      "orders": "Commandes",
+      "products": "Produits",
+      "categories": "Catégories",
+      "inventory": "Inventaire",
+      "customers": "Clients",
+      "bookings": "Réservations",
+      "coupons": "Codes promo",
+      "promotions": "Promotions",
+      "loyalty": "Fidélité",
+      "subscriptions": "Abonnements",
+      "analytics": "Statistiques",
+      "appearance": "Apparence",
+      "settings": "Paramètres",
+      "switchBusiness": "Changer d’établissement",
+      "viewStore": "Voir la boutique",
+      "platform": "Administration plateforme"
+    },
+    "dashboard": {
+      "title": "Tableau de bord",
+      "welcome": "Bon retour",
+      "kpi": {
+        "revenueToday": "Chiffre d’affaires du jour",
+        "ordersToday": "Commandes du jour",
+        "customers": "Clients",
+        "bookingsToday": "Réservations du jour"
+      },
+      "noData": "Aucune donnée",
+      "noOrdersTitle": "Aucune commande pour le moment",
+      "noOrdersBody": "Les chiffres de vente apparaîtront ici dès que votre boutique recevra des commandes."
+    },
+    "module": {
+      "notBuiltTitle": "{module} n’est pas encore disponible",
+      "notBuiltBody": "Ce module fait partie d’une prochaine version de SmartManager E-commerce. Rien n’est encore actif ici.",
+      "notEntitledTitle": "{module} n’est pas inclus dans votre formule",
+      "notEntitledBody": "Passez à une formule supérieure pour activer ce module."
+    },
+    "platform": {
+      "title": "Administration de la plateforme",
+      "businesses": "Établissements",
+      "business": "Établissement",
+      "slug": "Adresse",
+      "plan": "Formule",
+      "status": "Statut",
+      "created": "Créé le",
+      "noPlan": "Aucune formule",
+      "empty": "Aucun établissement pour le moment."
+    },
+    "forbidden": {
+      "title": "Accès refusé",
+      "body": "Votre compte n’a pas l’autorisation d’afficher cette page."
+    }
+  }
+}
