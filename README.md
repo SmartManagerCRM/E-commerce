@@ -16,7 +16,8 @@ A multi-tenant SaaS e-commerce platform (storefront, ordering, booking, loyalty 
 | 2 | Multi-tenancy management: create businesses, settings, branding, staff invitations, custom domains, Super Admin | ✅ Complete |
 | 3 | Storefront design system: 5 themes, customisation, homepage builder, commerce components, SEO | ✅ Complete |
 | 4 | Products & inventory: catalog, options/variants, photos, categories, stock ledger, shop & product pages | ✅ Complete |
-| 5+ | Cart & checkout, payments… | Not started |
+| 5 | Cart & checkout: guest cart, pickup/delivery, VAT, pay on fulfillment, orders, customers, order tracking | ✅ Complete |
+| 6+ | Online payments (Moyasar), booking, loyalty… | Not started |
 
 ## Local development
 

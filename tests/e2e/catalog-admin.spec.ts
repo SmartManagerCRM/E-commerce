@@ -151,8 +151,10 @@ test("the homepage can feature products and categories", async ({ page }) => {
     await owner.getByRole("button", { name: `Show ${name}` }).click();
     await expect(owner.getByRole("button", { name: `Hide ${name}` })).toBeVisible();
   }
-  // Best sellers needs real sales data, so it is not offered yet.
-  await expect(owner.getByLabel("Section").locator('option[value="best_sellers"]')).toHaveCount(0);
+  // Best sellers is now offered (ranked from real orders; hidden on the storefront
+  // until there are any), but sections needing modules not built yet still are not.
+  await expect(owner.getByLabel("Section").locator('option[value="best_sellers"]')).toHaveCount(1);
+  await expect(owner.getByLabel("Section").locator('option[value="loyalty"]')).toHaveCount(0);
 
   await expectStorefront(page, "/en", async () => {
     await expect(page.getByRole("heading", { name: "Featured products" })).toBeVisible();

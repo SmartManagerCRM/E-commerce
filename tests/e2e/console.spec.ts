@@ -66,8 +66,8 @@ test.describe("admin console", () => {
 
   test("unbuilt modules say so instead of pretending to work", async ({ page }) => {
     await signIn(page, USERS.ownerA);
-    await page.goto(`${CONSOLE}/en/t/roasters/orders`);
-    await expect(page.getByText("Orders is not available yet")).toBeVisible();
+    await page.goto(`${CONSOLE}/en/t/roasters/loyalty`);
+    await expect(page.getByText("Loyalty is not available yet")).toBeVisible();
   });
 
   test("platform admin sees every business", async ({ page }) => {

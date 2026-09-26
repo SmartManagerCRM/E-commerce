@@ -981,3 +981,31 @@ Catalog, orders and the other domain tables are **not** created in Phase 1. They
   - Featured products, featured categories and product collection are now available.
   - Best sellers stays locked until real order data exists.
 - **Uploads:** product and category photos (PNG/JPEG/WebP, ≤ 8 MB each) are re-encoded to WebP (max 2000 px). Server Action and proxy body limits are raised to 20 MB (`next.config.ts`).
+
+## 21. Phase 5 implementation notes (cart, checkout & orders)
+
+- **Migration `20260927000011_orders_checkout`:**
+  - Tables: `tenant_counters` (per-tenant order numbers), `delivery_zones`, `customers`, `carts` / `cart_items` (guest cart, keyed by a **hashed** random cookie token — never the raw token), `orders`, `order_items` (price/name snapshots), `order_status_history`, `payments` (pay-on-fulfillment only; online providers arrive in Phase 6).
+  - `tenant_settings.checkout` / `.tax` gain a validation trigger and a `app.commerce_settings()` reader with safe defaults (ordering is **off** until the owner turns it on).
+- **Nothing priced or trusted comes from the browser:**
+  - The storefront cart, quote, checkout and order-status reads/writes are `service_role`-only Postgres functions (`cart_update`, `cart_view`, `checkout_quote`, `create_order_from_cart`, `storefront_order`, `storefront_checkout_options`, `storefront_best_sellers`), called from server code with the tenant resolved from the request Host — never a client-supplied id.
+  - `create_order_from_cart` re-reads every price, re-checks every stock line, and recomputes the subtotal, delivery fee, tax and total inside one transaction; the browser only ever sends a variant id/quantity (cart) or contact/fulfillment details (checkout).
+  - VAT: `tax_rate_bps` (0–10000) and `tax_included` come from `tenant_settings.tax`; the total is computed once, server-side, and stored on the order so it never drifts if the setting changes later.
+- **Stock reservation, not double-booking:**
+  - Placing an order **reserves** stock (`inventory_items.reserved`) for tracked variants; it is never deducted at checkout.
+  - `update_order_status()` deducts reserved stock into the ledger (`stock_movements`, reason `sale`) only when an order reaches `completed`, and releases the reservation on `cancelled`. A guard trigger stops staff from manually lowering `on_hand` below what is currently reserved (unless backorders are allowed).
+  - Concurrent carts for the same variant are re-checked and capped against real availability both when adding to cart and again, row-locked, when the order is placed.
+- **Order workflow:** `pending → confirmed → preparing → (ready | out_for_delivery) → completed`, or `cancelled` from any open state. `update_order_status()` enforces the transition table (`app.allowed_next_statuses`) and records every change (`order_status_history`), gated by `orders.write`.
+- **Customers:** one row per tenant + email, created/updated at checkout (name, phone, marketing consent with a timestamp); `orders_count` and `lifetime_value_minor` are updated when an order completes. Staff read them with `customers.read`; there is no direct write path (they only change through the checkout and order functions).
+- **Customer order tracking:** `/orders/<number>?t=<token>` is reachable only with the private link handed back at checkout (the token is hashed the same way as the cart cookie); the wrong token or another store's order number returns 404, never another customer's order.
+- **Storefront:**
+  - `/cart` (line items with live prices/availability, quantity as a plain `<form>` so it works without JavaScript) and `/checkout` (fulfillment choice, delivery zone with live fee/minimum, VAT breakdown, contact form) are only offered when `storefront_checkout_options().ordering_open` is true; otherwise the product page and checkout both say ordering isn't available yet, honestly, with no cart button.
+  - Cart identity is a random token in an HttpOnly, `SameSite=Lax` cookie scoped to the tenant's own host; only its SHA-256 hash reaches the database.
+  - Add-to-cart, cart updates and checkout are rate-limited per IP; checkout has a bot honeypot field.
+  - The best-sellers homepage section is now unlocked: it ranks products by units sold in the last 90 days and hides itself until a store has any completed sales.
+- **Console:**
+  - **Orders** (`orders` module, now built): list with an open/completed/cancelled/all filter and a search by order number, name, email or phone; a detail page with the next-status actions, a "record payment" form (cash/card terminal/bank transfer), delivery address, customer notes and the full status history. Auto-refreshes while visible.
+  - **Customers** (`customers` module, now built): list with search, and a detail page showing lifetime value, marketing consent and order history.
+  - **Settings → Checkout & delivery**: accepting orders, pickup/delivery toggles, pay-on-fulfillment, minimum order, VAT rate/inclusion/registration number, and delivery zones (fee, minimum, free-over threshold, ETA).
+  - The dashboard now shows live revenue/orders today, open and pending order counts, and a recent-orders list, alongside the Phase 4 catalog/stock figures.
+- **Online payments are not built yet.** `payments.provider` only accepts `'manual'`; a manual payment is recorded by staff after the customer pays on pickup/delivery. Moyasar (or another provider) arrives in Phase 6, behind the same `orders`/`payment_status` model.

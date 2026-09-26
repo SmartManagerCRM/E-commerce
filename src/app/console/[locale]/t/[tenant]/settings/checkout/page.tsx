@@ -97,7 +97,7 @@ async function Content({ slug, context }: { slug: string; locale: Locale; contex
         <div className="space-y-4">
           {(zones ?? []).map((zone) => (
             <ZoneForm
-              key={`${zone.id}-${zone.updated_at}`}
+              key={zone.id}
               action={saveZone.bind(null, slug)}
               remove={deleteZone.bind(null, slug, zone.id)}
               locales={settings.locales}
@@ -119,7 +119,7 @@ async function Content({ slug, context }: { slug: string; locale: Locale; contex
           {(zones ?? []).length === 0 ? <p className="text-sm text-muted">{t("noZones")}</p> : null}
           {canEdit ? (
             <ZoneForm
-              key={`new-${(zones ?? []).length}`}
+              key="new-zone"
               action={saveZone.bind(null, slug)}
               locales={settings.locales}
               currency={settings.currency}

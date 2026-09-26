@@ -78,29 +78,31 @@ const CLOSED: CheckoutOptions = {
   zones: [],
 };
 
-export const getCheckoutOptions = cache(async (tenant: ActiveStorefrontTenant, locale: Locale): Promise<CheckoutOptions> => {
-  if (!commerceConfigured()) return CLOSED;
-  const { data, error } = await serviceClient().rpc("storefront_checkout_options", { p_tenant: tenant.id });
-  if (error || !data) return CLOSED;
-  const row = optionsRow.parse(data);
-  const ctx = { tenant, locale };
-  return {
-    orderingOpen: row.ordering_open === true,
-    pickup: row.pickup === true,
-    delivery: row.delivery === true,
-    minOrderMinor: row.min_order_minor,
-    taxRateBps: row.tax_rate_bps,
-    taxIncluded: row.tax_included,
-    zones: row.zones.map((z) => ({
-      id: z.id,
-      name: text(ctx, z.name),
-      feeMinor: z.fee_minor,
-      minOrderMinor: z.min_order_minor,
-      freeOverMinor: z.free_over_minor,
-      etaMinutes: z.eta_minutes,
-    })),
-  };
-});
+export const getCheckoutOptions = cache(
+  async (tenant: ActiveStorefrontTenant, locale: Locale): Promise<CheckoutOptions> => {
+    if (!commerceConfigured()) return CLOSED;
+    const { data, error } = await serviceClient().rpc("storefront_checkout_options", { p_tenant: tenant.id });
+    if (error || !data) return CLOSED;
+    const row = optionsRow.parse(data);
+    const ctx = { tenant, locale };
+    return {
+      orderingOpen: row.ordering_open === true,
+      pickup: row.pickup === true,
+      delivery: row.delivery === true,
+      minOrderMinor: row.min_order_minor,
+      taxRateBps: row.tax_rate_bps,
+      taxIncluded: row.tax_included,
+      zones: row.zones.map((z) => ({
+        id: z.id,
+        name: text(ctx, z.name),
+        feeMinor: z.fee_minor,
+        minOrderMinor: z.min_order_minor,
+        freeOverMinor: z.free_over_minor,
+        etaMinutes: z.eta_minutes,
+      })),
+    };
+  },
+);
 
 // ---------------------------------------------------------------------------
 // Cart

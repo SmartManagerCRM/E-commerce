@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useEffect, useRef } from "react";
 
 import { TextInput } from "@/components/forms/controls";
 import { FormMessage } from "@/components/forms/form-message";
@@ -191,9 +192,14 @@ export function ZoneForm({
   const { state, pending, formProps } = useActionForm(action, idleState as FormState);
   const removal = useActionForm(remove ?? (async () => idleState as FormState), idleState as FormState);
   const step = priceStep(exponent);
+  const form = useRef<HTMLFormElement>(null);
+  // The "add a delivery area" form starts empty again after each create.
+  useEffect(() => {
+    if (!zone && state.status === "success") form.current?.reset();
+  }, [state, zone]);
   return (
     <div className="rounded-md border border-border p-4">
-      <form {...formProps} className="space-y-4">
+      <form ref={form} {...formProps} className="space-y-4">
         <p className="text-sm font-semibold">{zone ? t("zone") : t("newZone")}</p>
         {zone ? <input type="hidden" name="id" value={zone.id} /> : null}
         <input type="hidden" name="position" value={zone?.position ?? position ?? 0} />

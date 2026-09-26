@@ -58,7 +58,9 @@ export default async function OrderPage({ params, searchParams }: Props) {
 
       <h1 className="font-display text-display-md font-semibold">{t("title", { number: order.number })}</h1>
       <p className="mt-2 text-sm text-muted">
-        {t("placedOn", { date: format.dateTime(new Date(order.placedAt), { dateStyle: "medium", timeStyle: "short" }) })}
+        {t("placedOn", {
+          date: format.dateTime(new Date(order.placedAt), { dateStyle: "medium", timeStyle: "short" }),
+        })}
       </p>
 
       <section aria-labelledby="progress" className="mt-8">
@@ -184,7 +186,10 @@ export default async function OrderPage({ params, searchParams }: Props) {
           ) : null}
           {tenant.phone && tenant.email ? " · " : null}
           {tenant.email ? (
-            <a href={`mailto:${tenant.email}?subject=${encodeURIComponent(t("title", { number: order.number }))}`} className="font-medium text-fg underline">
+            <a
+              href={`mailto:${tenant.email}?subject=${encodeURIComponent(t("title", { number: order.number }))}`}
+              className="font-medium text-fg underline"
+            >
               {tenant.email}
             </a>
           ) : null}

@@ -64,11 +64,17 @@ test.describe("product page", () => {
     await expect(page.getByText("ETH-YIR-1KG")).toBeVisible();
     await expect(page.getByText("Only a few left")).toBeVisible();
     await expect(page.locator("main")).toContainText("220.00");
-    // Ordering is not live yet, and the page says so instead of a fake cart button.
-    await expect(page.getByText("Online ordering opens soon")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Add to cart" })).toHaveCount(0);
+    // Roasters takes online orders (Phase 5): the panel offers the real thing, not a placeholder.
+    await expect(page.getByRole("button", { name: "Add to cart" })).toBeVisible();
     await expectNoHorizontalOverflow(page);
     await expectNoA11yViolations(page);
+  });
+
+  test("a store with ordering off shows an honest message instead of a cart button", async ({ page }) => {
+    // Coffeehouse (Tenant B) has not turned on online ordering.
+    await page.goto(`${STORE_B}/en/products/tasse-ceramique`);
+    await expect(page.getByText("Online ordering opens soon")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Add to cart" })).toHaveCount(0);
   });
 
   test("structured data describes the product and its offers", async ({ page }) => {

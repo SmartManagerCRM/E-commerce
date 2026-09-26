@@ -150,7 +150,10 @@ export async function getCatalog(ctx: Ctx, query: CatalogQuery): Promise<{ total
  */
 export async function getBestSellers(ctx: Ctx, limit: number): Promise<ProductCardView[]> {
   if (!serverEnv().SUPABASE_SECRET_KEY) return [];
-  const { data, error } = await serviceClient().rpc("storefront_best_sellers", { p_tenant: ctx.tenant.id, p_limit: limit });
+  const { data, error } = await serviceClient().rpc("storefront_best_sellers", {
+    p_tenant: ctx.tenant.id,
+    p_limit: limit,
+  });
   if (error || !data) return [];
   return z
     .array(cardRow)
