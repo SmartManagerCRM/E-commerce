@@ -20,7 +20,8 @@ A multi-tenant SaaS e-commerce platform (storefront, ordering, booking, loyalty 
 | 6 | Online payments: Moyasar (card, Mada, STC Pay), payment holds, webhooks | ✅ Complete |
 | 7 | Notifications: order emails, daily brief, invitation emails (Resend); dine-in foundation (tables/sessions) and a commerce service layer for the future AI agent | ✅ Complete |
 | 8 | Booking: reservable resources, availability, guest requests, staff confirm/reject workflow, booking notifications | ✅ Complete |
-| 9+ | Loyalty, AI assistant… | Not started |
+| 9 | Loyalty: points program, tiers, staff-redeemed rewards, automatic accrual on paid orders | ✅ Complete |
+| 10+ | AI assistant… | Not started |
 
 ## Local development
 

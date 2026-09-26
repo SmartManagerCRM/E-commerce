@@ -460,7 +460,11 @@
       "invalidPublishableKey": "Enter a valid publishable key.",
       "secretKeyRequired": "Enter your Moyasar secret key.",
       "webhookSecretRequired": "Enter your Moyasar webhook secret token.",
-      "needMethod": "Choose at least one payment method."
+      "needMethod": "Choose at least one payment method.",
+      "insufficient_points": "This customer doesn't have enough points for that reward.",
+      "invalid_reward": "This reward isn't available.",
+      "invalid_delta": "Enter a non-zero number of points.",
+      "invalid_note": "That note is too long."
     },
     "categoryCreated": "Category created.",
     "stockUpdated": "Stock updated.",
@@ -468,7 +472,10 @@
     "paymentRecorded": "Payment recorded.",
     "zoneAdded": "Delivery area added.",
     "resourceAdded": "Booking resource added.",
-    "bookingUpdated": "Booking updated."
+    "bookingUpdated": "Booking updated.",
+    "tierAdded": "Tier added.",
+    "rewardAdded": "Reward added.",
+    "pointsAdjusted": "Points adjusted."
   },
   "settings": {
     "title": "Settings",
@@ -1235,7 +1242,31 @@
     "consentNo": "Not subscribed",
     "consentAt": "Consent given on {date} at checkout.",
     "orderHistory": "Orders",
-    "noOrders": "No orders to show."
+    "noOrders": "No orders to show.",
+    "loyalty": {
+      "title": "Loyalty",
+      "notEntitled": "Loyalty isn't included in your current plan.",
+      "balance": "Points balance",
+      "lifetime": "Lifetime points",
+      "tier": "Tier",
+      "noTier": "No tier yet",
+      "history": "History",
+      "noHistory": "No point activity yet.",
+      "reasons": {
+        "earned_order": "Earned from an order",
+        "redeemed_reward": "Redeemed a reward",
+        "manual_adjustment": "Manual adjustment"
+      },
+      "adjustTitle": "Adjust points",
+      "adjustDelta": "Points (use a negative number to deduct)",
+      "adjustNote": "Note (optional)",
+      "adjustSubmit": "Apply adjustment",
+      "redeemTitle": "Redeem a reward",
+      "redeemSelect": "Reward",
+      "redeemSubmit": "Redeem",
+      "noRewardsToRedeem": "No rewards are set up yet.",
+      "redeemed": "Redeemed “{name}” — apply it to this customer's order."
+    }
   },
   "checkoutSettings": {
     "title": "Checkout & delivery",
@@ -1435,5 +1466,45 @@
     "capacityMax": "Maximum guests",
     "resourceActive": "Active",
     "deleteResource": "Remove"
+  },
+  "loyalty": {
+    "title": "Loyalty",
+    "subtitle": "Reward repeat customers with points they can redeem in person.",
+    "notEntitled": "Loyalty isn't included in your current plan.",
+    "programTitle": "Program",
+    "programDescription": "Turn on point accrual and set how many points a purchase earns.",
+    "active": "Award points on paid orders",
+    "activeHint": "Points are added automatically when an order is paid — never anything the browser can fake.",
+    "pointsRate": "Points per {currency} spent",
+    "pointsRateHint": "For example, 1 means a 50 {currency} order earns 50 points.",
+    "tiersTitle": "Tiers",
+    "tiersDescription": "Unlocked once a customer's lifetime points cross a threshold.",
+    "noTiers": "No tiers yet.",
+    "tier": "Tier",
+    "newTier": "Add a tier",
+    "addTier": "Add tier",
+    "tierName": "Name",
+    "threshold": "Points needed",
+    "perks": "Perks (optional, shown to staff only)",
+    "tierActive": "Active",
+    "deleteTier": "Remove",
+    "rewardsTitle": "Rewards",
+    "rewardsDescription": "What points can be redeemed for. Staff apply the discount when they redeem one for a customer.",
+    "noRewards": "No rewards yet.",
+    "reward": "Reward",
+    "newReward": "Add a reward",
+    "addReward": "Add reward",
+    "rewardName": "Name",
+    "costPoints": "Cost (points)",
+    "kind": "Type",
+    "kinds": {
+      "discount_percent": "Percent off",
+      "discount_fixed": "Fixed amount off"
+    },
+    "value": "Value",
+    "valuePercentHint": "A whole percent, 1–100.",
+    "valueFixedHint": "Amount off, in {currency}.",
+    "rewardActive": "Active",
+    "deleteReward": "Remove"
   }
 }

@@ -22,10 +22,11 @@ import "server-only";
  * same status workflow (`app.allowed_next_statuses`).
  *
  * What's covered: products, inventory, carts, customers, tables, table
- * sessions, orders (both online and dine-in), payments (Moyasar) and
- * bookings (branches → booking_resources → bookings). What's not: loyalty is
- * architecture-planned (see ARCHITECTURE.md §7.4) but not built yet — there
- * is nothing here to wrap until that schema exists.
+ * sessions, orders (both online and dine-in), payments (Moyasar), bookings
+ * (branches → booking_resources → bookings) and loyalty (program settings,
+ * tiers, rewards, a customer's points ledger). Subscriptions and marketing
+ * campaigns remain architecture-planned (see ARCHITECTURE.md §7.4) but not
+ * built yet.
  */
 export * as products from "./products";
 export * as inventory from "./inventory";
@@ -35,3 +36,4 @@ export * as tables from "./tables";
 export * as orders from "./orders";
 export * as payments from "./payments";
 export * as bookings from "./bookings";
+export * as loyalty from "./loyalty";

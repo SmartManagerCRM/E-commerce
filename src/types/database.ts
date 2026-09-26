@@ -9,10 +9,7 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      graphql: {
-        Args: { extensions?: Json; operationName?: string; query?: string; variables?: Json };
-        Returns: Json;
-      };
+      graphql: { Args: { extensions?: Json; operationName?: string; query?: string; variables?: Json }; Returns: Json };
     };
     Enums: {
       [_ in never]: never;
@@ -679,6 +676,165 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "product_variants";
             referencedColumns: ["tenant_id", "id"];
+          },
+        ];
+      };
+      loyalty_ledger: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          customer_id: string;
+          delta: number;
+          id: number;
+          note: string | null;
+          order_id: string | null;
+          reason: string;
+          reward_id: string | null;
+          tenant_id: string;
+        };
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          customer_id: string;
+          delta: number;
+          id?: never;
+          note?: string | null;
+          order_id?: string | null;
+          reason: string;
+          reward_id?: string | null;
+          tenant_id: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          customer_id?: string;
+          delta?: number;
+          id?: never;
+          note?: string | null;
+          order_id?: string | null;
+          reason?: string;
+          reward_id?: string | null;
+          tenant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_ledger_tenant_id_customer_id_fkey";
+            columns: ["tenant_id", "customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customers";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "loyalty_ledger_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "loyalty_ledger_tenant_id_order_id_fkey";
+            columns: ["tenant_id", "order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "loyalty_ledger_tenant_id_reward_id_fkey";
+            columns: ["tenant_id", "reward_id"];
+            isOneToOne: false;
+            referencedRelation: "loyalty_rewards";
+            referencedColumns: ["tenant_id", "id"];
+          },
+        ];
+      };
+      loyalty_rewards: {
+        Row: {
+          active: boolean;
+          cost_points: number;
+          created_at: string;
+          id: string;
+          kind: string;
+          name: NonNullable<Json>;
+          position: number;
+          tenant_id: string;
+          updated_at: string;
+          value: number;
+        };
+        Insert: {
+          active?: boolean;
+          cost_points: number;
+          created_at?: string;
+          id?: string;
+          kind: string;
+          name: NonNullable<Json>;
+          position?: number;
+          tenant_id: string;
+          updated_at?: string;
+          value: number;
+        };
+        Update: {
+          active?: boolean;
+          cost_points?: number;
+          created_at?: string;
+          id?: string;
+          kind?: string;
+          name?: NonNullable<Json>;
+          position?: number;
+          tenant_id?: string;
+          updated_at?: string;
+          value?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_rewards_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      loyalty_tiers: {
+        Row: {
+          active: boolean;
+          created_at: string;
+          id: string;
+          name: NonNullable<Json>;
+          perks: string | null;
+          position: number;
+          tenant_id: string;
+          threshold_points: number;
+          updated_at: string;
+        };
+        Insert: {
+          active?: boolean;
+          created_at?: string;
+          id?: string;
+          name: NonNullable<Json>;
+          perks?: string | null;
+          position?: number;
+          tenant_id: string;
+          threshold_points: number;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          created_at?: string;
+          id?: string;
+          name?: NonNullable<Json>;
+          perks?: string | null;
+          position?: number;
+          tenant_id?: string;
+          threshold_points?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "loyalty_tiers_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -2143,6 +2299,7 @@ export type Database = {
           checkout: NonNullable<Json>;
           consent: NonNullable<Json>;
           delivery: NonNullable<Json>;
+          loyalty: NonNullable<Json>;
           notifications: NonNullable<Json>;
           retention: NonNullable<Json>;
           tax: NonNullable<Json>;
@@ -2154,6 +2311,7 @@ export type Database = {
           checkout?: NonNullable<Json>;
           consent?: NonNullable<Json>;
           delivery?: NonNullable<Json>;
+          loyalty?: NonNullable<Json>;
           notifications?: NonNullable<Json>;
           retention?: NonNullable<Json>;
           tax?: NonNullable<Json>;
@@ -2165,6 +2323,7 @@ export type Database = {
           checkout?: NonNullable<Json>;
           consent?: NonNullable<Json>;
           delivery?: NonNullable<Json>;
+          loyalty?: NonNullable<Json>;
           notifications?: NonNullable<Json>;
           retention?: NonNullable<Json>;
           tax?: NonNullable<Json>;
@@ -2318,23 +2477,15 @@ export type Database = {
     };
     Functions: {
       accept_invitation: { Args: { p_token: string }; Returns: string };
-      adjust_stock: {
-        Args: { p_delta: number; p_item: string; p_note?: string; p_reason: string };
-        Returns: number;
+      adjust_loyalty_points: {
+        Args: { p_customer: string; p_delta: number; p_note: string; p_tenant: string };
+        Returns: Json;
       };
+      adjust_stock: { Args: { p_delta: number; p_item: string; p_note?: string; p_reason: string }; Returns: number };
       booking_settings: { Args: { p_tenant: string }; Returns: Json };
-      cancel_booking_by_customer: {
-        Args: { p_id: string; p_tenant: string; p_token_hash: string };
-        Returns: boolean;
-      };
+      cancel_booking_by_customer: { Args: { p_id: string; p_tenant: string; p_token_hash: string }; Returns: boolean };
       cart_update: {
-        Args: {
-          p_mode: string;
-          p_qty: number;
-          p_tenant: string;
-          p_token_hash: string;
-          p_variant: string;
-        };
+        Args: { p_mode: string; p_qty: number; p_tenant: string; p_token_hash: string; p_variant: string };
         Returns: Json;
       };
       cart_view: { Args: { p_tenant: string; p_token_hash: string }; Returns: Json };
@@ -2372,20 +2523,14 @@ export type Database = {
         Args: { p_items: Json; p_notes?: string; p_session: string; p_tenant: string };
         Returns: Json;
       };
-      create_order_from_cart: {
-        Args: { p_checkout: Json; p_tenant: string; p_token_hash: string };
-        Returns: Json;
-      };
+      create_order_from_cart: { Args: { p_checkout: Json; p_tenant: string; p_token_hash: string }; Returns: Json };
       create_table: {
         Args: { p_branch: string; p_capacity?: number; p_label: string; p_tenant: string };
         Returns: string;
       };
       daily_brief_summary: { Args: { p_tenant: string }; Returns: Json };
       get_invitation: { Args: { p_token: string }; Returns: Json };
-      invite_member: {
-        Args: { p_email: string; p_role_key: string; p_tenant: string };
-        Returns: string;
-      };
+      invite_member: { Args: { p_email: string; p_role_key: string; p_tenant: string }; Returns: string };
       low_stock_items: {
         Args: { p_limit?: number; p_tenant: string };
         Returns: {
@@ -2399,6 +2544,8 @@ export type Database = {
           variant_id: string;
         }[];
       };
+      loyalty_balance: { Args: { p_customer: string; p_tenant: string }; Returns: Json };
+      loyalty_settings: { Args: { p_tenant: string }; Returns: Json };
       my_memberships: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -2438,18 +2585,13 @@ export type Database = {
         Returns: Json;
       };
       platform_invite_owner: { Args: { p_email: string; p_tenant: string }; Returns: string };
-      platform_set_plan: {
-        Args: { p_plan_key: string; p_status?: string; p_tenant: string };
-        Returns: undefined;
-      };
+      platform_set_plan: { Args: { p_plan_key: string; p_status?: string; p_tenant: string }; Returns: undefined };
       record_domain_check: {
         Args: { p_actor: string; p_domain: string; p_error?: string; p_verified: boolean };
         Returns: undefined;
       };
-      record_order_payment: {
-        Args: { p_method: string; p_note?: string; p_order: string };
-        Returns: undefined;
-      };
+      record_order_payment: { Args: { p_method: string; p_note?: string; p_order: string }; Returns: undefined };
+      redeem_loyalty_reward: { Args: { p_customer: string; p_reward: string; p_tenant: string }; Returns: Json };
       resolve_storefront: { Args: { p_hostname?: string; p_slug?: string }; Returns: Json };
       revoke_invitation: { Args: { p_invitation: string }; Returns: undefined };
       sales_summary: { Args: { p_tenant: string }; Returns: Json };
@@ -2466,17 +2608,11 @@ export type Database = {
         };
         Returns: undefined;
       };
-      save_product_structure: {
-        Args: { p_options: Json; p_product: string; p_variants: Json };
-        Returns: undefined;
-      };
+      save_product_structure: { Args: { p_options: Json; p_product: string; p_variants: Json }; Returns: undefined };
       set_payment_intent_ref: { Args: { p_order: string; p_ref: string }; Returns: undefined };
       set_primary_domain: { Args: { p_domain: string }; Returns: undefined };
       storefront_best_sellers: { Args: { p_limit?: number; p_tenant: string }; Returns: Json };
-      storefront_booking: {
-        Args: { p_id: string; p_tenant: string; p_token_hash: string };
-        Returns: Json;
-      };
+      storefront_booking: { Args: { p_id: string; p_tenant: string; p_token_hash: string }; Returns: Json };
       storefront_booking_availability: {
         Args: { p_date: string; p_resource: string; p_tenant: string };
         Returns: Json;
@@ -2501,10 +2637,7 @@ export type Database = {
       };
       storefront_categories: { Args: { p_tenant: string }; Returns: Json };
       storefront_checkout_options: { Args: { p_tenant: string }; Returns: Json };
-      storefront_order: {
-        Args: { p_number: string; p_tenant: string; p_token_hash: string };
-        Returns: Json;
-      };
+      storefront_order: { Args: { p_number: string; p_tenant: string; p_token_hash: string }; Returns: Json };
       storefront_payment_options: { Args: { p_tenant: string }; Returns: Json };
       storefront_product: { Args: { p_slug: string; p_tenant: string }; Returns: Json };
       storefront_sitemap: { Args: { p_tenant: string }; Returns: Json };
@@ -2535,10 +2668,7 @@ export type Database = {
         }[];
       };
       update_booking_status: { Args: { p_booking: string; p_status: string }; Returns: string };
-      update_order_status: {
-        Args: { p_note?: string; p_order: string; p_status: string };
-        Returns: string;
-      };
+      update_order_status: { Args: { p_note?: string; p_order: string; p_status: string }; Returns: string };
     };
     Enums: {
       [_ in never]: never;
@@ -2555,8 +2685,7 @@ type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-    | { schema: keyof DatabaseWithoutInternals },
+    keyof (DefaultSchema["Tables"] & DefaultSchema["Views"]) | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
@@ -2579,9 +2708,7 @@ export type Tables<
     : never;
 
 export type TablesInsert<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
+  DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
@@ -2602,9 +2729,7 @@ export type TablesInsert<
     : never;
 
 export type TablesUpdate<
-  DefaultSchemaTableNameOrOptions extends
-    | keyof DefaultSchema["Tables"]
-    | { schema: keyof DatabaseWithoutInternals },
+  DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"] | { schema: keyof DatabaseWithoutInternals },
   TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
@@ -2625,9 +2750,7 @@ export type TablesUpdate<
     : never;
 
 export type Enums<
-  DefaultSchemaEnumNameOrOptions extends
-    | keyof DefaultSchema["Enums"]
-    | { schema: keyof DatabaseWithoutInternals },
+  DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"] | { schema: keyof DatabaseWithoutInternals },
   EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }
@@ -2641,8 +2764,7 @@ export type Enums<
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-    | keyof DefaultSchema["CompositeTypes"]
-    | { schema: keyof DatabaseWithoutInternals },
+    keyof DefaultSchema["CompositeTypes"] | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals;
   }

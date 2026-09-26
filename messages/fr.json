@@ -460,7 +460,11 @@
       "invalidPublishableKey": "Saisissez une clé publique valide.",
       "secretKeyRequired": "Saisissez votre clé secrète Moyasar.",
       "webhookSecretRequired": "Saisissez votre jeton secret de webhook Moyasar.",
-      "needMethod": "Choisissez au moins un mode de paiement."
+      "needMethod": "Choisissez au moins un mode de paiement.",
+      "insufficient_points": "Ce client n'a pas assez de points pour cette récompense.",
+      "invalid_reward": "Cette récompense n'est pas disponible.",
+      "invalid_delta": "Saisissez un nombre de points non nul.",
+      "invalid_note": "Cette note est trop longue."
     },
     "categoryCreated": "Catégorie créée.",
     "stockUpdated": "Stock mis à jour.",
@@ -468,7 +472,10 @@
     "paymentRecorded": "Paiement enregistré.",
     "zoneAdded": "Zone de livraison ajoutée.",
     "resourceAdded": "Ressource de réservation ajoutée.",
-    "bookingUpdated": "Réservation mise à jour."
+    "bookingUpdated": "Réservation mise à jour.",
+    "tierAdded": "Palier ajouté.",
+    "rewardAdded": "Récompense ajoutée.",
+    "pointsAdjusted": "Points ajustés."
   },
   "settings": {
     "title": "Paramètres",
@@ -1235,7 +1242,31 @@
     "consentNo": "Non abonné",
     "consentAt": "Consentement donné le {date} lors du paiement.",
     "orderHistory": "Commandes",
-    "noOrders": "Aucune commande à afficher."
+    "noOrders": "Aucune commande à afficher.",
+    "loyalty": {
+      "title": "Fidélité",
+      "notEntitled": "La fidélité n'est pas incluse dans votre offre actuelle.",
+      "balance": "Solde de points",
+      "lifetime": "Points cumulés",
+      "tier": "Palier",
+      "noTier": "Aucun palier pour le moment",
+      "history": "Historique",
+      "noHistory": "Aucune activité de points pour le moment.",
+      "reasons": {
+        "earned_order": "Gagnés grâce à une commande",
+        "redeemed_reward": "Récompense échangée",
+        "manual_adjustment": "Ajustement manuel"
+      },
+      "adjustTitle": "Ajuster les points",
+      "adjustDelta": "Points (utilisez un nombre négatif pour retirer)",
+      "adjustNote": "Note (optionnel)",
+      "adjustSubmit": "Appliquer l'ajustement",
+      "redeemTitle": "Échanger une récompense",
+      "redeemSelect": "Récompense",
+      "redeemSubmit": "Échanger",
+      "noRewardsToRedeem": "Aucune récompense n'est configurée.",
+      "redeemed": "« {name} » échangée — appliquez-la à la commande de ce client."
+    }
   },
   "checkoutSettings": {
     "title": "Paiement et livraison",
@@ -1435,5 +1466,45 @@
     "capacityMax": "Maximum de personnes",
     "resourceActive": "Active",
     "deleteResource": "Supprimer"
+  },
+  "loyalty": {
+    "title": "Fidélité",
+    "subtitle": "Récompensez vos clients fidèles avec des points échangeables en magasin.",
+    "notEntitled": "La fidélité n'est pas incluse dans votre offre actuelle.",
+    "programTitle": "Programme",
+    "programDescription": "Activez l'accumulation de points et définissez combien de points un achat rapporte.",
+    "active": "Attribuer des points sur les commandes payées",
+    "activeHint": "Les points sont ajoutés automatiquement une fois la commande payée — jamais depuis le navigateur.",
+    "pointsRate": "Points par {currency} dépensé",
+    "pointsRateHint": "Par exemple, 1 signifie qu'une commande de 50 {currency} rapporte 50 points.",
+    "tiersTitle": "Paliers",
+    "tiersDescription": "Débloqués une fois que les points cumulés d'un client dépassent un seuil.",
+    "noTiers": "Aucun palier pour le moment.",
+    "tier": "Palier",
+    "newTier": "Ajouter un palier",
+    "addTier": "Ajouter le palier",
+    "tierName": "Nom",
+    "threshold": "Points requis",
+    "perks": "Avantages (optionnel, visible du personnel uniquement)",
+    "tierActive": "Actif",
+    "deleteTier": "Supprimer",
+    "rewardsTitle": "Récompenses",
+    "rewardsDescription": "Ce que les points permettent d'obtenir. Le personnel applique la réduction en l'échangeant pour un client.",
+    "noRewards": "Aucune récompense pour le moment.",
+    "reward": "Récompense",
+    "newReward": "Ajouter une récompense",
+    "addReward": "Ajouter la récompense",
+    "rewardName": "Nom",
+    "costPoints": "Coût (points)",
+    "kind": "Type",
+    "kinds": {
+      "discount_percent": "Pourcentage de réduction",
+      "discount_fixed": "Montant fixe de réduction"
+    },
+    "value": "Valeur",
+    "valuePercentHint": "Un pourcentage entier, de 1 à 100.",
+    "valueFixedHint": "Montant de la réduction, en {currency}.",
+    "rewardActive": "Active",
+    "deleteReward": "Supprimer"
   }
 }

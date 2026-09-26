@@ -4,15 +4,20 @@ import { notFound } from "next/navigation";
 import { getFormatter, getTranslations, setRequestLocale } from "next-intl/server";
 
 import { OrderStatusBadge } from "@/components/admin/order-status-badge";
+import { Badge } from "@/components/ui/badge";
 import { SectionCard } from "@/components/ui/card";
 import { Link } from "@/i18n/navigation";
 import { isLocale, type Locale } from "@/i18n/locales";
 import type { OrderStatus } from "@/lib/commerce/orders";
+import { pickLocalized } from "@/lib/localized";
 import { formatMoney } from "@/lib/money";
 import { requireTenantAdmin, type TenantAdminContext } from "@/server/admin/context";
 import { catalogSettings } from "@/server/catalog/admin";
+import * as loyaltyService from "@/server/services/loyalty";
 import { createUserClient } from "@/server/supabase/clients";
 
+import { adjustCustomerPoints, redeemCustomerReward } from "../actions";
+import { AdjustPointsForm, RedeemRewardForm } from "./loyalty-actions";
 import { ModuleGate } from "../../module-gate";
 
 type Props = PageProps<"/console/[locale]/t/[tenant]/customers/[id]">;
@@ -69,6 +74,18 @@ async function Detail({
     .limit(50);
   const money = (minor: number) =>
     formatMoney({ amountMinor: BigInt(minor), currency: settings.currency }, settings.exponent, locale);
+
+  const loyaltyEntitled = context.features.loyalty?.enabled === true;
+  const canManageLoyalty = context.permissions.includes("marketing.write") && loyaltyEntitled;
+  const [balance, ledger, rewards] = loyaltyEntitled
+    ? await Promise.all([
+        loyaltyService.getCustomerLoyaltyBalance(context, id),
+        loyaltyService.getCustomerLoyaltyLedger(context, id),
+        loyaltyService.listLoyaltyRewards(context),
+      ])
+    : [null, [], []];
+  const tLoyalty = await getTranslations("customers.loyalty");
+  const activeRewards = rewards.filter((r) => r.active);
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
@@ -141,6 +158,66 @@ async function Detail({
           <p className="text-sm text-muted">{t("noOrders")}</p>
         )}
       </SectionCard>
+
+      {loyaltyEntitled && balance ? (
+        <SectionCard title={tLoyalty("title")}>
+          <div className="space-y-6">
+            <dl className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <div className="rounded-lg border border-border bg-surface p-4">
+                <dt className="text-sm text-muted">{tLoyalty("balance")}</dt>
+                <dd className="mt-1 font-semibold tabular-nums">{balance.balance}</dd>
+              </div>
+              <div className="rounded-lg border border-border bg-surface p-4">
+                <dt className="text-sm text-muted">{tLoyalty("lifetime")}</dt>
+                <dd className="mt-1 font-semibold tabular-nums">{balance.lifetimePoints}</dd>
+              </div>
+              <div className="rounded-lg border border-border bg-surface p-4">
+                <dt className="text-sm text-muted">{tLoyalty("tier")}</dt>
+                <dd className="mt-1 font-semibold">
+                  {balance.tier ? (
+                    <Badge tone="accent">{pickLocalized(balance.tier.name, locale, settings.defaultLocale)}</Badge>
+                  ) : (
+                    tLoyalty("noTier")
+                  )}
+                </dd>
+              </div>
+            </dl>
+
+            <div>
+              <p className="mb-2 text-sm font-semibold">{tLoyalty("history")}</p>
+              {ledger.length > 0 ? (
+                <ul className="divide-y divide-border border-y border-border text-sm">
+                  {ledger.map((entry) => (
+                    <li key={entry.id} className="flex items-center justify-between gap-3 py-2">
+                      <span>
+                        {tLoyalty(`reasons.${entry.reason as "earned_order"}`)}
+                        {entry.note ? <span className="text-muted"> — {entry.note}</span> : null}
+                      </span>
+                      <span className={entry.delta > 0 ? "font-medium text-success tabular-nums" : "font-medium text-danger tabular-nums"}>
+                        {entry.delta > 0 ? `+${entry.delta}` : entry.delta}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="text-sm text-muted">{tLoyalty("noHistory")}</p>
+              )}
+            </div>
+
+            {canManageLoyalty ? (
+              <div className="grid gap-6 sm:grid-cols-2">
+                <AdjustPointsForm action={adjustCustomerPoints.bind(null, slug, id)} />
+                <RedeemRewardForm
+                  action={redeemCustomerReward.bind(null, slug, id)}
+                  locale={locale}
+                  defaultLocale={settings.defaultLocale}
+                  rewards={activeRewards.map((r) => ({ id: r.id, name: r.name, costPoints: r.costPoints }))}
+                />
+              </div>
+            ) : null}
+          </div>
+        </SectionCard>
+      ) : null}
     </div>
   );
 }

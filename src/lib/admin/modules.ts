@@ -33,7 +33,7 @@ export const ADMIN_MODULES = [
   { key: "inventory", section: "catalog", feature: "inventory", permission: "inventory.read", available: true },
   { key: "coupons", section: "marketing", feature: "coupons", permission: "marketing.read", available: false },
   { key: "promotions", section: "marketing", feature: "promotions", permission: "marketing.read", available: false },
-  { key: "loyalty", section: "marketing", feature: "loyalty", permission: "marketing.read", available: false },
+  { key: "loyalty", section: "marketing", feature: "loyalty", permission: "marketing.read", available: true },
   { key: "analytics", section: "business", feature: "basic_analytics", permission: "analytics.read", available: false },
   { key: "appearance", section: "business", feature: null, permission: "appearance.read", available: true },
   { key: "staff", section: "business", feature: null, permission: "staff.read", available: true },

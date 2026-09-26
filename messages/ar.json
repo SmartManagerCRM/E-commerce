@@ -460,7 +460,11 @@
       "invalidPublishableKey": "أدخل مفتاحًا علنيًا صالحًا.",
       "secretKeyRequired": "أدخل مفتاح ميسر السري.",
       "webhookSecretRequired": "أدخل رمز الويب هوك السري الخاص بميسر.",
-      "needMethod": "اختر طريقة دفع واحدة على الأقل."
+      "needMethod": "اختر طريقة دفع واحدة على الأقل.",
+      "insufficient_points": "لا يملك هذا العميل نقاطًا كافية لهذه المكافأة.",
+      "invalid_reward": "هذه المكافأة غير متاحة.",
+      "invalid_delta": "أدخل عددًا غير صفري من النقاط.",
+      "invalid_note": "هذه الملاحظة طويلة جدًا."
     },
     "categoryCreated": "تم إنشاء الفئة.",
     "stockUpdated": "تم تحديث المخزون.",
@@ -468,7 +472,10 @@
     "paymentRecorded": "تم تسجيل الدفع.",
     "zoneAdded": "تمت إضافة منطقة التوصيل.",
     "resourceAdded": "تمت إضافة مورد الحجز.",
-    "bookingUpdated": "تم تحديث الحجز."
+    "bookingUpdated": "تم تحديث الحجز.",
+    "tierAdded": "تمت إضافة المستوى.",
+    "rewardAdded": "تمت إضافة المكافأة.",
+    "pointsAdjusted": "تم تعديل النقاط."
   },
   "settings": {
     "title": "الإعدادات",
@@ -1235,7 +1242,31 @@
     "consentNo": "غير مشترك",
     "consentAt": "تمت الموافقة في {date} أثناء الدفع.",
     "orderHistory": "الطلبات",
-    "noOrders": "لا توجد طلبات لعرضها."
+    "noOrders": "لا توجد طلبات لعرضها.",
+    "loyalty": {
+      "title": "الولاء",
+      "notEntitled": "الولاء غير مشمول في خطتك الحالية.",
+      "balance": "رصيد النقاط",
+      "lifetime": "النقاط التراكمية",
+      "tier": "المستوى",
+      "noTier": "لا يوجد مستوى بعد",
+      "history": "السجل",
+      "noHistory": "لا يوجد نشاط نقاط بعد.",
+      "reasons": {
+        "earned_order": "مكتسبة من طلب",
+        "redeemed_reward": "تم استبدال مكافأة",
+        "manual_adjustment": "تعديل يدوي"
+      },
+      "adjustTitle": "تعديل النقاط",
+      "adjustDelta": "النقاط (استخدم رقمًا سالبًا للخصم)",
+      "adjustNote": "ملاحظة (اختياري)",
+      "adjustSubmit": "تطبيق التعديل",
+      "redeemTitle": "استبدال مكافأة",
+      "redeemSelect": "المكافأة",
+      "redeemSubmit": "استبدال",
+      "noRewardsToRedeem": "لم يتم إعداد أي مكافآت بعد.",
+      "redeemed": "تم استبدال “{name}” — طبّقها على طلب هذا العميل."
+    }
   },
   "checkoutSettings": {
     "title": "الدفع والتوصيل",
@@ -1435,5 +1466,45 @@
     "capacityMax": "الحد الأقصى للأشخاص",
     "resourceActive": "نشط",
     "deleteResource": "إزالة"
+  },
+  "loyalty": {
+    "title": "الولاء",
+    "subtitle": "كافئ عملاءك المتكررين بنقاط يمكن استبدالها شخصيًا.",
+    "notEntitled": "الولاء غير مشمول في خطتك الحالية.",
+    "programTitle": "البرنامج",
+    "programDescription": "فعّل تراكم النقاط وحدّد عدد النقاط التي يكسبها كل عملية شراء.",
+    "active": "منح نقاط عند دفع الطلبات",
+    "activeHint": "تُضاف النقاط تلقائيًا عند دفع الطلب — لا شيء يمكن للمتصفح تزويره.",
+    "pointsRate": "نقاط لكل {currency} يُنفق",
+    "pointsRateHint": "على سبيل المثال، 1 يعني أن طلبًا بقيمة 50 {currency} يكسب 50 نقطة.",
+    "tiersTitle": "المستويات",
+    "tiersDescription": "تُفتح بمجرد تجاوز نقاط العميل التراكمية حدًا معينًا.",
+    "noTiers": "لا توجد مستويات بعد.",
+    "tier": "المستوى",
+    "newTier": "إضافة مستوى",
+    "addTier": "إضافة المستوى",
+    "tierName": "الاسم",
+    "threshold": "النقاط المطلوبة",
+    "perks": "المزايا (اختياري، يراها الموظفون فقط)",
+    "tierActive": "نشط",
+    "deleteTier": "إزالة",
+    "rewardsTitle": "المكافآت",
+    "rewardsDescription": "ما يمكن استبدال النقاط به. يطبّق الموظف الخصم عند استبدالها لعميل.",
+    "noRewards": "لا توجد مكافآت بعد.",
+    "reward": "المكافأة",
+    "newReward": "إضافة مكافأة",
+    "addReward": "إضافة المكافأة",
+    "rewardName": "الاسم",
+    "costPoints": "التكلفة (نقاط)",
+    "kind": "النوع",
+    "kinds": {
+      "discount_percent": "نسبة خصم مئوية",
+      "discount_fixed": "مبلغ خصم ثابت"
+    },
+    "value": "القيمة",
+    "valuePercentHint": "نسبة مئوية صحيحة، من 1 إلى 100.",
+    "valueFixedHint": "مبلغ الخصم، بعملة {currency}.",
+    "rewardActive": "نشطة",
+    "deleteReward": "إزالة"
   }
 }
