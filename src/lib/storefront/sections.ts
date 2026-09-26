@@ -107,7 +107,7 @@ export const SECTION_SCHEMAS = {
   newsletter: newsletterPropsSchema,
   featured_categories: featuredCategoriesPropsSchema,
   featured_products: featuredProductsPropsSchema,
-  best_sellers: emptyProps,
+  best_sellers: featuredProductsPropsSchema,
   product_collection: productCollectionPropsSchema,
   loyalty: emptyProps,
   booking_cta: emptyProps,
@@ -122,7 +122,7 @@ export type Section<T extends SectionType = SectionType> = {
   [K in T]: { id: string; type: K; enabled: boolean; props: SectionProps<K> };
 }[T];
 
-type Availability = { available: true } | { available: false; reason: "orders" | "booking" | "loyalty" };
+type Availability = { available: true } | { available: false; reason: "booking" | "loyalty" };
 
 /** Which sections can be used today. Unavailable ones become usable in their phase. */
 export const SECTION_REGISTRY: Record<SectionType, Availability & { multiple: boolean }> = {
@@ -134,8 +134,8 @@ export const SECTION_REGISTRY: Record<SectionType, Availability & { multiple: bo
   newsletter: { available: true, multiple: false },
   featured_categories: { available: true, multiple: false },
   featured_products: { available: true, multiple: false },
-  // Needs real sales data: available once orders exist (Phase 5).
-  best_sellers: { available: false, reason: "orders", multiple: false },
+  // Ranked from real orders (last 90 days); hidden until there are sales.
+  best_sellers: { available: true, multiple: false },
   product_collection: { available: true, multiple: true },
   loyalty: { available: false, reason: "loyalty", multiple: false },
   booking_cta: { available: false, reason: "booking", multiple: false },

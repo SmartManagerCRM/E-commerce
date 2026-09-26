@@ -10,6 +10,9 @@ import { Container } from "@/components/ui/container";
 import { minorToDecimal } from "@/lib/money";
 import { breadcrumbJsonLd, jsonLdScript, productJsonLd } from "@/lib/storefront/structured-data";
 import { getCatalog, getProduct } from "@/server/catalog/storefront";
+import { getCheckoutOptions } from "@/server/commerce/storefront";
+
+import { addToCart } from "../../cart/actions";
 import { storefrontDesign } from "@/server/storefront/homepage";
 import { requireStorePage, storeAlternates } from "@/server/storefront/page-tenant";
 import { storefrontOrigin } from "@/server/tenant/urls";
@@ -45,6 +48,7 @@ export default async function ProductPage({ params }: Props) {
   const origin = storefrontOrigin(tenant);
   const design = storefrontDesign(tenant);
   const category = product.categories[0] ?? null;
+  const checkout = await getCheckoutOptions(tenant, locale);
   const related = await getCatalog(
     { tenant, locale },
     { category: category?.slug ?? null, exclude: product.id, limit: 4, sort: "featured" },
@@ -92,6 +96,7 @@ export default async function ProductPage({ params }: Props) {
             currency={tenant.currency}
             exponent={tenant.currency_exponent}
             contact={{ business: tenant.business_name, phone: tenant.phone, email: tenant.email }}
+            ordering={checkout.orderingOpen ? { addToCart } : null}
           />
         </div>
         {product.description ? (

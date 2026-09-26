@@ -1,8 +1,10 @@
+import { ChevronRight } from "lucide-react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { SectionCard } from "@/components/ui/card";
+import { Link } from "@/i18n/navigation";
 import { isLocale, type Locale } from "@/i18n/locales";
 import { asLocalizedText } from "@/lib/localized";
 import { parseOpeningHours } from "@/lib/storefront/hours";
@@ -91,6 +93,17 @@ async function SettingsContent({
         <h1 className="text-2xl font-semibold tracking-tight">{t("title")}</h1>
         <p className="mt-1 text-sm text-muted">{t("subtitle")}</p>
       </div>
+
+      <Link
+        href={`/t/${slug}/settings/checkout`}
+        className="flex items-center justify-between gap-4 rounded-lg border border-border bg-surface p-5 shadow-card hover:border-fg/30"
+      >
+        <span>
+          <span className="block font-semibold">{t("checkoutLink.title")}</span>
+          <span className="mt-1 block text-sm text-muted">{t("checkoutLink.description")}</span>
+        </span>
+        <ChevronRight className="size-5 shrink-0 text-muted rtl:-scale-x-100" aria-hidden="true" />
+      </Link>
 
       <SectionCard title={t("profile.title")} description={t("profile.description")}>
         <ProfileForm

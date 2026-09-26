@@ -227,6 +227,15 @@ export function SectionForm({
         </>
       );
       break;
+    case "best_sellers":
+      fields = (
+        <>
+          {L("title", t("title"), section.props.title, { max: 120 })}
+          <LimitSelect value={section.props.limit} />
+          <p className="text-xs text-muted">{t("bestSellersHint")}</p>
+        </>
+      );
+      break;
     case "featured_products":
       fields = (
         <>

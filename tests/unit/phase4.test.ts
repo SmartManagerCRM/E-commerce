@@ -208,16 +208,16 @@ describe("catalog validation", () => {
 });
 
 describe("catalog homepage sections", () => {
-  it("unlocks catalog sections with safe defaults; best sellers waits for orders", () => {
+  it("unlocks catalog sections with safe defaults", () => {
     const parsed = parseSections([
       { id: uuid(1), type: "featured_products", enabled: true, props: { limit: 7 } },
       { id: uuid(2), type: "product_collection", enabled: true, props: { category: "../etc", limit: 4 } },
-      { id: uuid(3), type: "best_sellers", enabled: true, props: {} },
+      { id: uuid(3), type: "booking_cta", enabled: true, props: {} },
     ]);
     expect(parsed.map((s) => s.type)).toEqual(["featured_products", "product_collection"]);
     expect(parsed[0].props).toMatchObject({ limit: 8 });
     expect(parsed[1].props).toMatchObject({ category: null, limit: 4 });
-    expect(SECTION_REGISTRY.best_sellers).toMatchObject({ available: false, reason: "orders" });
+    expect(SECTION_REGISTRY.booking_cta).toMatchObject({ available: false, reason: "booking" });
   });
 });
 

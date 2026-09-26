@@ -145,7 +145,7 @@ export async function updateSection(slug: string, _prev: FormState, formData: Fo
       const cta = raw.cta as { href: string } | null;
       if (cta && !hrefSchema.safeParse(cta.href).success) return { status: "error", error: "invalidLink" };
     }
-    if (type === "featured_products" || type === "product_collection") {
+    if (type === "featured_products" || type === "product_collection" || type === "best_sellers") {
       raw.limit = Number(raw.limit);
       if (type === "product_collection") raw.category = raw.category ? raw.category : null;
     }

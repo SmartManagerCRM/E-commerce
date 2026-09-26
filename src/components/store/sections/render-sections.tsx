@@ -1,5 +1,6 @@
 import type { Section, SectionType } from "@/lib/storefront/sections";
 
+import { BestSellersSection } from "./best-sellers-section";
 import { BrandStorySection } from "./brand-story-section";
 import { FeaturedCategoriesSection } from "./featured-categories-section";
 import { FeaturedProductsSection } from "./featured-products-section";
@@ -53,6 +54,8 @@ export function RenderSections({ sections, ctx }: { sections: Section[]; ctx: Om
               return <LocationSection key={s.id} props={s.props} ctx={sctx} />;
             case "newsletter":
               return <NewsletterSection key={s.id} props={s.props} ctx={sctx} />;
+            case "best_sellers":
+              return <BestSellersSection key={s.id} props={s.props} ctx={sctx} />;
             case "featured_products":
               return <FeaturedProductsSection key={s.id} props={s.props} ctx={sctx} />;
             case "featured_categories":

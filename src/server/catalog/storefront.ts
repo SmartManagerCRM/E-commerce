@@ -10,7 +10,8 @@ import { pickLocalized } from "@/lib/localized";
 import { publicMediaUrl } from "@/lib/storage";
 import type { CategoryView, ImageView, PriceView, ProductCardView } from "@/lib/storefront/catalog-types";
 import type { ActiveStorefrontTenant } from "@/lib/tenant";
-import { anonymousClient } from "@/server/supabase/clients";
+import { serverEnv } from "@/server/env";
+import { anonymousClient, serviceClient } from "@/server/supabase/clients";
 
 /**
  * Public catalog reads for the storefront. Everything goes through the
@@ -141,6 +142,20 @@ export async function getCatalog(ctx: Ctx, query: CatalogQuery): Promise<{ total
   if (error) throw new Error(`Failed to load catalog: ${error.message}`);
   const parsed = catalogResult.parse(data);
   return { total: parsed.total, items: parsed.items.map((row) => toCard(ctx, row)) };
+}
+
+/**
+ * Best-selling products (non-cancelled orders, last 90 days). Order data is
+ * not public, so this read goes through a service-role-only function.
+ */
+export async function getBestSellers(ctx: Ctx, limit: number): Promise<ProductCardView[]> {
+  if (!serverEnv().SUPABASE_SECRET_KEY) return [];
+  const { data, error } = await serviceClient().rpc("storefront_best_sellers", { p_tenant: ctx.tenant.id, p_limit: limit });
+  if (error || !data) return [];
+  return z
+    .array(cardRow)
+    .parse(data)
+    .map((row) => toCard(ctx, row));
 }
 
 export const getCategories = cache(async (tenant: ActiveStorefrontTenant, locale: Locale): Promise<CategoryView[]> => {

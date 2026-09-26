@@ -17,6 +17,8 @@ import { isActiveTenant, tenantLocales } from "@/lib/tenant";
 import { businessJsonLd, jsonLdScript } from "@/lib/storefront/structured-data";
 import { getTheme } from "@/themes/definitions";
 import { hasProducts } from "@/server/catalog/storefront";
+import { cartTokenHash } from "@/server/commerce/cart-cookie";
+import { getCart, getCheckoutOptions } from "@/server/commerce/storefront";
 import { storefrontFontClasses } from "@/themes/fonts";
 import { themeCssVariables } from "@/themes/tokens";
 import { homepageSections, storefrontDesign } from "@/server/storefront/homepage";
@@ -94,6 +96,9 @@ export default async function StoreLayout({ children, params }: LayoutProps<"/st
     ...(anchors.has("newsletter") ? [{ label: tNav("newsletter"), href: "/", hash: "newsletter" }] : []),
   ];
   const origin = storefrontOrigin(tenant);
+  const checkout = await getCheckoutOptions(tenant, locale);
+  const cart = checkout.orderingOpen ? await getCart(tenant, locale, await cartTokenHash()) : null;
+  const tCart = await getTranslations("store.cart");
 
   return (
     <html lang={locale} dir={dir} style={style} className={storefrontFontClasses(design.fontRole, rtl)}>
@@ -121,6 +126,9 @@ export default async function StoreLayout({ children, params }: LayoutProps<"/st
               announcement={pickLocalized(design.announcement, locale, tenant.default_language)}
               nav={nav}
               labels={{ mainNavigation: tNav("mainNavigation"), menu: t("openMenu"), close: t("closeMenu") }}
+              cart={
+                cart ? { count: cart.itemCount, label: tCart("headerLabel", { count: cart.itemCount }) } : undefined
+              }
             />
             <main id="main" className="flex-1">
               {children}

@@ -1,3 +1,4 @@
+import { ShoppingBag } from "lucide-react";
 import Image from "next/image";
 import { Suspense } from "react";
 
@@ -22,7 +23,29 @@ type StoreHeaderProps = {
   announcement: string;
   nav: NavItem[];
   labels: { mainNavigation: string; menu: string; close: string };
+  /** Shown when the store takes online orders. */
+  cart?: { count: number; label: string };
 };
+
+function CartLink({ cart }: { cart: NonNullable<StoreHeaderProps["cart"]> }) {
+  return (
+    <Link
+      href="/cart"
+      aria-label={cart.label}
+      className="relative inline-flex size-11 items-center justify-center rounded-md hover:bg-fg/5"
+    >
+      <ShoppingBag className="size-5" aria-hidden="true" />
+      {cart.count > 0 ? (
+        <span
+          aria-hidden="true"
+          className="absolute end-0.5 top-0.5 inline-flex min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[11px] font-semibold text-primary-fg tabular-nums"
+        >
+          {cart.count > 99 ? "99+" : cart.count}
+        </span>
+      ) : null}
+    </Link>
+  );
+}
 
 function NavLinks({ nav, className }: { nav: NavItem[]; className?: string }) {
   return (
@@ -50,6 +73,7 @@ export function StoreHeader({
   announcement,
   nav,
   labels,
+  cart,
 }: StoreHeaderProps) {
   const logo = publicMediaUrl(logoPath);
   const brand = (
@@ -76,9 +100,12 @@ export function StoreHeader({
     </Link>
   );
   const language = (
-    <Suspense fallback={<div className="h-9 w-20" />}>
-      <LanguageSwitcher locales={locales} />
-    </Suspense>
+    <div className="flex items-center gap-1">
+      <Suspense fallback={<div className="h-9 w-20" />}>
+        <LanguageSwitcher locales={locales} className="max-sm:[&_a]:min-w-8 max-sm:[&_a]:px-1" />
+      </Suspense>
+      {cart ? <CartLink cart={cart} /> : null}
+    </div>
   );
   const mobile = <MobileMenu nav={nav} locales={locales} title={labels.menu} closeLabel={labels.close} />;
 

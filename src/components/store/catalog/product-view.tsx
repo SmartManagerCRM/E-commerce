@@ -16,6 +16,7 @@ import {
 import type { ImageView, PriceView } from "@/lib/storefront/catalog-types";
 
 import { Price } from "../price";
+import { AddToCart, type AddToCartAction } from "./add-to-cart";
 import { ProductGallery } from "../product-gallery";
 import { VariantSelector } from "../variant-selector";
 
@@ -28,13 +29,15 @@ type ProductViewProps = {
   currency: string;
   exponent: number;
   contact: { business: string; phone: string | null; email: string | null };
+  /** Present when the store takes online orders; otherwise a "contact us to order" panel is shown. */
+  ordering: { addToCart: AddToCartAction } | null;
 };
 
 /**
  * Product page gallery + purchase panel. Choosing options updates the price,
- * availability, SKU and image of the matching variant. Ordering is not built
- * yet (checkout arrives in the next phase), so the panel says so honestly
- * instead of showing a cart button that does nothing.
+ * availability, SKU and image of the matching variant. When the store takes
+ * online orders the panel adds to the cart; otherwise it says so honestly and
+ * offers the store's contact details instead of a button that does nothing.
  */
 export function ProductView({
   name,
@@ -45,6 +48,7 @@ export function ProductView({
   currency,
   exponent,
   contact,
+  ordering,
 }: ProductViewProps) {
   const t = useTranslations("catalog");
   const tp = useTranslations("store.product");
@@ -117,36 +121,44 @@ export function ProductView({
           />
         ))}
 
-        <div className="rounded-lg border border-border bg-surface p-5">
-          <p className="font-medium">{tp("orderingSoonTitle")}</p>
-          <p className="mt-1 text-sm text-muted">
-            {contact.phone || contact.email
-              ? tp("orderingSoonContact", { business: contact.business })
-              : tp("orderingSoonBody")}
-          </p>
-          {contact.phone || contact.email ? (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {contact.phone ? (
-                <a
-                  href={`tel:${contact.phone.replace(/\s+/g, "")}`}
-                  className="inline-flex h-11 items-center gap-2 rounded-button bg-primary px-5 text-sm font-medium text-primary-fg hover:opacity-90"
-                >
-                  <Phone className="size-4" aria-hidden="true" />
-                  <span dir="ltr">{contact.phone}</span>
-                </a>
-              ) : null}
-              {contact.email ? (
-                <a
-                  href={`mailto:${contact.email}?subject=${encodeURIComponent(name)}`}
-                  className="inline-flex h-11 items-center gap-2 rounded-button border border-border px-5 text-sm font-medium hover:bg-bg"
-                >
-                  <Mail className="size-4" aria-hidden="true" />
-                  {tp("emailUs")}
-                </a>
-              ) : null}
-            </div>
-          ) : null}
-        </div>
+        {ordering ? (
+          <AddToCart
+            action={ordering.addToCart}
+            variantId={variant?.id ?? null}
+            soldOut={variant?.availability === "out_of_stock"}
+          />
+        ) : (
+          <div className="rounded-lg border border-border bg-surface p-5">
+            <p className="font-medium">{tp("orderingSoonTitle")}</p>
+            <p className="mt-1 text-sm text-muted">
+              {contact.phone || contact.email
+                ? tp("orderingSoonContact", { business: contact.business })
+                : tp("orderingSoonBody")}
+            </p>
+            {contact.phone || contact.email ? (
+              <div className="mt-4 flex flex-wrap gap-2">
+                {contact.phone ? (
+                  <a
+                    href={`tel:${contact.phone.replace(/\s+/g, "")}`}
+                    className="inline-flex h-11 items-center gap-2 rounded-button bg-primary px-5 text-sm font-medium text-primary-fg hover:opacity-90"
+                  >
+                    <Phone className="size-4" aria-hidden="true" />
+                    <span dir="ltr">{contact.phone}</span>
+                  </a>
+                ) : null}
+                {contact.email ? (
+                  <a
+                    href={`mailto:${contact.email}?subject=${encodeURIComponent(name)}`}
+                    className="inline-flex h-11 items-center gap-2 rounded-button border border-border px-5 text-sm font-medium hover:bg-bg"
+                  >
+                    <Mail className="size-4" aria-hidden="true" />
+                    {tp("emailUs")}
+                  </a>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+        )}
       </div>
     </div>
   );
