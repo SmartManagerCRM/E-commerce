@@ -10,7 +10,10 @@ export type NotificationTemplate =
   | "new_order_staff"
   | "staff_invited"
   | "owner_invited"
-  | "daily_brief";
+  | "daily_brief"
+  | "booking_requested"
+  | "booking_status_changed"
+  | "new_booking_staff";
 
 export async function logNotification(entry: {
   tenantId: string;

@@ -22,7 +22,8 @@
       "contact": "Contact",
       "mainNavigation": "Navigation principale",
       "visit": "Nous rendre visite",
-      "newsletter": "Newsletter"
+      "newsletter": "Newsletter",
+      "booking": "Réserver"
     },
     "footer": {
       "contact": "Contact",
@@ -235,6 +236,45 @@
       "awaitingPayment": "En attente de paiement",
       "awaitingPaymentBody": "Cette commande est mise de côté le temps que vous finalisiez le paiement. Elle sera annulée automatiquement si le paiement n'est pas terminé à temps.",
       "completePayment": "Finaliser le paiement"
+    },
+    "booking": {
+      "title": "Réserver une table",
+      "breadcrumb": "Fil d'Ariane",
+      "closedTitle": "Les réservations sont suspendues",
+      "closedBody": "Cet établissement n'accepte pas de demandes de réservation en ligne pour le moment. Revenez plus tard.",
+      "backHome": "Retour à l'accueil",
+      "partySize": "Nombre de personnes",
+      "date": "Date",
+      "resource": "Où",
+      "timeLabel": "Heure",
+      "loadingSlots": "Chargement des horaires disponibles…",
+      "noSlots": "Aucun horaire disponible à cette date. Essayez une autre date.",
+      "chooseDateFirst": "Choisissez une date pour voir les horaires disponibles.",
+      "contactTitle": "Vos coordonnées",
+      "name": "Nom complet",
+      "email": "Email",
+      "emailHint": "Pour la confirmation de votre réservation.",
+      "phone": "Téléphone (optionnel)",
+      "notes": "Notes pour l'établissement (optionnel)",
+      "requesting": "Envoi de la demande…",
+      "request": "Demander la réservation",
+      "requestHint": "Votre réservation est confirmée une fois que l'établissement accepte votre demande.",
+      "errors": {
+        "generic": "Nous n'avons pas pu envoyer votre demande. Veuillez réessayer.",
+        "invalid": "Vérifiez les informations ci-dessous.",
+        "rateLimited": "Trop de tentatives. Veuillez patienter quelques minutes.",
+        "invalid_time": "Veuillez choisir un horaire.",
+        "bookings_closed": "Cet établissement n'accepte pas de réservations pour le moment.",
+        "invalid_resource": "Veuillez choisir ce que vous souhaitez réserver.",
+        "too_far_ahead": "Cette date est trop éloignée. Choisissez une date plus proche.",
+        "party_too_large": "Ce nombre de personnes est trop élevé pour cette option.",
+        "slot_taken": "Cet horaire vient d'être pris. Veuillez en choisir un autre.",
+        "invalid_contact": "Vérifiez votre nom, email et téléphone."
+      },
+      "fieldErrors": {
+        "required": "Requis.",
+        "invalid": "Vérifiez ce champ."
+      }
     }
   },
   "platform": {
@@ -426,7 +466,9 @@
     "stockUpdated": "Stock mis à jour.",
     "orderUpdated": "Commande mise à jour.",
     "paymentRecorded": "Paiement enregistré.",
-    "zoneAdded": "Zone de livraison ajoutée."
+    "zoneAdded": "Zone de livraison ajoutée.",
+    "resourceAdded": "Ressource de réservation ajoutée.",
+    "bookingUpdated": "Réservation mise à jour."
   },
   "settings": {
     "title": "Paramètres",
@@ -507,6 +549,10 @@
     "notificationsLink": {
       "title": "Notifications",
       "description": "E-mails de commande et résumé quotidien."
+    },
+    "bookingLink": {
+      "title": "Réservation",
+      "description": "Acceptez les demandes de réservation et gérez tables, espaces ou salles."
     }
   },
   "appearance": {
@@ -1281,5 +1327,113 @@
       "failed": "Échoué",
       "skipped": "Ignoré"
     }
+  },
+  "bookingStatus": {
+    "pending": "En attente de confirmation",
+    "confirmed": "Confirmée",
+    "rejected": "Refusée",
+    "cancelled": "Annulée",
+    "completed": "Terminée",
+    "no_show": "Absence",
+    "updated": "Réservation mise à jour"
+  },
+  "bookingTracking": {
+    "title": "Votre réservation",
+    "thanks": "Merci — votre demande de réservation est envoyée !",
+    "received": "{business} a bien reçu votre demande et vous confirmera bientôt.",
+    "keepLink": "Enregistrez cette page pour suivre votre réservation.",
+    "requestedOn": "Demandée le {date}",
+    "status": "Statut",
+    "when": "Quand",
+    "guests": "Personnes",
+    "resource": "Où",
+    "notes": "Notes",
+    "contact": "Contact",
+    "cancel": "Annuler la réservation",
+    "cancelling": "Annulation…",
+    "cancelConfirm": "Voulez-vous vraiment annuler cette réservation ?",
+    "cancelled": "Cette réservation a été annulée.",
+    "cancelError": "Nous n'avons pas pu annuler cette réservation. Réessayez ou contactez l'établissement.",
+    "questions": "Des questions sur votre réservation ? Contactez {business} :",
+    "keepBooking": "Ne pas annuler"
+  },
+  "bookings": {
+    "title": "Réservations",
+    "subtitle": "Demandes et réservations de vos clients.",
+    "views": {
+      "pending": "En attente",
+      "upcoming": "À venir",
+      "all": "Toutes"
+    },
+    "viewLabel": "Filtrer les réservations",
+    "search": "Rechercher des réservations",
+    "searchPlaceholder": "Rechercher par nom, email ou téléphone",
+    "booking": "Réservation",
+    "customer": "Client",
+    "statusLabel": "Statut",
+    "when": "Quand",
+    "guests": "Personnes",
+    "resource": "Où",
+    "emptyTitle": "Aucune réservation pour le moment",
+    "emptyBody": "Les demandes de réservation de votre boutique apparaîtront ici.",
+    "noResults": "Aucune réservation trouvée",
+    "noResultsBody": "Essayez un autre filtre ou une autre recherche.",
+    "bookingSettings": "Paramètres de réservation",
+    "backToList": "Réservations",
+    "requestedOn": "Demandée le {date}",
+    "nextStep": "Étape suivante",
+    "actions": {
+      "confirmed": "Confirmer",
+      "rejected": "Refuser",
+      "completed": "Marquer terminée",
+      "no_show": "Marquer absence",
+      "cancelled": "Annuler"
+    },
+    "cancelBooking": "Annuler la réservation",
+    "confirmCancel": "Confirmer l'annulation",
+    "keepBooking": "Ne pas annuler",
+    "history": "Historique",
+    "source": {
+      "storefront": "Réservée en ligne",
+      "staff": "Réservée par le personnel"
+    },
+    "notes": "Notes",
+    "previous": "Précédent",
+    "next": "Suivant"
+  },
+  "bookingSettings": {
+    "title": "Réservation",
+    "subtitle": "Acceptez les demandes de réservation et gérez ce que les clients peuvent réserver.",
+    "back": "Paramètres",
+    "notEntitled": "Les réservations ne sont pas incluses dans votre offre actuelle.",
+    "acceptingTitle": "Accepter les réservations",
+    "acceptingDescription": "Activez cette option pour permettre aux clients de demander une réservation depuis votre boutique.",
+    "acceptingBookings": "Accepter les demandes de réservation",
+    "acceptingBookingsHint": "Les clients verront un lien « Réserver » dans la navigation de votre boutique.",
+    "durationTitle": "Durée",
+    "durationDescription": "La durée de chaque réservation, et le délai de prévenance nécessaire.",
+    "defaultDuration": "Durée par défaut (minutes)",
+    "bufferMinutes": "Battement entre réservations (minutes)",
+    "minNotice": "Délai minimum (minutes)",
+    "maxAdvance": "Délai maximum de réservation (jours)",
+    "maxPartySize": "Nombre maximum de personnes (optionnel)",
+    "resourcesTitle": "Ce qui peut être réservé",
+    "resourcesDescription": "Tables, espaces, membres du personnel ou salles que les clients peuvent demander.",
+    "noResources": "Rien n'est encore configuré.",
+    "resource": "Ressource",
+    "newResource": "Ajouter une ressource",
+    "addResource": "Ajouter la ressource",
+    "resourceName": "Nom",
+    "kind": "Type",
+    "kinds": {
+      "table": "Table",
+      "area": "Espace",
+      "staff": "Membre du personnel",
+      "room": "Salle"
+    },
+    "capacityMin": "Minimum de personnes",
+    "capacityMax": "Maximum de personnes",
+    "resourceActive": "Active",
+    "deleteResource": "Supprimer"
   }
 }

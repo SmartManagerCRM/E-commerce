@@ -1,6 +1,7 @@
 import "server-only";
 
 import type { Locale } from "@/i18n/locales";
+import type { BookingStatus } from "@/lib/booking";
 import type { Fulfillment, OrderStatus } from "@/lib/commerce/orders";
 import { formatMoney } from "@/lib/money";
 
@@ -49,6 +50,37 @@ const STATUS_LABEL: Record<Locale, Record<OrderStatus, string>> = {
   },
 };
 
+const BOOKING_STATUS_LABEL: Record<Locale, Record<BookingStatus, string>> = {
+  en: {
+    pending: "pending confirmation",
+    confirmed: "confirmed",
+    rejected: "declined",
+    cancelled: "cancelled",
+    completed: "completed",
+    no_show: "marked as no-show",
+  },
+  fr: {
+    pending: "en attente de confirmation",
+    confirmed: "confirmée",
+    rejected: "refusée",
+    cancelled: "annulée",
+    completed: "terminée",
+    no_show: "marquée absente",
+  },
+  ar: {
+    pending: "بانتظار التأكيد",
+    confirmed: "مؤكد",
+    rejected: "مرفوض",
+    cancelled: "ملغى",
+    completed: "مكتمل",
+    no_show: "لم يحضر",
+  },
+};
+
+function formatDateTime(iso: string, locale: Locale): string {
+  return new Intl.DateTimeFormat(locale === "ar" ? "ar" : locale, { dateStyle: "medium", timeStyle: "short" }).format(new Date(iso));
+}
+
 const T = {
   en: {
     orderPlacedSubject: (n: string) => `Order #${n} received`,
@@ -61,6 +93,11 @@ const T = {
     total: "Total",
     viewOrder: "View your order",
     footer: (business: string) => `${business} — sent via SmartManager.`,
+    bookingRequestedSubject: (business: string) => `Your booking request at ${business}`,
+    bookingRequestedBody: (business: string, when: string) => `We've received your booking request at ${business} for ${when}. We'll confirm shortly.`,
+    bookingStatusChangedSubject: (business: string) => `Your booking at ${business}`,
+    bookingStatusChangedBody: (when: string, status: string) => `Your booking for ${when} is now ${status}.`,
+    viewBooking: "View your booking",
   },
   fr: {
     orderPlacedSubject: (n: string) => `Commande n°${n} reçue`,
@@ -73,6 +110,11 @@ const T = {
     total: "Total",
     viewOrder: "Voir votre commande",
     footer: (business: string) => `${business} — envoyé via SmartManager.`,
+    bookingRequestedSubject: (business: string) => `Votre demande de réservation chez ${business}`,
+    bookingRequestedBody: (business: string, when: string) => `Nous avons bien reçu votre demande de réservation chez ${business} pour le ${when}. Nous vous confirmerons bientôt.`,
+    bookingStatusChangedSubject: (business: string) => `Votre réservation chez ${business}`,
+    bookingStatusChangedBody: (when: string, status: string) => `Votre réservation pour le ${when} est maintenant ${status}.`,
+    viewBooking: "Voir votre réservation",
   },
   ar: {
     orderPlacedSubject: (n: string) => `تم استلام الطلب رقم ${n}`,
@@ -85,6 +127,11 @@ const T = {
     total: "الإجمالي",
     viewOrder: "عرض طلبك",
     footer: (business: string) => `${business} — أُرسل عبر سمارت مانجر.`,
+    bookingRequestedSubject: (business: string) => `طلب حجزك في ${business}`,
+    bookingRequestedBody: (business: string, when: string) => `لقد استلمنا طلب حجزك في ${business} بتاريخ ${when}. سنؤكد الحجز قريبًا.`,
+    bookingStatusChangedSubject: (business: string) => `حجزك في ${business}`,
+    bookingStatusChangedBody: (when: string, status: string) => `حجزك بتاريخ ${when} أصبح الآن ${status}.`,
+    viewBooking: "عرض حجزك",
   },
 } satisfies Record<Locale, Record<string, unknown>>;
 
@@ -199,6 +246,60 @@ export function ownerInvitedEmail(input: { businessName: string; inviteUrl: stri
     subject: `Set up ${input.businessName} on SmartManager`,
     html: wrap("en", heading, body, "Sent via SmartManager."),
     text: `${heading}\nAccept: ${input.inviteUrl}`,
+  };
+}
+
+export function bookingRequestedEmail(input: {
+  locale: Locale;
+  businessName: string;
+  startsAt: string;
+  bookingUrl?: string;
+}): EmailContent {
+  const t = T[input.locale];
+  const when = formatDateTime(input.startsAt, input.locale);
+  const heading = t.bookingRequestedBody(input.businessName, when);
+  const body = input.bookingUrl ? button(input.bookingUrl, t.viewBooking) : "";
+  return {
+    subject: t.bookingRequestedSubject(input.businessName),
+    html: wrap(input.locale, heading, body, t.footer(input.businessName)),
+    text: input.bookingUrl ? `${heading}\n${input.bookingUrl}` : heading,
+  };
+}
+
+export function bookingStatusChangedEmail(input: {
+  locale: Locale;
+  businessName: string;
+  startsAt: string;
+  status: BookingStatus;
+  /** Only known right after the request (only the token's hash is ever stored) — omitted for staff-triggered updates. */
+  bookingUrl?: string;
+}): EmailContent {
+  const t = T[input.locale];
+  const when = formatDateTime(input.startsAt, input.locale);
+  const status = BOOKING_STATUS_LABEL[input.locale][input.status];
+  const heading = t.bookingStatusChangedBody(when, status);
+  const body = input.bookingUrl ? button(input.bookingUrl, t.viewBooking) : "";
+  return {
+    subject: t.bookingStatusChangedSubject(input.businessName),
+    html: wrap(input.locale, heading, body, t.footer(input.businessName)),
+    text: input.bookingUrl ? `${heading}\n${input.bookingUrl}` : heading,
+  };
+}
+
+export function newBookingStaffEmail(input: {
+  businessName: string;
+  consoleUrl: string;
+  customerName: string;
+  guests: number;
+  startsAt: string;
+}): EmailContent {
+  const when = formatDateTime(input.startsAt, "en");
+  const heading = `New booking request`;
+  const body = `<p>${input.customerName} requested a table for ${input.guests} on ${when}.</p>${button(input.consoleUrl, "Open booking")}`;
+  return {
+    subject: `New booking request — ${input.businessName}`,
+    html: wrap("en", heading, body, `${input.businessName} — sent via SmartManager.`),
+    text: `${heading}\n${input.customerName} requested a table for ${input.guests} on ${when}.\n${input.consoleUrl}`,
   };
 }
 

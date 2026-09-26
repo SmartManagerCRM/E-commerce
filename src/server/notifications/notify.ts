@@ -1,12 +1,16 @@
 import "server-only";
 
 import type { Locale } from "@/i18n/locales";
+import type { BookingStatus } from "@/lib/booking";
 import type { Fulfillment, OrderStatus } from "@/lib/commerce/orders";
 import { emailConfigured, sendEmail } from "@/server/notifications/resend";
 import { serviceClient } from "@/server/supabase/clients";
 
 import {
+  bookingRequestedEmail,
+  bookingStatusChangedEmail,
   dailyBriefEmail,
+  newBookingStaffEmail,
   newOrderStaffEmail,
   orderPlacedEmail,
   orderStatusChangedEmail,
@@ -223,6 +227,95 @@ export async function notifyOwnerInvited(input: {
     subject: email.subject,
     html: email.html,
     text: email.text,
+  });
+}
+
+/** Sent right after a booking request, when the raw tracking token is still in hand. */
+export async function notifyBookingRequested(input: {
+  tenantId: string;
+  customerEmail: string;
+  customerId?: string | null;
+  locale: Locale;
+  businessName: string;
+  startsAt: string;
+  bookingUrl?: string;
+}): Promise<void> {
+  const settings = await notificationSettings(input.tenantId);
+  if (!settings.orderEmails) return;
+  const email = bookingRequestedEmail({
+    locale: input.locale,
+    businessName: input.businessName,
+    startsAt: input.startsAt,
+    bookingUrl: input.bookingUrl,
+  });
+  await deliver({
+    tenantId: input.tenantId,
+    template: "booking_requested",
+    to: input.customerEmail,
+    recipientCustomerId: input.customerId,
+    subject: email.subject,
+    html: email.html,
+    text: email.text,
+    payload: { starts_at: input.startsAt },
+  });
+}
+
+/** Staff-triggered: no booking link (only the token's hash is ever stored). */
+export async function notifyBookingStatusChanged(input: {
+  tenantId: string;
+  customerEmail: string;
+  customerId?: string | null;
+  locale: Locale;
+  businessName: string;
+  startsAt: string;
+  status: BookingStatus;
+}): Promise<void> {
+  const settings = await notificationSettings(input.tenantId);
+  if (!settings.orderEmails) return;
+  const email = bookingStatusChangedEmail({
+    locale: input.locale,
+    businessName: input.businessName,
+    startsAt: input.startsAt,
+    status: input.status,
+  });
+  await deliver({
+    tenantId: input.tenantId,
+    template: "booking_status_changed",
+    to: input.customerEmail,
+    recipientCustomerId: input.customerId,
+    subject: email.subject,
+    html: email.html,
+    text: email.text,
+    payload: { starts_at: input.startsAt, status: input.status },
+  });
+}
+
+/** Alerts the store when a customer requests a new booking. */
+export async function notifyNewBookingStaff(input: {
+  tenantId: string;
+  businessName: string;
+  consoleUrl: string;
+  customerName: string;
+  guests: number;
+  startsAt: string;
+}): Promise<void> {
+  const settings = await notificationSettings(input.tenantId);
+  if (!settings.orderEmails) return;
+  const email = newBookingStaffEmail({
+    businessName: input.businessName,
+    consoleUrl: input.consoleUrl,
+    customerName: input.customerName,
+    guests: input.guests,
+    startsAt: input.startsAt,
+  });
+  await deliver({
+    tenantId: input.tenantId,
+    template: "new_booking_staff",
+    to: settings.recipientEmail,
+    subject: email.subject,
+    html: email.html,
+    text: email.text,
+    payload: { starts_at: input.startsAt },
   });
 }
 

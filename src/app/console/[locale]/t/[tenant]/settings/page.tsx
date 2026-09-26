@@ -127,6 +127,17 @@ async function SettingsContent({
         <ChevronRight className="size-5 shrink-0 text-muted rtl:-scale-x-100" aria-hidden="true" />
       </Link>
 
+      <Link
+        href={`/t/${slug}/settings/booking`}
+        className="flex items-center justify-between gap-4 rounded-lg border border-border bg-surface p-5 shadow-card hover:border-fg/30"
+      >
+        <span>
+          <span className="block font-semibold">{t("bookingLink.title")}</span>
+          <span className="mt-1 block text-sm text-muted">{t("bookingLink.description")}</span>
+        </span>
+        <ChevronRight className="size-5 shrink-0 text-muted rtl:-scale-x-100" aria-hidden="true" />
+      </Link>
+
       <SectionCard title={t("profile.title")} description={t("profile.description")}>
         <ProfileForm
           action={updateBusinessProfile.bind(null, slug)}

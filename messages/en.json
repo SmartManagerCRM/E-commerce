@@ -22,7 +22,8 @@
       "contact": "Contact",
       "mainNavigation": "Main navigation",
       "visit": "Visit us",
-      "newsletter": "Newsletter"
+      "newsletter": "Newsletter",
+      "booking": "Book"
     },
     "footer": {
       "contact": "Contact",
@@ -235,6 +236,45 @@
       "awaitingPayment": "Awaiting payment",
       "awaitingPaymentBody": "This order is being held while you complete payment. It will be released automatically if payment isn't finished in time.",
       "completePayment": "Complete payment"
+    },
+    "booking": {
+      "title": "Book a table",
+      "breadcrumb": "Breadcrumb",
+      "closedTitle": "Bookings are paused",
+      "closedBody": "This business isn't taking online booking requests right now. Please check back later.",
+      "backHome": "Back to home",
+      "partySize": "Party size",
+      "date": "Date",
+      "resource": "Where",
+      "timeLabel": "Time",
+      "loadingSlots": "Loading available times…",
+      "noSlots": "No times available for this date. Try another date.",
+      "chooseDateFirst": "Choose a date to see available times.",
+      "contactTitle": "Your details",
+      "name": "Full name",
+      "email": "Email",
+      "emailHint": "For your booking confirmation.",
+      "phone": "Phone (optional)",
+      "notes": "Notes for the business (optional)",
+      "requesting": "Sending request…",
+      "request": "Request booking",
+      "requestHint": "Your booking is confirmed once the business accepts your request.",
+      "errors": {
+        "generic": "We couldn't send your booking request. Please try again.",
+        "invalid": "Check the details below.",
+        "rateLimited": "Too many attempts. Please wait a few minutes.",
+        "invalid_time": "Please choose a time.",
+        "bookings_closed": "This business isn't taking bookings right now.",
+        "invalid_resource": "Please choose where you'd like to book.",
+        "too_far_ahead": "That date is too far ahead. Please choose a nearer date.",
+        "party_too_large": "That party size is too large for this option.",
+        "slot_taken": "That time was just taken. Please choose another.",
+        "invalid_contact": "Check your name, email and phone."
+      },
+      "fieldErrors": {
+        "required": "Required.",
+        "invalid": "Check this field."
+      }
     }
   },
   "platform": {
@@ -426,7 +466,9 @@
     "stockUpdated": "Stock updated.",
     "orderUpdated": "Order updated.",
     "paymentRecorded": "Payment recorded.",
-    "zoneAdded": "Delivery area added."
+    "zoneAdded": "Delivery area added.",
+    "resourceAdded": "Booking resource added.",
+    "bookingUpdated": "Booking updated."
   },
   "settings": {
     "title": "Settings",
@@ -507,6 +549,10 @@
     "notificationsLink": {
       "title": "Notifications",
       "description": "Order emails and the daily brief."
+    },
+    "bookingLink": {
+      "title": "Booking",
+      "description": "Accept booking requests and manage tables, areas or rooms."
     }
   },
   "appearance": {
@@ -1281,5 +1327,113 @@
       "failed": "Failed",
       "skipped": "Skipped"
     }
+  },
+  "bookingStatus": {
+    "pending": "Pending confirmation",
+    "confirmed": "Confirmed",
+    "rejected": "Declined",
+    "cancelled": "Cancelled",
+    "completed": "Completed",
+    "no_show": "No-show",
+    "updated": "Booking updated"
+  },
+  "bookingTracking": {
+    "title": "Your booking",
+    "thanks": "Thanks — your booking request is in!",
+    "received": "{business} has received your request and will confirm it shortly.",
+    "keepLink": "Bookmark this page to follow your booking.",
+    "requestedOn": "Requested on {date}",
+    "status": "Status",
+    "when": "When",
+    "guests": "Guests",
+    "resource": "Where",
+    "notes": "Notes",
+    "contact": "Contact",
+    "cancel": "Cancel booking",
+    "cancelling": "Cancelling…",
+    "cancelConfirm": "Are you sure you want to cancel this booking?",
+    "cancelled": "This booking has been cancelled.",
+    "cancelError": "We couldn't cancel this booking. Please try again or contact the business.",
+    "questions": "Questions about your booking? Contact {business}:",
+    "keepBooking": "Never mind"
+  },
+  "bookings": {
+    "title": "Bookings",
+    "subtitle": "Requests and reservations from your customers.",
+    "views": {
+      "pending": "Pending",
+      "upcoming": "Upcoming",
+      "all": "All"
+    },
+    "viewLabel": "Filter bookings",
+    "search": "Search bookings",
+    "searchPlaceholder": "Search by name, email or phone",
+    "booking": "Booking",
+    "customer": "Customer",
+    "statusLabel": "Status",
+    "when": "When",
+    "guests": "Guests",
+    "resource": "Where",
+    "emptyTitle": "No bookings yet",
+    "emptyBody": "Booking requests from your storefront will show up here.",
+    "noResults": "No bookings found",
+    "noResultsBody": "Try a different filter or search.",
+    "bookingSettings": "Booking settings",
+    "backToList": "Bookings",
+    "requestedOn": "Requested {date}",
+    "nextStep": "Next step",
+    "actions": {
+      "confirmed": "Confirm",
+      "rejected": "Decline",
+      "completed": "Mark completed",
+      "no_show": "Mark no-show",
+      "cancelled": "Cancel"
+    },
+    "cancelBooking": "Cancel booking",
+    "confirmCancel": "Confirm cancellation",
+    "keepBooking": "Never mind",
+    "history": "History",
+    "source": {
+      "storefront": "Booked online",
+      "staff": "Booked by staff"
+    },
+    "notes": "Notes",
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "bookingSettings": {
+    "title": "Booking",
+    "subtitle": "Accept booking requests and manage what customers can book.",
+    "back": "Settings",
+    "notEntitled": "Bookings aren't included in your current plan.",
+    "acceptingTitle": "Accept bookings",
+    "acceptingDescription": "Turn this on to let customers request a booking from your storefront.",
+    "acceptingBookings": "Accepting booking requests",
+    "acceptingBookingsHint": "Customers will see a \"Book\" link in your storefront navigation.",
+    "durationTitle": "Timing",
+    "durationDescription": "How long each booking lasts, and how much notice you need.",
+    "defaultDuration": "Default duration (minutes)",
+    "bufferMinutes": "Buffer between bookings (minutes)",
+    "minNotice": "Minimum notice (minutes)",
+    "maxAdvance": "How far ahead customers can book (days)",
+    "maxPartySize": "Maximum party size (optional)",
+    "resourcesTitle": "What can be booked",
+    "resourcesDescription": "Tables, areas, staff or rooms customers can request.",
+    "noResources": "Nothing set up yet.",
+    "resource": "Resource",
+    "newResource": "Add a resource",
+    "addResource": "Add resource",
+    "resourceName": "Name",
+    "kind": "Type",
+    "kinds": {
+      "table": "Table",
+      "area": "Area",
+      "staff": "Staff member",
+      "room": "Room"
+    },
+    "capacityMin": "Minimum guests",
+    "capacityMax": "Maximum guests",
+    "resourceActive": "Active",
+    "deleteResource": "Remove"
   }
 }

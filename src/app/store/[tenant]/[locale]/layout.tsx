@@ -21,6 +21,7 @@ import { cartTokenHash } from "@/server/commerce/cart-cookie";
 import { getCart, getCheckoutOptions } from "@/server/commerce/storefront";
 import { storefrontFontClasses } from "@/themes/fonts";
 import { themeCssVariables } from "@/themes/tokens";
+import { getBookingOptions } from "@/server/booking/storefront";
 import { homepageSections, storefrontDesign } from "@/server/storefront/homepage";
 import { getStorefrontTenant, isTenantLocale } from "@/server/tenant/storefront";
 import { storefrontOrigin } from "@/server/tenant/urls";
@@ -88,9 +89,11 @@ export default async function StoreLayout({ children, params }: LayoutProps<"/st
 
   // Header navigation mirrors the sections actually shown on the homepage.
   const anchors = new Set(anchorsFor(homepageSections(tenant)).values());
+  const booking = await getBookingOptions(tenant, locale);
   const nav = [
     { label: tNav("home"), href: "/" },
     ...((await hasProducts(tenant)) ? [{ label: tNav("shop"), href: "/shop" }] : []),
+    ...(booking.acceptingBookings ? [{ label: tNav("booking"), href: "/booking" }] : []),
     ...(anchors.has("story") ? [{ label: tNav("about"), href: "/", hash: "story" }] : []),
     ...(anchors.has("visit") ? [{ label: tNav("visit"), href: "/", hash: "visit" }] : []),
     ...(anchors.has("newsletter") ? [{ label: tNav("newsletter"), href: "/", hash: "newsletter" }] : []),

@@ -22,7 +22,8 @@
       "contact": "تواصل معنا",
       "mainNavigation": "التنقل الرئيسي",
       "visit": "زورونا",
-      "newsletter": "النشرة البريدية"
+      "newsletter": "النشرة البريدية",
+      "booking": "احجز"
     },
     "footer": {
       "contact": "التواصل",
@@ -235,6 +236,45 @@
       "awaitingPayment": "بانتظار الدفع",
       "awaitingPaymentBody": "هذا الطلب محجوز ريثما تُكمل عملية الدفع. سيُلغى تلقائيًا إذا لم يكتمل الدفع في الوقت المحدد.",
       "completePayment": "إكمال الدفع"
+    },
+    "booking": {
+      "title": "احجز طاولة",
+      "breadcrumb": "مسار التنقل",
+      "closedTitle": "الحجوزات متوقفة مؤقتًا",
+      "closedBody": "لا يقبل هذا المتجر طلبات الحجز عبر الإنترنت حاليًا. يرجى المحاولة لاحقًا.",
+      "backHome": "العودة إلى الرئيسية",
+      "partySize": "عدد الأشخاص",
+      "date": "التاريخ",
+      "resource": "المكان",
+      "timeLabel": "الوقت",
+      "loadingSlots": "جارٍ تحميل الأوقات المتاحة…",
+      "noSlots": "لا توجد أوقات متاحة في هذا التاريخ. جرّب تاريخًا آخر.",
+      "chooseDateFirst": "اختر تاريخًا لعرض الأوقات المتاحة.",
+      "contactTitle": "بياناتك",
+      "name": "الاسم الكامل",
+      "email": "البريد الإلكتروني",
+      "emailHint": "لإرسال تأكيد الحجز.",
+      "phone": "الهاتف (اختياري)",
+      "notes": "ملاحظات للمتجر (اختياري)",
+      "requesting": "جارٍ إرسال الطلب…",
+      "request": "طلب الحجز",
+      "requestHint": "يتم تأكيد حجزك بعد موافقة المتجر على طلبك.",
+      "errors": {
+        "generic": "تعذّر إرسال طلب الحجز. يرجى المحاولة مرة أخرى.",
+        "invalid": "تحقق من البيانات أدناه.",
+        "rateLimited": "محاولات كثيرة جدًا. يرجى الانتظار بضع دقائق.",
+        "invalid_time": "يرجى اختيار وقت.",
+        "bookings_closed": "لا يقبل هذا المتجر الحجوزات حاليًا.",
+        "invalid_resource": "يرجى اختيار ما تريد حجزه.",
+        "too_far_ahead": "هذا التاريخ بعيد جدًا. اختر تاريخًا أقرب.",
+        "party_too_large": "عدد الأشخاص كبير جدًا لهذا الخيار.",
+        "slot_taken": "تم للتو حجز هذا الوقت. يرجى اختيار وقت آخر.",
+        "invalid_contact": "تحقق من الاسم والبريد الإلكتروني والهاتف."
+      },
+      "fieldErrors": {
+        "required": "مطلوب.",
+        "invalid": "تحقق من هذا الحقل."
+      }
     }
   },
   "platform": {
@@ -426,7 +466,9 @@
     "stockUpdated": "تم تحديث المخزون.",
     "orderUpdated": "تم تحديث الطلب.",
     "paymentRecorded": "تم تسجيل الدفع.",
-    "zoneAdded": "تمت إضافة منطقة التوصيل."
+    "zoneAdded": "تمت إضافة منطقة التوصيل.",
+    "resourceAdded": "تمت إضافة مورد الحجز.",
+    "bookingUpdated": "تم تحديث الحجز."
   },
   "settings": {
     "title": "الإعدادات",
@@ -507,6 +549,10 @@
     "notificationsLink": {
       "title": "الإشعارات",
       "description": "رسائل الطلبات والملخص اليومي."
+    },
+    "bookingLink": {
+      "title": "الحجز",
+      "description": "اقبل طلبات الحجز وأدر الطاولات أو المناطق أو الغرف."
     }
   },
   "appearance": {
@@ -1281,5 +1327,113 @@
       "failed": "فشلت",
       "skipped": "تم تخطيها"
     }
+  },
+  "bookingStatus": {
+    "pending": "بانتظار التأكيد",
+    "confirmed": "مؤكد",
+    "rejected": "مرفوض",
+    "cancelled": "ملغى",
+    "completed": "مكتمل",
+    "no_show": "لم يحضر",
+    "updated": "تم تحديث الحجز"
+  },
+  "bookingTracking": {
+    "title": "حجزك",
+    "thanks": "شكرًا — تم إرسال طلب حجزك!",
+    "received": "استلم {business} طلبك وسيؤكده قريبًا.",
+    "keepLink": "احفظ هذه الصفحة لمتابعة حجزك.",
+    "requestedOn": "طُلب بتاريخ {date}",
+    "status": "الحالة",
+    "when": "الموعد",
+    "guests": "عدد الأشخاص",
+    "resource": "المكان",
+    "notes": "ملاحظات",
+    "contact": "التواصل",
+    "cancel": "إلغاء الحجز",
+    "cancelling": "جارٍ الإلغاء…",
+    "cancelConfirm": "هل أنت متأكد من إلغاء هذا الحجز؟",
+    "cancelled": "تم إلغاء هذا الحجز.",
+    "cancelError": "تعذّر إلغاء هذا الحجز. حاول مرة أخرى أو تواصل مع المتجر.",
+    "questions": "أسئلة حول حجزك؟ تواصل مع {business}:",
+    "keepBooking": "تراجع"
+  },
+  "bookings": {
+    "title": "الحجوزات",
+    "subtitle": "طلبات وحجوزات عملائك.",
+    "views": {
+      "pending": "قيد الانتظار",
+      "upcoming": "القادمة",
+      "all": "الكل"
+    },
+    "viewLabel": "تصفية الحجوزات",
+    "search": "البحث في الحجوزات",
+    "searchPlaceholder": "ابحث بالاسم أو البريد الإلكتروني أو الهاتف",
+    "booking": "الحجز",
+    "customer": "العميل",
+    "statusLabel": "الحالة",
+    "when": "الموعد",
+    "guests": "عدد الأشخاص",
+    "resource": "المكان",
+    "emptyTitle": "لا توجد حجوزات بعد",
+    "emptyBody": "ستظهر طلبات الحجز من متجرك هنا.",
+    "noResults": "لم يتم العثور على حجوزات",
+    "noResultsBody": "جرّب تصفية أو بحثًا مختلفًا.",
+    "bookingSettings": "إعدادات الحجز",
+    "backToList": "الحجوزات",
+    "requestedOn": "طُلب في {date}",
+    "nextStep": "الخطوة التالية",
+    "actions": {
+      "confirmed": "تأكيد",
+      "rejected": "رفض",
+      "completed": "تحديد كمكتمل",
+      "no_show": "تحديد كعدم حضور",
+      "cancelled": "إلغاء"
+    },
+    "cancelBooking": "إلغاء الحجز",
+    "confirmCancel": "تأكيد الإلغاء",
+    "keepBooking": "تراجع",
+    "history": "السجل",
+    "source": {
+      "storefront": "حُجز عبر الإنترنت",
+      "staff": "حجزه الموظف"
+    },
+    "notes": "ملاحظات",
+    "previous": "السابق",
+    "next": "التالي"
+  },
+  "bookingSettings": {
+    "title": "الحجز",
+    "subtitle": "اقبل طلبات الحجز وأدر ما يمكن للعملاء حجزه.",
+    "back": "الإعدادات",
+    "notEntitled": "الحجوزات غير مشمولة في خطتك الحالية.",
+    "acceptingTitle": "قبول الحجوزات",
+    "acceptingDescription": "فعّل هذا الخيار للسماح للعملاء بطلب الحجز من متجرك.",
+    "acceptingBookings": "قبول طلبات الحجز",
+    "acceptingBookingsHint": "سيرى العملاء رابط \"احجز\" في قائمة تنقل متجرك.",
+    "durationTitle": "التوقيت",
+    "durationDescription": "مدة كل حجز، ومقدار الإشعار المسبق المطلوب.",
+    "defaultDuration": "المدة الافتراضية (دقائق)",
+    "bufferMinutes": "الفاصل بين الحجوزات (دقائق)",
+    "minNotice": "الحد الأدنى للإشعار المسبق (دقائق)",
+    "maxAdvance": "أقصى مدة للحجز المسبق (أيام)",
+    "maxPartySize": "أقصى عدد للأشخاص (اختياري)",
+    "resourcesTitle": "ما يمكن حجزه",
+    "resourcesDescription": "الطاولات أو المناطق أو الموظفون أو الغرف التي يمكن للعملاء طلبها.",
+    "noResources": "لم يتم إعداد أي شيء بعد.",
+    "resource": "المورد",
+    "newResource": "إضافة مورد",
+    "addResource": "إضافة المورد",
+    "resourceName": "الاسم",
+    "kind": "النوع",
+    "kinds": {
+      "table": "طاولة",
+      "area": "منطقة",
+      "staff": "موظف",
+      "room": "غرفة"
+    },
+    "capacityMin": "الحد الأدنى للأشخاص",
+    "capacityMax": "الحد الأقصى للأشخاص",
+    "resourceActive": "نشط",
+    "deleteResource": "إزالة"
   }
 }

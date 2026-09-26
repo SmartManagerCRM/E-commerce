@@ -73,6 +73,201 @@ export type Database = {
           },
         ];
       };
+      booking_blackouts: {
+        Row: {
+          branch_id: string;
+          created_at: string;
+          id: string;
+          period: unknown;
+          reason: string | null;
+          resource_id: string | null;
+          tenant_id: string;
+        };
+        Insert: {
+          branch_id: string;
+          created_at?: string;
+          id?: string;
+          period: unknown;
+          reason?: string | null;
+          resource_id?: string | null;
+          tenant_id: string;
+        };
+        Update: {
+          branch_id?: string;
+          created_at?: string;
+          id?: string;
+          period?: unknown;
+          reason?: string | null;
+          resource_id?: string | null;
+          tenant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "booking_blackouts_tenant_id_branch_id_fkey";
+            columns: ["tenant_id", "branch_id"];
+            isOneToOne: false;
+            referencedRelation: "branches";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "booking_blackouts_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "booking_blackouts_tenant_id_resource_id_fkey";
+            columns: ["tenant_id", "resource_id"];
+            isOneToOne: false;
+            referencedRelation: "booking_resources";
+            referencedColumns: ["tenant_id", "id"];
+          },
+        ];
+      };
+      booking_resources: {
+        Row: {
+          active: boolean;
+          branch_id: string;
+          capacity_max: number | null;
+          capacity_min: number | null;
+          created_at: string;
+          id: string;
+          kind: string;
+          name: NonNullable<Json>;
+          position: number;
+          tenant_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          active?: boolean;
+          branch_id: string;
+          capacity_max?: number | null;
+          capacity_min?: number | null;
+          created_at?: string;
+          id?: string;
+          kind: string;
+          name: NonNullable<Json>;
+          position?: number;
+          tenant_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          branch_id?: string;
+          capacity_max?: number | null;
+          capacity_min?: number | null;
+          created_at?: string;
+          id?: string;
+          kind?: string;
+          name?: NonNullable<Json>;
+          position?: number;
+          tenant_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "booking_resources_tenant_id_branch_id_fkey";
+            columns: ["tenant_id", "branch_id"];
+            isOneToOne: false;
+            referencedRelation: "branches";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "booking_resources_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      bookings: {
+        Row: {
+          access_token_hash: string;
+          branch_id: string;
+          contact: NonNullable<Json>;
+          created_at: string;
+          customer_id: string | null;
+          guests: number;
+          id: string;
+          notes: string | null;
+          period: unknown;
+          resource_id: string;
+          responded_at: string | null;
+          responded_by: string | null;
+          source: string;
+          status: string;
+          tenant_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          access_token_hash: string;
+          branch_id: string;
+          contact: NonNullable<Json>;
+          created_at?: string;
+          customer_id?: string | null;
+          guests: number;
+          id?: string;
+          notes?: string | null;
+          period: unknown;
+          resource_id: string;
+          responded_at?: string | null;
+          responded_by?: string | null;
+          source?: string;
+          status?: string;
+          tenant_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          access_token_hash?: string;
+          branch_id?: string;
+          contact?: NonNullable<Json>;
+          created_at?: string;
+          customer_id?: string | null;
+          guests?: number;
+          id?: string;
+          notes?: string | null;
+          period?: unknown;
+          resource_id?: string;
+          responded_at?: string | null;
+          responded_by?: string | null;
+          source?: string;
+          status?: string;
+          tenant_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "bookings_tenant_id_branch_id_fkey";
+            columns: ["tenant_id", "branch_id"];
+            isOneToOne: false;
+            referencedRelation: "branches";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "bookings_tenant_id_customer_id_fkey";
+            columns: ["tenant_id", "customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customers";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "bookings_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bookings_tenant_id_resource_id_fkey";
+            columns: ["tenant_id", "resource_id"];
+            isOneToOne: false;
+            referencedRelation: "booking_resources";
+            referencedColumns: ["tenant_id", "id"];
+          },
+        ];
+      };
       branches: {
         Row: {
           address: NonNullable<Json>;
@@ -2127,6 +2322,11 @@ export type Database = {
         Args: { p_delta: number; p_item: string; p_note?: string; p_reason: string };
         Returns: number;
       };
+      booking_settings: { Args: { p_tenant: string }; Returns: Json };
+      cancel_booking_by_customer: {
+        Args: { p_id: string; p_tenant: string; p_token_hash: string };
+        Returns: boolean;
+      };
       cart_update: {
         Args: {
           p_mode: string;
@@ -2152,6 +2352,19 @@ export type Database = {
           p_paid: boolean;
           p_provider: string;
           p_provider_ref: string;
+        };
+        Returns: Json;
+      };
+      create_booking: {
+        Args: {
+          p_access_token_hash: string;
+          p_contact: Json;
+          p_end: string;
+          p_guests: number;
+          p_notes: string;
+          p_resource: string;
+          p_start: string;
+          p_tenant: string;
         };
         Returns: Json;
       };
@@ -2260,6 +2473,15 @@ export type Database = {
       set_payment_intent_ref: { Args: { p_order: string; p_ref: string }; Returns: undefined };
       set_primary_domain: { Args: { p_domain: string }; Returns: undefined };
       storefront_best_sellers: { Args: { p_limit?: number; p_tenant: string }; Returns: Json };
+      storefront_booking: {
+        Args: { p_id: string; p_tenant: string; p_token_hash: string };
+        Returns: Json;
+      };
+      storefront_booking_availability: {
+        Args: { p_date: string; p_resource: string; p_tenant: string };
+        Returns: Json;
+      };
+      storefront_booking_options: { Args: { p_tenant: string }; Returns: Json };
       storefront_catalog: {
         Args: {
           p_available?: boolean;
@@ -2312,6 +2534,7 @@ export type Database = {
           today: string;
         }[];
       };
+      update_booking_status: { Args: { p_booking: string; p_status: string }; Returns: string };
       update_order_status: {
         Args: { p_note?: string; p_order: string; p_status: string };
         Returns: string;

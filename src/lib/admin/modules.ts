@@ -20,7 +20,7 @@ export const ADMIN_MODULES = [
   { key: "dashboard", section: "main", feature: null, permission: "dashboard.read", available: true },
   { key: "orders", section: "sales", feature: "orders", permission: "orders.read", available: true },
   { key: "customers", section: "sales", feature: "customers", permission: "customers.read", available: true },
-  { key: "bookings", section: "sales", feature: "booking", permission: "bookings.read", available: false },
+  { key: "bookings", section: "sales", feature: "booking", permission: "bookings.read", available: true },
   {
     key: "subscriptions",
     section: "sales",
