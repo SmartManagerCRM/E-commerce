@@ -15,7 +15,8 @@ A multi-tenant SaaS e-commerce platform (storefront, ordering, booking, loyalty 
 | 1 | Foundation: tenancy schema, RLS, tenant resolver, i18n/RTL, design tokens, storefront & admin shells | ✅ Complete |
 | 2 | Multi-tenancy management: create businesses, settings, branding, staff invitations, custom domains, Super Admin | ✅ Complete |
 | 3 | Storefront design system: 5 themes, customisation, homepage builder, commerce components, SEO | ✅ Complete |
-| 4+ | Products & inventory, checkout, payments… | Not started |
+| 4 | Products & inventory: catalog, options/variants, photos, categories, stock ledger, shop & product pages | ✅ Complete |
+| 5+ | Cart & checkout, payments… | Not started |
 
 ## Local development
 

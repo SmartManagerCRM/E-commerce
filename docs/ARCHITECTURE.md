@@ -950,3 +950,34 @@ Catalog, orders and the other domain tables are **not** created in Phase 1. They
 - **SEO:** LocalBusiness/Organization JSON-LD with the schema.org type chosen by business type, address and opening hours. Host-aware `robots.txt` (console and platform are not indexable) and `sitemap.xml` with hreflang alternates.
 - **Forms:** `useActionForm` prevents React 19's automatic form reset, so a server-side validation error no longer wipes the user's other inputs. Forms still submit without JavaScript.
 - **Images:** section photos are re-encoded to WebP (max 2400 px) at upload. `next/image` serves responsive AVIF/WebP. Optimising images from private IPs is enabled only when Supabase runs locally.
+
+## 20. Phase 4 implementation notes (products & inventory)
+
+- **Migration `20260926000010_catalog_inventory`:**
+  - Tables: `categories` (tree with a cycle guard), `products`, `product_categories`, `product_options` (up to 3), `product_option_values`, `product_images`, `product_variants`, `inventory_items` (one per variant per branch) and `stock_movements` (ledger).
+  - Every table uses composite `(tenant_id, id)` foreign keys, so rows cannot be linked across tenants.
+  - Image paths are constrained to the tenant's own storage folder.
+- **Derived data is database-owned:**
+  - `price_min_minor` / `price_max_minor` (from active variants), `search_text` (normalised names, slug and SKUs; Latin accents, Arabic diacritics and letter variants are ignored) and `published_at` are maintained by triggers.
+  - Clients have column-level grants that exclude these columns, and `tenant_id` / `id` cannot be updated.
+- **Stock:**
+  - `on_hand` is never writable by clients. Every change goes through `adjust_stock()`, which checks `inventory.write`, rejects negative stock unless backorders are allowed, and writes a `stock_movements` row with the acting user.
+  - Staff may only use manual reasons (initial, restock, adjustment, damage, correction). Sales, refunds and reservations are reserved for server code with the service role (Phase 5).
+  - Stock is tracked by default only when the plan includes `inventory`.
+  - Cost (`cost_minor`) lives only in `inventory_items`, which anonymous visitors cannot read.
+- **Product editor:**
+  - `save_product_structure()` saves options, values and variants in one transaction.
+  - It runs as SECURITY INVOKER, so RLS (`catalog.write`) still applies, and opening stock goes through `adjust_stock()`.
+  - Variants that are removed are archived, not deleted, so future orders keep their history. SKUs are unique among a tenant's active variants.
+  - `max_products` is enforced by a trigger (error 53400).
+- **Storefront reads:**
+  - `storefront_catalog` (search, category subtree, price range in minor units, availability, sort, pagination ≤ 60), `storefront_product`, `storefront_categories` and `storefront_sitemap`.
+  - They return only active products of active stores, and availability only as a status (`in_stock` / `low_stock` / `out_of_stock`), never quantities or cost.
+- **Routes:**
+  - Storefront: `/[locale]/shop`, `/[locale]/shop/[category]` (filters are a GET form with shareable URLs; filtered URLs are `noindex`) and `/[locale]/products/[slug]` (Product + BreadcrumbList JSON-LD).
+  - Console: `products` (list, new, editor), `categories` (list, editor) and `inventory` (list, low-stock filter, item page with adjustment, settings and history). The dashboard shows live catalog and low-stock figures.
+- **Ordering is not live yet.** The product page states that online ordering opens soon and offers the store's phone or email; there is no cart button. The cart and checkout come in Phase 5.
+- **Homepage sections:**
+  - Featured products, featured categories and product collection are now available.
+  - Best sellers stays locked until real order data exists.
+- **Uploads:** product and category photos (PNG/JPEG/WebP, ≤ 8 MB each) are re-encoded to WebP (max 2000 px). Server Action and proxy body limits are raised to 20 MB (`next.config.ts`).
