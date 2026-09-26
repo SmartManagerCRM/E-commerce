@@ -18,6 +18,10 @@ import {
   toStructurePayload,
 } from "@/lib/validation/catalog";
 import { parseSections, SECTION_REGISTRY } from "@/lib/storefront/sections";
+import { likePattern, normalizeSearch } from "@/lib/catalog/search";
+import { descendantsOf, treeOrder } from "@/lib/catalog/tree";
+import { stockStatus } from "@/lib/catalog/stock";
+import { comboLabel, combinations, emptyVariant, reconcileVariants } from "@/lib/catalog/structure";
 
 const uuid = (n: number) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
 
@@ -206,5 +210,69 @@ describe("catalog homepage sections", () => {
     expect(parsed[0].props).toMatchObject({ limit: 8 });
     expect(parsed[1].props).toMatchObject({ category: null, limit: 4 });
     expect(SECTION_REGISTRY.best_sellers).toMatchObject({ available: false, reason: "orders" });
+  });
+});
+
+describe("product structure editor", () => {
+  const value = (key: string) => ({ id: null, key, label: { en: key.toUpperCase() } });
+  const size = { id: null, key: "o1", name: { en: "Size" }, values: [value("s"), value("m")] };
+  const grind = { id: null, key: "o2", name: { en: "Grind" }, values: [value("whole"), value("fine")] };
+
+  it("builds every combination in option order", () => {
+    expect(combinations([])).toEqual([[]]);
+    expect(combinations([size, grind])).toEqual([
+      ["s", "whole"],
+      ["s", "fine"],
+      ["m", "whole"],
+      ["m", "fine"],
+    ]);
+    expect(comboLabel([size, grind], ["m", "fine"], (t) => t.en ?? "")).toBe("M / FINE");
+  });
+
+  it("keeps saved variants (and their stock) when options change", () => {
+    const saved = { ...emptyVariant([]), id: "v-default", price: "12.00", on_hand: 7 };
+    const withSize = reconcileVariants([size], [saved]);
+    expect(withSize.map((v) => v.id)).toEqual(["v-default", null]);
+    expect(withSize[1].price).toBe("12.00");
+
+    const small = { ...withSize[0], keys: ["s"] };
+    const medium = { ...withSize[1], id: "v-m", keys: ["m"] };
+    const withGrind = reconcileVariants([size, grind], [small, medium]);
+    expect(withGrind.map((v) => v.id)).toEqual(["v-default", null, "v-m", null]);
+
+    expect(reconcileVariants([], withGrind).map((v) => v.id)).toEqual(["v-default"]);
+  });
+});
+
+describe("console search", () => {
+  it("normalizes like the database", () => {
+    expect(normalizeSearch("  Café CRÈME ")).toBe("cafe creme");
+    expect(normalizeSearch("قَهْوَة أصيلة")).toBe("قهوه اصيله");
+    expect(likePattern("50%_off")).toBe("%50\\%\\_off%");
+  });
+});
+
+describe("category tree", () => {
+  const rows = [
+    { id: "b", parent_id: "a" },
+    { id: "a", parent_id: null },
+    { id: "c", parent_id: "b" },
+    { id: "d", parent_id: "missing" },
+  ];
+  it("orders parents before children with depth", () => {
+    expect(treeOrder(rows).map(({ row, depth }) => `${row.id}${depth}`)).toEqual(["a0", "b1", "c2", "d0"]);
+  });
+  it("finds descendants so a category cannot move under itself", () => {
+    expect([...descendantsOf(rows, "a")].sort()).toEqual(["a", "b", "c"]);
+  });
+});
+
+describe("stock status", () => {
+  it("classifies tracked stock against the minimum", () => {
+    const item = { on_hand: 5, reserved: 0, min_stock: 5, track_stock: true };
+    expect(stockStatus(item)).toBe("low");
+    expect(stockStatus({ ...item, reserved: 5 })).toBe("out");
+    expect(stockStatus({ ...item, on_hand: 20 })).toBe("ok");
+    expect(stockStatus({ ...item, track_stock: false, on_hand: 0 })).toBe("untracked");
   });
 });

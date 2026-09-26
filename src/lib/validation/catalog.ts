@@ -134,6 +134,10 @@ export const productStructureSchema = (exponent: number) =>
               .transform((v) => v || null)
               .refine((v) => v === null || SKU.test(v), "invalidSku"),
             weight_g: optionalInt(0, 1_000_000),
+            image_id: z
+              .union([z.literal(""), z.uuid()])
+              .nullish()
+              .transform((v) => v || null),
             initial_stock: optionalInt(0, 1_000_000),
           }),
         )
@@ -185,6 +189,7 @@ export function toStructurePayload(input: ProductStructureInput) {
       compare_at: v.compare_at === null ? null : Number(v.compare_at),
       sku: v.sku,
       weight_g: v.weight_g,
+      image_id: v.image_id,
       initial_stock: v.id ? null : v.initial_stock,
     })),
   };

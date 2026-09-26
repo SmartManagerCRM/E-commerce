@@ -9,6 +9,8 @@ import sharp from "sharp";
 const ACCEPTED = new Set(["image/png", "image/jpeg", "image/webp"]);
 export const MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
 export const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
+/** Total per upload request; matches `serverActions.bodySizeLimit` in next.config.ts (minus multipart overhead). */
+export const MAX_REQUEST_UPLOAD_BYTES = 19 * 1024 * 1024;
 
 export type ProcessedImage = { buffer: Buffer; contentType: string; extension: string };
 
@@ -61,4 +63,17 @@ export async function processSectionImage(file: File | null): Promise<ProcessedI
     .webp({ quality: 82 })
     .toBuffer();
   return { buffer, contentType: "image/webp", extension: "webp" };
+}
+
+export type ProcessedPhoto = ProcessedImage & { width: number; height: number };
+
+/** Product and category photos: max 2000px on the long edge, WebP q82, with final dimensions. */
+export async function processProductImage(file: File | null): Promise<ProcessedPhoto> {
+  const input = await readValidated(file, MAX_PHOTO_BYTES);
+  const { data, info } = await sharp(input)
+    .rotate()
+    .resize(2000, 2000, { fit: "inside", withoutEnlargement: true })
+    .webp({ quality: 82 })
+    .toBuffer({ resolveWithObject: true });
+  return { buffer: data, contentType: "image/webp", extension: "webp", width: info.width, height: info.height };
 }

@@ -49,7 +49,7 @@ create table public.categories (
   name        jsonb not null check (app.is_localized_text(name) and name <> '{}'::jsonb),
   slug        text not null check (slug ~ '^[a-z0-9](?:[a-z0-9-]{0,78}[a-z0-9])?$'),
   description jsonb not null default '{}'::jsonb check (app.is_localized_text(description)),
-  image_path  text,
+  image_path  text check (image_path ~ '^[0-9a-f-]{36}/categories/[\w-]+\.(webp|jpg|png)$'),
   position    integer not null default 0,
   status      text not null default 'active' check (status in ('active', 'hidden')),
   created_at  timestamptz not null default now(),
@@ -57,7 +57,8 @@ create table public.categories (
   unique (tenant_id, id),
   unique (tenant_id, slug),
   foreign key (tenant_id, parent_id) references public.categories (tenant_id, id) on delete set null (parent_id),
-  check (parent_id is null or parent_id <> id)
+  check (parent_id is null or parent_id <> id),
+  check (image_path is null or split_part(image_path, '/', 1) = tenant_id::text)
 );
 
 create index categories_tenant_position on public.categories (tenant_id, parent_id, position);
@@ -709,7 +710,7 @@ grant execute on function public.low_stock_items(uuid, integer) to authenticated
 --
 --   p_options  = [{ "id"?: uuid, "name": {..}, "values": [{ "id"?: uuid, "key": text, "label": {..} }] }]
 --   p_variants = [{ "id"?: uuid, "keys": [value key per option], "price": int, "compare_at"?: int,
---                   "sku"?: text, "weight_g"?: int, "initial_stock"?: int }]
+--                   "sku"?: text, "weight_g"?: int, "image_id"?: uuid, "initial_stock"?: int }]
 --
 -- Variants left out are archived (not deleted) so order history keeps them.
 -- =============================================================================
@@ -830,15 +831,16 @@ begin
         compare_at_minor = (v_var ->> 'compare_at')::bigint,
         sku = nullif(btrim(v_var ->> 'sku'), ''),
         weight_g = (v_var ->> 'weight_g')::integer,
+        image_id = (v_var ->> 'image_id')::uuid,
         position = v_var_pos
       where id = v_var_id and product_id = p_product and status = 'active';
       if not found then
         raise exception 'Variant not found' using errcode = 'P0002';
       end if;
     else
-      insert into public.product_variants (tenant_id, product_id, option_value_ids, price_minor, compare_at_minor, sku, weight_g, position)
+      insert into public.product_variants (tenant_id, product_id, option_value_ids, price_minor, compare_at_minor, sku, weight_g, image_id, position)
       values (v_tenant, p_product, v_ids, (v_var ->> 'price')::bigint, (v_var ->> 'compare_at')::bigint,
-              nullif(btrim(v_var ->> 'sku'), ''), (v_var ->> 'weight_g')::integer, v_var_pos)
+              nullif(btrim(v_var ->> 'sku'), ''), (v_var ->> 'weight_g')::integer, (v_var ->> 'image_id')::uuid, v_var_pos)
       returning id into v_var_id;
 
       v_stock := coalesce((v_var ->> 'initial_stock')::integer, 0);

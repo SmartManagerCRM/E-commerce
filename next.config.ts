@@ -19,8 +19,19 @@ const securityHeaders = [
   { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
 ];
 
+/**
+ * Request body limits for uploads through Server Actions (photos are up to
+ * 8 MB each, several per request). Both the action parser and the proxy's
+ * body buffer must allow it.
+ */
+const MAX_ACTION_BODY = "20mb";
+
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  experimental: {
+    serverActions: { bodySizeLimit: MAX_ACTION_BODY },
+    proxyClientMaxBodySize: MAX_ACTION_BODY,
+  },
   images: {
     formats: ["image/avif", "image/webp"],
     // Only for the local Supabase stack in development (127.0.0.1). The hosted
