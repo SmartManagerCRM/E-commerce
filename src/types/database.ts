@@ -123,6 +123,93 @@ export type Database = {
           },
         ];
       };
+      cart_items: {
+        Row: {
+          added_at: string;
+          cart_id: string;
+          qty: number;
+          tenant_id: string;
+          variant_id: string;
+        };
+        Insert: {
+          added_at?: string;
+          cart_id: string;
+          qty: number;
+          tenant_id: string;
+          variant_id: string;
+        };
+        Update: {
+          added_at?: string;
+          cart_id?: string;
+          qty?: number;
+          tenant_id?: string;
+          variant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "cart_items_tenant_id_cart_id_fkey";
+            columns: ["tenant_id", "cart_id"];
+            isOneToOne: false;
+            referencedRelation: "carts";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "cart_items_tenant_id_variant_id_fkey";
+            columns: ["tenant_id", "variant_id"];
+            isOneToOne: false;
+            referencedRelation: "product_variants";
+            referencedColumns: ["tenant_id", "id"];
+          },
+        ];
+      };
+      carts: {
+        Row: {
+          created_at: string;
+          customer_id: string | null;
+          id: string;
+          last_activity_at: string;
+          order_id: string | null;
+          status: string;
+          tenant_id: string;
+          token_hash: string;
+        };
+        Insert: {
+          created_at?: string;
+          customer_id?: string | null;
+          id?: string;
+          last_activity_at?: string;
+          order_id?: string | null;
+          status?: string;
+          tenant_id: string;
+          token_hash: string;
+        };
+        Update: {
+          created_at?: string;
+          customer_id?: string | null;
+          id?: string;
+          last_activity_at?: string;
+          order_id?: string | null;
+          status?: string;
+          tenant_id?: string;
+          token_hash?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "carts_tenant_id_customer_id_fkey";
+            columns: ["tenant_id", "customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customers";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "carts_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       categories: {
         Row: {
           created_at: string;
@@ -200,6 +287,118 @@ export type Database = {
           name?: NonNullable<Json>;
         };
         Relationships: [];
+      };
+      customers: {
+        Row: {
+          auth_user_id: string | null;
+          consent_at: string | null;
+          created_at: string;
+          email: string;
+          first_order_at: string | null;
+          full_name: string;
+          id: string;
+          last_order_at: string | null;
+          lifetime_value_minor: number;
+          locale: string | null;
+          marketing_consent: boolean;
+          orders_count: number;
+          phone: string | null;
+          tenant_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          auth_user_id?: string | null;
+          consent_at?: string | null;
+          created_at?: string;
+          email: string;
+          first_order_at?: string | null;
+          full_name: string;
+          id?: string;
+          last_order_at?: string | null;
+          lifetime_value_minor?: number;
+          locale?: string | null;
+          marketing_consent?: boolean;
+          orders_count?: number;
+          phone?: string | null;
+          tenant_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          auth_user_id?: string | null;
+          consent_at?: string | null;
+          created_at?: string;
+          email?: string;
+          first_order_at?: string | null;
+          full_name?: string;
+          id?: string;
+          last_order_at?: string | null;
+          lifetime_value_minor?: number;
+          locale?: string | null;
+          marketing_consent?: boolean;
+          orders_count?: number;
+          phone?: string | null;
+          tenant_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "customers_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      delivery_zones: {
+        Row: {
+          active: boolean;
+          created_at: string;
+          eta_minutes: number | null;
+          fee_minor: number;
+          free_over_minor: number | null;
+          id: string;
+          min_order_minor: number | null;
+          name: NonNullable<Json>;
+          position: number;
+          tenant_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          active?: boolean;
+          created_at?: string;
+          eta_minutes?: number | null;
+          fee_minor?: number;
+          free_over_minor?: number | null;
+          id?: string;
+          min_order_minor?: number | null;
+          name: NonNullable<Json>;
+          position?: number;
+          tenant_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          created_at?: string;
+          eta_minutes?: number | null;
+          fee_minor?: number;
+          free_over_minor?: number | null;
+          id?: string;
+          min_order_minor?: number | null;
+          name?: NonNullable<Json>;
+          position?: number;
+          tenant_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "delivery_zones_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       features: {
         Row: {
@@ -329,6 +528,305 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "tenants";
             referencedColumns: ["id"];
+          },
+        ];
+      };
+      order_items: {
+        Row: {
+          id: string;
+          inventory_item_id: string | null;
+          order_id: string;
+          position: number;
+          product_id: string | null;
+          qty: number;
+          reserved_qty: number;
+          snapshot: NonNullable<Json>;
+          tenant_id: string;
+          total_minor: number;
+          unit_price_minor: number;
+          variant_id: string | null;
+        };
+        Insert: {
+          id?: string;
+          inventory_item_id?: string | null;
+          order_id: string;
+          position?: number;
+          product_id?: string | null;
+          qty: number;
+          reserved_qty?: number;
+          snapshot: NonNullable<Json>;
+          tenant_id: string;
+          total_minor: number;
+          unit_price_minor: number;
+          variant_id?: string | null;
+        };
+        Update: {
+          id?: string;
+          inventory_item_id?: string | null;
+          order_id?: string;
+          position?: number;
+          product_id?: string | null;
+          qty?: number;
+          reserved_qty?: number;
+          snapshot?: NonNullable<Json>;
+          tenant_id?: string;
+          total_minor?: number;
+          unit_price_minor?: number;
+          variant_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "order_items_tenant_id_inventory_item_id_fkey";
+            columns: ["tenant_id", "inventory_item_id"];
+            isOneToOne: false;
+            referencedRelation: "inventory_items";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "order_items_tenant_id_order_id_fkey";
+            columns: ["tenant_id", "order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "order_items_tenant_id_product_id_fkey";
+            columns: ["tenant_id", "product_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "order_items_tenant_id_variant_id_fkey";
+            columns: ["tenant_id", "variant_id"];
+            isOneToOne: false;
+            referencedRelation: "product_variants";
+            referencedColumns: ["tenant_id", "id"];
+          },
+        ];
+      };
+      order_status_history: {
+        Row: {
+          actor_id: string | null;
+          at: string;
+          from_status: string | null;
+          id: number;
+          note: string | null;
+          order_id: string;
+          tenant_id: string;
+          to_status: string;
+        };
+        Insert: {
+          actor_id?: string | null;
+          at?: string;
+          from_status?: string | null;
+          id?: never;
+          note?: string | null;
+          order_id: string;
+          tenant_id: string;
+          to_status: string;
+        };
+        Update: {
+          actor_id?: string | null;
+          at?: string;
+          from_status?: string | null;
+          id?: never;
+          note?: string | null;
+          order_id?: string;
+          tenant_id?: string;
+          to_status?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "order_status_history_tenant_id_order_id_fkey";
+            columns: ["tenant_id", "order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
+            referencedColumns: ["tenant_id", "id"];
+          },
+        ];
+      };
+      orders: {
+        Row: {
+          access_token_hash: string;
+          archived_at: string | null;
+          branch_id: string;
+          cancel_reason: string | null;
+          cancelled_at: string | null;
+          completed_at: string | null;
+          confirmed_at: string | null;
+          contact: NonNullable<Json>;
+          currency: string;
+          customer_id: string | null;
+          delivery_fee_minor: number;
+          delivery_zone_id: string | null;
+          delivery_zone_name: Json | null;
+          discount_minor: number;
+          fulfillment_type: string;
+          id: string;
+          locale: string;
+          notes: string | null;
+          order_number: string;
+          payment_method: string;
+          payment_status: string;
+          placed_at: string;
+          shipping_address: Json | null;
+          status: string;
+          subtotal_minor: number;
+          tax_included: boolean;
+          tax_minor: number;
+          tax_rate_bps: number;
+          tenant_id: string;
+          total_minor: number;
+          updated_at: string;
+        };
+        Insert: {
+          access_token_hash: string;
+          archived_at?: string | null;
+          branch_id: string;
+          cancel_reason?: string | null;
+          cancelled_at?: string | null;
+          completed_at?: string | null;
+          confirmed_at?: string | null;
+          contact: NonNullable<Json>;
+          currency: string;
+          customer_id?: string | null;
+          delivery_fee_minor?: number;
+          delivery_zone_id?: string | null;
+          delivery_zone_name?: Json | null;
+          discount_minor?: number;
+          fulfillment_type: string;
+          id?: string;
+          locale?: string;
+          notes?: string | null;
+          order_number: string;
+          payment_method?: string;
+          payment_status?: string;
+          placed_at?: string;
+          shipping_address?: Json | null;
+          status?: string;
+          subtotal_minor: number;
+          tax_included?: boolean;
+          tax_minor?: number;
+          tax_rate_bps?: number;
+          tenant_id: string;
+          total_minor: number;
+          updated_at?: string;
+        };
+        Update: {
+          access_token_hash?: string;
+          archived_at?: string | null;
+          branch_id?: string;
+          cancel_reason?: string | null;
+          cancelled_at?: string | null;
+          completed_at?: string | null;
+          confirmed_at?: string | null;
+          contact?: NonNullable<Json>;
+          currency?: string;
+          customer_id?: string | null;
+          delivery_fee_minor?: number;
+          delivery_zone_id?: string | null;
+          delivery_zone_name?: Json | null;
+          discount_minor?: number;
+          fulfillment_type?: string;
+          id?: string;
+          locale?: string;
+          notes?: string | null;
+          order_number?: string;
+          payment_method?: string;
+          payment_status?: string;
+          placed_at?: string;
+          shipping_address?: Json | null;
+          status?: string;
+          subtotal_minor?: number;
+          tax_included?: boolean;
+          tax_minor?: number;
+          tax_rate_bps?: number;
+          tenant_id?: string;
+          total_minor?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "orders_tenant_id_branch_id_fkey";
+            columns: ["tenant_id", "branch_id"];
+            isOneToOne: false;
+            referencedRelation: "branches";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "orders_tenant_id_customer_id_fkey";
+            columns: ["tenant_id", "customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customers";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "orders_tenant_id_delivery_zone_id_fkey";
+            columns: ["tenant_id", "delivery_zone_id"];
+            isOneToOne: false;
+            referencedRelation: "delivery_zones";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "orders_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      payments: {
+        Row: {
+          amount_minor: number;
+          created_at: string;
+          currency: string;
+          id: string;
+          method: string;
+          note: string | null;
+          order_id: string;
+          paid_at: string;
+          provider: string;
+          recorded_by: string | null;
+          status: string;
+          tenant_id: string;
+        };
+        Insert: {
+          amount_minor: number;
+          created_at?: string;
+          currency: string;
+          id?: string;
+          method: string;
+          note?: string | null;
+          order_id: string;
+          paid_at?: string;
+          provider: string;
+          recorded_by?: string | null;
+          status: string;
+          tenant_id: string;
+        };
+        Update: {
+          amount_minor?: number;
+          created_at?: string;
+          currency?: string;
+          id?: string;
+          method?: string;
+          note?: string | null;
+          order_id?: string;
+          paid_at?: string;
+          provider?: string;
+          recorded_by?: string | null;
+          status?: string;
+          tenant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "payments_tenant_id_order_id_fkey";
+            columns: ["tenant_id", "order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
+            referencedColumns: ["tenant_id", "id"];
           },
         ];
       };
@@ -920,6 +1418,32 @@ export type Database = {
           },
         ];
       };
+      tenant_counters: {
+        Row: {
+          key: string;
+          tenant_id: string;
+          value: number;
+        };
+        Insert: {
+          key: string;
+          tenant_id: string;
+          value: number;
+        };
+        Update: {
+          key?: string;
+          tenant_id?: string;
+          value?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "tenant_counters_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       tenant_domains: {
         Row: {
           created_at: string;
@@ -1321,6 +1845,16 @@ export type Database = {
     Functions: {
       accept_invitation: { Args: { p_token: string }; Returns: string };
       adjust_stock: { Args: { p_delta: number; p_item: string; p_note?: string; p_reason: string }; Returns: number };
+      cart_update: {
+        Args: { p_mode: string; p_qty: number; p_tenant: string; p_token_hash: string; p_variant: string };
+        Returns: Json;
+      };
+      cart_view: { Args: { p_tenant: string; p_token_hash: string }; Returns: Json };
+      checkout_quote: {
+        Args: { p_fulfillment: string; p_tenant: string; p_token_hash: string; p_zone: string };
+        Returns: Json;
+      };
+      create_order_from_cart: { Args: { p_checkout: Json; p_tenant: string; p_token_hash: string }; Returns: Json };
       get_invitation: { Args: { p_token: string }; Returns: Json };
       invite_member: { Args: { p_email: string; p_role_key: string; p_tenant: string }; Returns: string };
       low_stock_items: {
@@ -1374,10 +1908,13 @@ export type Database = {
         Args: { p_actor: string; p_domain: string; p_error?: string; p_verified: boolean };
         Returns: undefined;
       };
+      record_order_payment: { Args: { p_method: string; p_note?: string; p_order: string }; Returns: undefined };
       resolve_storefront: { Args: { p_hostname?: string; p_slug?: string }; Returns: Json };
       revoke_invitation: { Args: { p_invitation: string }; Returns: undefined };
+      sales_summary: { Args: { p_tenant: string }; Returns: Json };
       save_product_structure: { Args: { p_options: Json; p_product: string; p_variants: Json }; Returns: undefined };
       set_primary_domain: { Args: { p_domain: string }; Returns: undefined };
+      storefront_best_sellers: { Args: { p_limit?: number; p_tenant: string }; Returns: Json };
       storefront_catalog: {
         Args: {
           p_available?: boolean;
@@ -1396,6 +1933,8 @@ export type Database = {
         Returns: Json;
       };
       storefront_categories: { Args: { p_tenant: string }; Returns: Json };
+      storefront_checkout_options: { Args: { p_tenant: string }; Returns: Json };
+      storefront_order: { Args: { p_number: string; p_tenant: string; p_token_hash: string }; Returns: Json };
       storefront_product: { Args: { p_slug: string; p_tenant: string }; Returns: Json };
       storefront_sitemap: { Args: { p_tenant: string }; Returns: Json };
       tenant_admin_context: { Args: { p_tenant: string }; Returns: Json };
@@ -1411,6 +1950,7 @@ export type Database = {
           user_id: string;
         }[];
       };
+      update_order_status: { Args: { p_note?: string; p_order: string; p_status: string }; Returns: string };
     };
     Enums: {
       [_ in never]: never;

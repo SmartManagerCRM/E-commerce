@@ -125,3 +125,19 @@ with stock(variant_id, qty, min_stock, cost) as (values
 )
 insert into public.stock_movements (tenant_id, inventory_item_id, delta, on_hand_after, reason, note)
 select tenant_id, id, on_hand, on_hand, 'initial', 'Seed data' from updated;
+
+-- -----------------------------------------------------------------------------
+-- Ordering (Phase 5): the café takes pickup and delivery orders, pays on
+-- fulfillment, 15 % VAT included; the retail store has ordering switched off.
+-- -----------------------------------------------------------------------------
+update public.tenant_settings set
+  checkout = '{"accepting_orders": true, "pickup": true, "delivery": true, "pay_on_fulfillment": true, "min_order_minor": null}',
+  tax = '{"rate_bps": 1500, "included": true, "registration_number": "300000000000003"}'
+where tenant_id = 'a0000000-0000-4000-8000-00000000000a';
+
+insert into public.delivery_zones (id, tenant_id, name, fee_minor, min_order_minor, free_over_minor, eta_minutes, position) values
+  ('70000000-0000-4000-8000-000000000001', 'a0000000-0000-4000-8000-00000000000a',
+   '{"ar":"الرياض — وسط المدينة","en":"Riyadh — city centre","fr":"Riyad — centre-ville"}', 1500, 5000, 20000, 45, 0),
+  ('70000000-0000-4000-8000-000000000002', 'a0000000-0000-4000-8000-00000000000a',
+   '{"ar":"الرياض — الضواحي","en":"Riyadh — suburbs","fr":"Riyad — banlieue"}', 2500, 8000, null, 90, 1)
+on conflict (id) do nothing;
