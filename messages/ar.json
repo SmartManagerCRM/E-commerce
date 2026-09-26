@@ -371,7 +371,7 @@
       "description": "يبدأ النشاط في مرحلة الإعداد؛ فعّله عندما يصبح جاهزاً.",
       "businessName": "اسم النشاط التجاري",
       "slug": "عنوان المتجر",
-      "slugHint": "حروف صغيرة وأرقام وشرطات. يُستخدم كـ ‎<address>.e-commerce.smartmanage.me.",
+      "slugHint": "حروف صغيرة وأرقام وشرطات. يُستخدم كـ ‎<address>.e-commerce.smartmanager.me.",
       "businessType": "نوع النشاط",
       "plan": "الباقة",
       "currency": "العملة",

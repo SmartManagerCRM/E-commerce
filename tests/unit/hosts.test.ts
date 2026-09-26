@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import { classifyHost, normalizeHost } from "@/lib/hosts";
 
-const prod = { rootDomain: "e-commerce.smartmanage.me", consoleSubdomain: "app" };
+const prod = { rootDomain: "e-commerce.smartmanager.me", consoleSubdomain: "app" };
 const dev = { rootDomain: "localhost", consoleSubdomain: "app" };
 
 describe("normalizeHost", () => {
@@ -15,21 +15,21 @@ describe("normalizeHost", () => {
 
 describe("classifyHost", () => {
   it("recognises the platform root and the console", () => {
-    expect(classifyHost("e-commerce.smartmanage.me", prod)).toEqual({ kind: "platform" });
-    expect(classifyHost("www.e-commerce.smartmanage.me", prod)).toEqual({ kind: "platform" });
-    expect(classifyHost("app.e-commerce.smartmanage.me", prod)).toEqual({ kind: "console" });
+    expect(classifyHost("e-commerce.smartmanager.me", prod)).toEqual({ kind: "platform" });
+    expect(classifyHost("www.e-commerce.smartmanager.me", prod)).toEqual({ kind: "platform" });
+    expect(classifyHost("app.e-commerce.smartmanager.me", prod)).toEqual({ kind: "console" });
   });
 
   it("maps platform subdomains to tenant slugs", () => {
-    expect(classifyHost("roasters.e-commerce.smartmanage.me", prod)).toEqual({
+    expect(classifyHost("roasters.e-commerce.smartmanager.me", prod)).toEqual({
       kind: "storefront",
       lookup: { by: "slug", slug: "roasters" },
     });
   });
 
   it("rejects nested or malformed platform subdomains", () => {
-    expect(classifyHost("a.b.e-commerce.smartmanage.me", prod)).toEqual({ kind: "invalid" });
-    expect(classifyHost("-bad.e-commerce.smartmanage.me", prod)).toEqual({ kind: "invalid" });
+    expect(classifyHost("a.b.e-commerce.smartmanager.me", prod)).toEqual({ kind: "invalid" });
+    expect(classifyHost("-bad.e-commerce.smartmanager.me", prod)).toEqual({ kind: "invalid" });
   });
 
   it("treats any other valid hostname as a custom domain", () => {
@@ -40,11 +40,11 @@ describe("classifyHost", () => {
   });
 
   it("does not let a look-alike domain match the platform root", () => {
-    expect(classifyHost("evil-e-commerce.smartmanage.me.attacker.com", prod)).toEqual({
+    expect(classifyHost("evil-e-commerce.smartmanager.me.attacker.com", prod)).toEqual({
       kind: "storefront",
-      lookup: { by: "hostname", hostname: "evil-e-commerce.smartmanage.me.attacker.com" },
+      lookup: { by: "hostname", hostname: "evil-e-commerce.smartmanager.me.attacker.com" },
     });
-    expect(classifyHost("xe-commerce.smartmanage.me", prod).kind).toBe("storefront");
+    expect(classifyHost("xe-commerce.smartmanager.me", prod).kind).toBe("storefront");
   });
 
   it("rejects garbage hosts", () => {

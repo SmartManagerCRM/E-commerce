@@ -27,7 +27,7 @@ The ZIP contains the committed source only. It excludes `node_modules`, `.next`,
 | Build command | `npm run build` |
 | Start command | `npm start` (runs `next start`, which honours Hostinger's `PORT`) |
 
-3. Attach the **platform domain** `e-commerce.smartmanage.me` to the app.
+3. Attach the **platform domain** `e-commerce.smartmanager.me` to the app.
 
 ## 3. Environment variables
 
@@ -38,8 +38,8 @@ Set these in the app's **Environment variables** before the first build. `NEXT_P
 | `NEXT_PUBLIC_SUPABASE_URL` | ✅ | `https://yswvehtpwmzulgkvznnb.supabase.co` | Public |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | ✅ | `sb_publishable_…` (Supabase → Project Settings → API Keys) | Public |
 | `SUPABASE_SECRET_KEY` | ✅ | `sb_secret_…` (Supabase → API Keys → Secret keys) | **Secret.** Server-only. Needed for invitation sign-up and domain verification. |
-| `PLATFORM_ROOT_DOMAIN` | ✅ | `e-commerce.smartmanage.me` | |
-| `CONSOLE_SUBDOMAIN` | ✅ | `app` | Admin console at `app.e-commerce.smartmanage.me` |
+| `PLATFORM_ROOT_DOMAIN` | ✅ | `e-commerce.smartmanager.me` | |
+| `CONSOLE_SUBDOMAIN` | ✅ | `app` | Admin console at `app.e-commerce.smartmanager.me` |
 | `PUBLIC_URL_SCHEME` | ✅ | `https` | |
 | `STOREFRONT_DNS_TARGET` | recommended | The IP/hostname Hostinger shows for the app | Shown to tenants in their custom-domain DNS instructions |
 | `NODE_ENV` | — | `production` | Usually set by Hostinger |
@@ -52,15 +52,15 @@ Hostinger Business hosting has **no wildcard SSL** (wildcards are VPS-only). Eve
 
 | Hostname | When | DNS |
 |---|---|---|
-| `e-commerce.smartmanage.me` | once | A record → app IP (or as hPanel instructs) |
-| `app.e-commerce.smartmanage.me` | once | A record → app IP |
-| `<slug>.e-commerce.smartmanage.me` | **per new business** | A record → app IP |
+| `e-commerce.smartmanager.me` | once | A record → app IP (or as hPanel instructs) |
+| `app.e-commerce.smartmanager.me` | once | A record → app IP |
+| `<slug>.e-commerce.smartmanager.me` | **per new business** | A record → app IP |
 | a business's own domain (e.g. `roasters.com`) | when the business adds one | Set by the business at their registrar: TXT verification record + A/CNAME to `STOREFRONT_DNS_TARGET` |
 
 **Onboarding a business (Super Admin checklist)**
 
 1. Console → Platform administration → **New business**. Send the owner invitation link.
-2. In hPanel, add `<slug>.e-commerce.smartmanage.me` to the Node.js app (DNS A record + SSL).
+2. In hPanel, add `<slug>.e-commerce.smartmanager.me` to the Node.js app (DNS A record + SSL).
 3. When the business adds a custom domain, the owner verifies it (DNS TXT) in **Settings → Domains**. It then appears as **DNS verified** on the business page in Super Admin. Add it in hPanel, then click **Mark as connected**.
 4. Set the business status to **Active** when it is ready to go live.
 
@@ -70,8 +70,8 @@ The app never serves one business's data on another business's hostname: unknown
 
 In the Supabase dashboard → **Authentication → URL Configuration**:
 
-- **Site URL:** `https://app.e-commerce.smartmanage.me`
-- **Redirect URLs:** `https://app.e-commerce.smartmanage.me/**`
+- **Site URL:** `https://e-commerce.smartmanager.me`
+- **Redirect URLs:** `https://e-commerce.smartmanager.me/**` and `https://app.e-commerce.smartmanager.me/**` (the admin console, where sign-in callbacks land)
 
 Database migrations are in `supabase/migrations/` and are applied to the project before deploying app code that depends on them.
 
@@ -79,7 +79,7 @@ Database migrations are in `supabase/migrations/` and are applied to the project
 
 1. Commit, then run `npm run package:hostinger`.
 2. Upload the new ZIP to the same Node.js app (redeploy). Hostinger rebuilds and restarts.
-3. Health check: `https://app.e-commerce.smartmanage.me/api/health` → `{"status":"ok"}`.
+3. Health check: `https://app.e-commerce.smartmanager.me/api/health` → `{"status":"ok"}`.
 
 ## 7. Known limits of Business hosting
 

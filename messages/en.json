@@ -371,7 +371,7 @@
       "description": "The business starts in onboarding; activate it when it’s ready to go live.",
       "businessName": "Business name",
       "slug": "Store address",
-      "slugHint": "Lower-case letters, digits and dashes. Used as <address>.e-commerce.smartmanage.me.",
+      "slugHint": "Lower-case letters, digits and dashes. Used as <address>.e-commerce.smartmanager.me.",
       "businessType": "Business type",
       "plan": "Plan",
       "currency": "Currency",

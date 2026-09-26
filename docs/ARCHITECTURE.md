@@ -1,6 +1,6 @@
 # SmartManager E-commerce — Architecture Plan (Phase 0)
 
-Status: **Approved (2026-09-25) with one change: deployment on Hostinger instead of Cloudflare.** Platform domain: `e-commerce.smartmanage.me`. Phase 1 is implemented; see §17.
+Status: **Approved (2026-09-25) with one change: deployment on Hostinger instead of Cloudflare.** Platform domain: `e-commerce.smartmanager.me`. Phase 1 is implemented; see §17.
 Date: 2026-09-25
 
 ---
@@ -32,7 +32,7 @@ Date: 2026-09-25
 | DB / Auth / Storage | **Supabase** (Postgres + RLS, Auth, Storage, Vault) via `@supabase/ssr` | Required by the spec. Cookie-based sessions. |
 | Validation | **Zod** at every server boundary, plus DB constraints | The client is never trusted. |
 | Data access | Typed **repositories** (`src/server/repositories/*`) with **services** above them (`src/server/services/*`). Generated Supabase types. | No business logic in components. |
-| Deployment | **Hostinger Business — Node.js web app, ZIP upload** (confirmed). Hostinger runs `npm run build` / `npm start`; see `docs/DEPLOYMENT-HOSTINGER.md`. Each storefront hostname is attached once in hPanel (no wildcard SSL on Business). A VPS would enable fully automatic custom domains later: tenant custom domains need on-demand TLS (e.g. Caddy `on_demand_tls` with an `ask` endpoint that checks `tenant_domains`) and a wildcard certificate for `*.e-commerce.smartmanage.me` (DNS-01). | Approved change. Managed Hostinger Node.js hosting works for platform subdomains, but each custom domain would need manual setup in hPanel. |
+| Deployment | **Hostinger Business — Node.js web app, ZIP upload** (confirmed). Hostinger runs `npm run build` / `npm start`; see `docs/DEPLOYMENT-HOSTINGER.md`. Each storefront hostname is attached once in hPanel (no wildcard SSL on Business). A VPS would enable fully automatic custom domains later: tenant custom domains need on-demand TLS (e.g. Caddy `on_demand_tls` with an `ask` endpoint that checks `tenant_domains`) and a wildcard certificate for `*.e-commerce.smartmanager.me` (DNS-01). | Approved change. Managed Hostinger Node.js hosting works for platform subdomains, but each custom domain would need manual setup in hPanel. |
 | Background work | **pg_cron** (schedules) + **pgmq** (queues). A secured `/api/jobs/*` worker is triggered by a server cron (Hostinger cron / systemd timer) or by `pg_net` from pg_cron. | Abandoned carts, daily brief, retention, aggregates, and notifications. |
 | Charts | Recharts (admin only; lazy-loaded) | Keeps storefront JS minimal. |
 | Tests | **Vitest** (unit/service), **pgTAP** (RLS and cross-tenant, run with `supabase test db`), **Playwright** (E2E, mobile viewports, RTL) | Required by §6 and §44 of the spec. |
@@ -834,7 +834,7 @@ interface PaymentProvider {
 | Email provider (Resend is connected to this workspace) + sending domain | Phase 7 | Order notifications, daily brief. |
 | WhatsApp Business provider | Phase 10 (optional) | Architecture only until credentials exist. |
 | Anthropic API key | Phase 13 | Server-only. |
-| Hostinger plan details (VPS recommended), SSH/deploy access, DNS for `e-commerce.smartmanage.me` and `*.e-commerce.smartmanage.me` | Phase 15 | Wildcard DNS + certificate; on-demand TLS for custom domains. |
+| Hostinger plan details (VPS recommended), SSH/deploy access, DNS for `e-commerce.smartmanager.me` and `*.e-commerce.smartmanager.me` | Phase 15 | Wildcard DNS + certificate; on-demand TLS for custom domains. |
 | Supabase plan (image transformations and PITR backups need Pro) | Phases 4/15 | |
 
 ---
@@ -906,9 +906,9 @@ Catalog, orders and the other domain tables are **not** created in Phase 1. They
 
 | Host | Area | Internal route |
 |---|---|---|
-| `e-commerce.smartmanage.me` | Platform site | `/site/[locale]/…` |
-| `app.e-commerce.smartmanage.me` | Tenant admin console + Super Admin (`/platform`) | `/console/[locale]/…` |
-| `<slug>.e-commerce.smartmanage.me` | Storefront (tenant by slug) | `/store/[tenant]/[locale]/…` |
+| `e-commerce.smartmanager.me` | Platform site | `/site/[locale]/…` |
+| `app.e-commerce.smartmanager.me` | Tenant admin console + Super Admin (`/platform`) | `/console/[locale]/…` |
+| `<slug>.e-commerce.smartmanager.me` | Storefront (tenant by slug) | `/store/[tenant]/[locale]/…` |
 | any verified custom domain | Storefront (tenant by `tenant_domains`) | `/store/[tenant]/[locale]/…` |
 | development | `localhost:3000`, `app.localhost:3000`, `<slug>.localhost:3000` | same |
 

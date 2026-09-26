@@ -371,7 +371,7 @@
       "description": "L’établissement démarre en configuration ; activez-le lorsqu’il est prêt.",
       "businessName": "Nom de l’établissement",
       "slug": "Adresse de la boutique",
-      "slugHint": "Minuscules, chiffres et tirets. Utilisé comme <adresse>.e-commerce.smartmanage.me.",
+      "slugHint": "Minuscules, chiffres et tirets. Utilisé comme <adresse>.e-commerce.smartmanager.me.",
       "businessType": "Type d’activité",
       "plan": "Formule",
       "currency": "Devise",

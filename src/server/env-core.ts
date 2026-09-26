@@ -14,7 +14,7 @@ const hostname = z
 
 const serverEnvSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
-  /** Root domain of the platform, e.g. `e-commerce.smartmanage.me` (`localhost` in development). */
+  /** Root domain of the platform, e.g. `e-commerce.smartmanager.me` (`localhost` in development). */
   PLATFORM_ROOT_DOMAIN: hostname.default("localhost"),
   /** Subdomain of the root domain that serves the admin console and Super Admin. */
   CONSOLE_SUBDOMAIN: z

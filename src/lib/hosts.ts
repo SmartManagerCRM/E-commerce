@@ -2,9 +2,9 @@
  * Pure host classification — no I/O, so it is shared by the proxy, server
  * components and unit tests.
  *
- *   e-commerce.smartmanage.me            → platform marketing site
- *   app.e-commerce.smartmanage.me        → admin console + Super Admin
- *   roasters.e-commerce.smartmanage.me   → storefront (tenant slug "roasters")
+ *   e-commerce.smartmanager.me            → platform marketing site
+ *   app.e-commerce.smartmanager.me        → admin console + Super Admin
+ *   roasters.e-commerce.smartmanager.me   → storefront (tenant slug "roasters")
  *   roasters.com / www.roasters.com      → storefront (custom domain lookup)
  */
 export type HostConfig = {
