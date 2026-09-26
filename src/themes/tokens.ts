@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { getTheme, type ThemeColors, type ThemeDefinition } from "./definitions";
+import { getTheme, type FontRole, type ThemeColors, type ThemeDefinition } from "./definitions";
 
 /**
  * Converts a theme (+ validated tenant overrides) into CSS custom properties.
@@ -88,15 +88,20 @@ export function resolveThemeColors(theme: ThemeDefinition, overrides: unknown): 
   return { ...theme.colors, ...parsed.colors };
 }
 
-export function themeCssVariables(themeKey: string | null | undefined, overrides: unknown): Record<string, string> {
+export function themeCssVariables(
+  themeKey: string | null | undefined,
+  overrides: unknown,
+  options: { fontRole?: FontRole; button?: ThemeDefinition["button"] } = {},
+): Record<string, string> {
   const theme = getTheme(themeKey);
   const colors = resolveThemeColors(theme, overrides);
+  const fontRole = options.fontRole ?? theme.displayFont;
   // Every font variable has a fallback: an undefined var() would invalidate
   // the whole font-family declaration (Arabic fonts are only loaded for RTL).
   const displayFont =
-    theme.displayFont === "serif-display"
+    fontRole === "serif-display"
       ? `var(--font-fraunces, Georgia), ${ARABIC_DISPLAY}, Georgia, serif`
-      : theme.displayFont === "classic-serif"
+      : fontRole === "classic-serif"
         ? `var(--font-cormorant, Georgia), ${ARABIC_DISPLAY}, Georgia, serif`
         : BODY_FONT;
 
@@ -118,6 +123,6 @@ export function themeCssVariables(themeKey: string | null | undefined, overrides
     "--sm-radius-sm": theme.radius.sm,
     "--sm-radius-md": theme.radius.md,
     "--sm-radius-lg": theme.radius.lg,
-    "--sm-radius-button": BUTTON_RADIUS[theme.button],
+    "--sm-radius-button": BUTTON_RADIUS[options.button ?? theme.button],
   };
 }

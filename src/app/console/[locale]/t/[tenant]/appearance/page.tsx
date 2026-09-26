@@ -3,15 +3,19 @@ import { ExternalLink } from "lucide-react";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { buttonClasses } from "@/components/ui/button";
 import { SectionCard } from "@/components/ui/card";
-import { isLocale } from "@/i18n/locales";
+import { Link } from "@/i18n/navigation";
+import { isLocale, type Locale } from "@/i18n/locales";
+import { designTokensSchema, footerConfigSchema, headerConfigSchema } from "@/lib/storefront/design";
 import { publicMediaUrl } from "@/lib/storage";
 import { requireTenantAdmin, type TenantAdminContext } from "@/server/admin/context";
 import { createUserClient } from "@/server/supabase/clients";
 import { storefrontOrigin } from "@/server/tenant/urls";
 import { getTheme, type ThemeKey } from "@/themes/definitions";
 
-import { removeBranding, updateAppearance, uploadBranding } from "./actions";
+import { removeBranding, updateAppearance, updateDesignDetails, uploadBranding } from "./actions";
+import { DesignForm } from "./design-form";
 import { BrandingForm } from "./branding-form";
 import { ThemeForm } from "./theme-form";
 import { ModuleGate } from "../module-gate";
@@ -49,11 +53,18 @@ async function AppearanceContent({
   const t = await getTranslations("appearance");
   const supabase = await createUserClient();
   const [{ data: config }, { data: tenant }] = await Promise.all([
-    supabase.from("storefront_configs").select("theme_key, tokens").eq("tenant_id", context.tenant.id).single(),
-    supabase.from("tenants").select("logo_path, favicon_path").eq("id", context.tenant.id).single(),
+    supabase
+      .from("storefront_configs")
+      .select("theme_key, tokens, header, footer")
+      .eq("tenant_id", context.tenant.id)
+      .single(),
+    supabase.from("tenants").select("logo_path, favicon_path, enabled_languages").eq("id", context.tenant.id).single(),
   ]);
   if (!config || !tenant) throw new Error("Failed to load appearance");
 
+  const tokens = designTokensSchema.parse(config.tokens ?? {});
+  const header = headerConfigSchema.parse(config.header ?? {});
+  const footer = footerConfigSchema.parse(config.footer ?? {});
   const colors = ((config.tokens as { colors?: Record<string, string> })?.colors ?? {}) as Record<string, string>;
   const canEdit = context.permissions.includes("appearance.write");
   const canEditBranding = canEdit && context.permissions.includes("settings.write");
@@ -95,6 +106,17 @@ async function AppearanceContent({
         </div>
       </SectionCard>
 
+      <SectionCard title={t("homepageTitle")} description={t("homepageDescription")}>
+        <div className="flex flex-wrap gap-3">
+          <Link href={`/t/${slug}/appearance/homepage`} className={buttonClasses("primary", "sm")}>
+            {t("editHomepage")}
+          </Link>
+          <Link href={`/t/${slug}/appearance/preview`} className={buttonClasses("secondary", "sm")}>
+            {t("openPreview")}
+          </Link>
+        </div>
+      </SectionCard>
+
       <SectionCard title={t("styleTitle")} description={t("styleDescription")}>
         <ThemeForm
           action={updateAppearance.bind(null, slug)}
@@ -102,6 +124,23 @@ async function AppearanceContent({
           primary={colors.primary ?? ""}
           accent={colors.accent ?? ""}
           canEdit={canEdit}
+        />
+      </SectionCard>
+
+      <SectionCard title={t("design.title")} description={t("design.description")}>
+        <DesignForm
+          action={updateDesignDetails.bind(null, slug)}
+          canEdit={canEdit}
+          locales={(tenant.enabled_languages ?? [locale]) as Locale[]}
+          defaults={{
+            typography: tokens.typography,
+            buttons: tokens.buttons,
+            cards: tokens.cards,
+            headerLayout: header.layout,
+            sticky: header.sticky,
+            announcement: header.announcement,
+            social: footer.social as Record<string, string>,
+          }}
         />
       </SectionCard>
     </div>

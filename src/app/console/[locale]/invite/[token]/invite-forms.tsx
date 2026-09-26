@@ -1,19 +1,25 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useActionState } from "react";
 
 import { TextInput } from "@/components/forms/controls";
 import { FormMessage } from "@/components/forms/form-message";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { idleState, type FormState } from "@/lib/validation/common";
+import { useActionForm } from "@/components/forms/use-action-form";
 
 export function AcceptForm({ action }: { action: () => Promise<FormState> }) {
   const t = useTranslations("invite");
-  const [state, formAction] = useActionState(action, idleState as FormState);
+  const {
+    state: state,
+    pending: statePending,
+    formProps: formActionProps,
+  } = useActionForm(action, idleState as FormState);
   return (
-    <form action={formAction} className="space-y-3">
-      <SubmitButton className="w-full">{t("accept")}</SubmitButton>
+    <form {...formActionProps} className="space-y-3">
+      <SubmitButton pending={statePending} className="w-full">
+        {t("accept")}
+      </SubmitButton>
       <FormMessage state={state} />
     </form>
   );
@@ -27,9 +33,13 @@ export function SignupForm({
   email: string;
 }) {
   const t = useTranslations("invite");
-  const [state, formAction] = useActionState(action, idleState as FormState);
+  const {
+    state: state,
+    pending: statePending,
+    formProps: formActionProps,
+  } = useActionForm(action, idleState as FormState);
   return (
-    <form action={formAction} className="space-y-4" noValidate>
+    <form {...formActionProps} className="space-y-4" noValidate>
       <TextInput label={t("email")} value={email} readOnly disabled dir="ltr" />
       <TextInput label={t("fullName")} name="full_name" autoComplete="name" required maxLength={120} />
       <TextInput
@@ -50,7 +60,9 @@ export function SignupForm({
         dir="ltr"
       />
       <FormMessage state={state} />
-      <SubmitButton className="w-full">{t("createAccount")}</SubmitButton>
+      <SubmitButton pending={statePending} className="w-full">
+        {t("createAccount")}
+      </SubmitButton>
     </form>
   );
 }

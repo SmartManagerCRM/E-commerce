@@ -12,8 +12,8 @@ test.describe("storefront tenant resolution", () => {
       await expect(page).toHaveURL(`${STORE_A}/ar`);
       await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
       await expect(page.locator("html")).toHaveAttribute("lang", "ar");
-      await expect(page.getByRole("heading", { level: 1 })).toContainText("Roasters Café");
-      await expect(page.getByRole("heading", { level: 1 })).toContainText("أهلاً بكم");
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText("Roasters Café");
+      await expect(page.getByText("محمّصة بعناية، تُقدَّم بشغف.").first()).toBeVisible();
       const primary = await page.evaluate(() =>
         getComputedStyle(document.documentElement).getPropertyValue("--sm-color-primary").trim(),
       );
@@ -25,7 +25,8 @@ test.describe("storefront tenant resolution", () => {
       await page.goto(`${STORE_B}/`);
       await expect(page).toHaveURL(`${STORE_B}/fr`);
       await expect(page.locator("html")).toHaveAttribute("dir", "ltr");
-      await expect(page.getByRole("heading", { level: 1 })).toContainText("Bienvenue chez Maison Coffeehouse");
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText("Maison Coffeehouse");
+      await expect(page.getByText("Tout pour un meilleur café à la maison.").first()).toBeVisible();
       await expect(page.locator('a[hreflang="ar"]')).toHaveCount(0);
       const primary = await page.evaluate(() =>
         getComputedStyle(document.documentElement).getPropertyValue("--sm-color-primary").trim(),
@@ -60,7 +61,8 @@ test.describe("storefront tenant resolution", () => {
 
   test("custom domains resolve to their tenant", async ({ page }) => {
     await page.goto("http://roasters.test:3000/en");
-    await expect(page.getByRole("heading", { level: 1 })).toContainText("Welcome to Roasters Café");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Roasters Café");
+    await expect(page.getByText("Roasted with care, served with soul.").first()).toBeVisible();
   });
 
   test("unknown hosts get a 404 instead of another store", async ({ page }) => {
@@ -74,11 +76,11 @@ test.describe("storefront tenant resolution", () => {
     await page.getByRole("link", { name: "English" }).click();
     await expect(page).toHaveURL(`${STORE_A}/en?ref=qr`);
     await expect(page.locator("html")).toHaveAttribute("dir", "ltr");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Welcome to Roasters Café");
+    await expect(page.getByText("Roasted with care, served with soul.").first()).toBeVisible();
 
     await page.getByRole("link", { name: "Français" }).click();
     await expect(page).toHaveURL(`${STORE_A}/fr?ref=qr`);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Bienvenue chez Roasters Café");
+    await expect(page.getByText("Torréfié avec soin, servi avec âme.").first()).toBeVisible();
 
     // The choice is remembered for visits without a locale.
     await page.goto(`${STORE_A}/`);

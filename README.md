@@ -5,6 +5,7 @@ A multi-tenant SaaS e-commerce platform (storefront, ordering, booking, loyalty 
 - **Languages:** English, French, Arabic (full RTL)
 - **Stack:** Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · next-intl · Supabase (Postgres, Auth, Storage) · Hostinger (Node.js)
 - **Architecture, ERD and security model:** [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
+- **Design system:** [`docs/DESIGN-SYSTEM.md`](docs/DESIGN-SYSTEM.md)
 
 ## Status
 
@@ -13,7 +14,8 @@ A multi-tenant SaaS e-commerce platform (storefront, ordering, booking, loyalty 
 | 0 | Audit & architecture | ✅ Approved |
 | 1 | Foundation: tenancy schema, RLS, tenant resolver, i18n/RTL, design tokens, storefront & admin shells | ✅ Complete |
 | 2 | Multi-tenancy management: create businesses, settings, branding, staff invitations, custom domains, Super Admin | ✅ Complete |
-| 3+ | Storefront design system, catalog, checkout, payments… | Not started |
+| 3 | Storefront design system: 5 themes, customisation, homepage builder, commerce components, SEO | ✅ Complete |
+| 4+ | Products & inventory, checkout, payments… | Not started |
 
 ## Local development
 

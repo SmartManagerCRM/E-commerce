@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SectionCard } from "@/components/ui/card";
 import { isLocale, type Locale } from "@/i18n/locales";
 import { asLocalizedText } from "@/lib/localized";
+import { parseOpeningHours } from "@/lib/storefront/hours";
 import { requireTenantAdmin } from "@/server/admin/context";
 import { verificationRecord } from "@/server/domains/verification";
 import { serverEnv } from "@/server/env";
@@ -15,8 +16,10 @@ import {
   removeCustomDomain,
   setPrimaryDomain,
   updateBusinessProfile,
+  updateOpeningHours,
   verifyCustomDomain,
 } from "./actions";
+import { HoursForm } from "./hours-form";
 import { DomainsSection } from "./domains-section";
 import { ProfileForm } from "./profile-form";
 import { ModuleGate } from "../module-gate";
@@ -52,7 +55,7 @@ async function SettingsContent({
 }) {
   const t = await getTranslations("settings");
   const supabase = await createUserClient();
-  const [{ data: tenant, error }, { data: domains }] = await Promise.all([
+  const [{ data: tenant, error }, { data: domains }, { data: branch }] = await Promise.all([
     supabase
       .from("tenants")
       .select(
@@ -65,6 +68,12 @@ async function SettingsContent({
       .select("id, hostname, is_primary, verified_at, hosting_connected_at, verification_token, last_check_error")
       .eq("tenant_id", context.tenant.id)
       .order("created_at"),
+    supabase
+      .from("branches")
+      .select("opening_hours")
+      .eq("tenant_id", context.tenant.id)
+      .eq("is_default", true)
+      .maybeSingle(),
   ]);
   if (error || !tenant) throw new Error("Failed to load settings");
 
@@ -102,6 +111,14 @@ async function SettingsContent({
             default_language: tenant.default_language as Locale,
             enabled_languages: tenant.enabled_languages as Locale[],
           }}
+        />
+      </SectionCard>
+
+      <SectionCard title={t("hours.title")} description={t("hours.description")}>
+        <HoursForm
+          action={updateOpeningHours.bind(null, slug)}
+          hours={parseOpeningHours(branch?.opening_hours)}
+          canEdit={canEdit && context.permissions.includes("branches.write")}
         />
       </SectionCard>
 

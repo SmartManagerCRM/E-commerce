@@ -939,3 +939,14 @@ Catalog, orders and the other domain tables are **not** created in Phase 1. They
 **Console modules:** Settings (profile, languages, contact, domains), Appearance (theme, contrast-checked colours, logo/favicon), Staff (invite, roles, disable, remove), invitation acceptance, and Super Admin (create business, status, plan, per-tenant feature overrides, hostname checklist, owner re-invite). Each page enforces permission and entitlement itself (`ModuleGate`); Server Actions re-check with `actionContext()`, and the database enforces RLS as the last line.
 
 **Email:** no provider is configured yet (Phase 7), so invitation links are shown to the inviter to share. Invitees create their account through the invitation (created server-side for the invited email only).
+
+---
+
+## 19. Phase 3 implementation notes (storefront design system)
+
+- **Design system:** documented in `docs/DESIGN-SYSTEM.md` (tokens, themes, components, sections, states).
+- **Migration `20260926000009_storefront_newsletter`:** `newsletter_subscribers` (consent timestamp and source, unique per tenant+email, staff with `marketing.read` can read). `newsletter_subscribe()` is service-role only and accepts active stores only. `resolve_storefront` now also returns the default branch's opening hours.
+- **Storefront writes** (newsletter) take the tenant from the request **Host** (`requestStorefrontTenant()`), never from route params or form fields. They are rate-limited per IP (in-process limiter, suitable for one Node process on Hostinger) and use a honeypot field.
+- **SEO:** LocalBusiness/Organization JSON-LD with the schema.org type chosen by business type, address and opening hours. Host-aware `robots.txt` (console and platform are not indexable) and `sitemap.xml` with hreflang alternates.
+- **Forms:** `useActionForm` prevents React 19's automatic form reset, so a server-side validation error no longer wipes the user's other inputs. Forms still submit without JavaScript.
+- **Images:** section photos are re-encoded to WebP (max 2400 px) at upload. `next/image` serves responsive AVIF/WebP. Optimising images from private IPs is enabled only when Supabase runs locally.

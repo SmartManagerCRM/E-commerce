@@ -26,6 +26,8 @@ export type ThemeDefinition = {
   radius: { sm: string; md: string; lg: string };
   button: "pill" | "rounded" | "square";
   heroLayout: "editorial" | "bold" | "clean" | "minimal";
+  productCard: "minimal" | "bordered" | "elevated";
+  headerLayout: "classic" | "centered";
 };
 
 export const THEMES = {
@@ -46,6 +48,8 @@ export const THEMES = {
     radius: { sm: "0.25rem", md: "0.5rem", lg: "0.75rem" },
     button: "rounded",
     heroLayout: "editorial",
+    productCard: "minimal",
+    headerLayout: "classic",
   },
   "modern-restaurant": {
     key: "modern-restaurant",
@@ -64,6 +68,8 @@ export const THEMES = {
     radius: { sm: "0.375rem", md: "0.75rem", lg: "1rem" },
     button: "pill",
     heroLayout: "bold",
+    productCard: "elevated",
+    headerLayout: "classic",
   },
   "modern-retail": {
     key: "modern-retail",
@@ -82,6 +88,8 @@ export const THEMES = {
     radius: { sm: "0.125rem", md: "0.25rem", lg: "0.5rem" },
     button: "square",
     heroLayout: "clean",
+    productCard: "bordered",
+    headerLayout: "classic",
   },
   luxury: {
     key: "luxury",
@@ -100,6 +108,8 @@ export const THEMES = {
     radius: { sm: "0", md: "0", lg: "0.125rem" },
     button: "square",
     heroLayout: "minimal",
+    productCard: "minimal",
+    headerLayout: "centered",
   },
   beauty: {
     key: "beauty",
@@ -118,6 +128,8 @@ export const THEMES = {
     radius: { sm: "0.375rem", md: "0.75rem", lg: "1.25rem" },
     button: "pill",
     heroLayout: "editorial",
+    productCard: "minimal",
+    headerLayout: "centered",
   },
 } as const satisfies Record<string, ThemeDefinition>;
 

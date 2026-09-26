@@ -7,6 +7,7 @@ import { useActionState } from "react";
 import { TextInput } from "@/components/forms/controls";
 import { FormMessage } from "@/components/forms/form-message";
 import { SubmitButton } from "@/components/forms/submit-button";
+import { useActionForm } from "@/components/forms/use-action-form";
 import { idleState, type FormState } from "@/lib/validation/common";
 
 type DomainAction = (state: FormState, formData: FormData) => Promise<FormState>;
@@ -55,7 +56,11 @@ function RowForm({
 
 export function DomainsSection({ platformHost, dnsTarget, domains, entitled, canEdit, actions }: Props) {
   const t = useTranslations("settings.domains");
-  const [addState, addAction] = useActionState(actions.add, idleState as FormState);
+  const {
+    state: addState,
+    pending: addPending,
+    formProps: addProps,
+  } = useActionForm(actions.add, idleState as FormState);
 
   return (
     <div className="space-y-6">
@@ -138,7 +143,7 @@ export function DomainsSection({ platformHost, dnsTarget, domains, entitled, can
           )}
 
           {canEdit ? (
-            <form action={addAction} className="flex flex-col gap-3 sm:flex-row sm:items-end">
+            <form {...addProps} className="flex flex-col gap-3 sm:flex-row sm:items-end">
               <div className="flex-1">
                 <TextInput
                   label={t("addLabel")}
@@ -149,7 +154,9 @@ export function DomainsSection({ platformHost, dnsTarget, domains, entitled, can
                   autoComplete="off"
                 />
               </div>
-              <SubmitButton variant="secondary">{t("add")}</SubmitButton>
+              <SubmitButton variant="secondary" pending={addPending}>
+                {t("add")}
+              </SubmitButton>
             </form>
           ) : null}
           <FormMessage state={addState} />

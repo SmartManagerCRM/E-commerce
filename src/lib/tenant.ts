@@ -42,6 +42,7 @@ const activeSchema = baseSchema.extend({
   currency_exponent: z.number().int().min(0).max(4),
   timezone: z.string(),
   primary_domain: z.string().nullable(),
+  opening_hours: z.unknown().optional(),
   storefront: storefrontConfigSchema,
 });
 

@@ -99,7 +99,7 @@ test("owner joins through the invitation and configures the business", async ({ 
   await page.goto(`${CONSOLE}/en/t/${slug}/appearance`);
   await page.getByText("Luxury", { exact: true }).click();
   await page.locator("#primary-text").fill("#1D4E89");
-  await page.getByRole("button", { name: "Save changes" }).click();
+  await page.getByRole("button", { name: "Save changes" }).first().click();
   await expect(page.getByRole("status").filter({ hasText: "Changes saved." })).toBeVisible();
 
   // Logo upload (generated PNG) and a rejected non-image
@@ -193,10 +193,10 @@ test("platform admin activates the business and the storefront reflects its sett
   // Tenant resolution is cached for up to 60 s in the proxy; poll until live.
   await expect(async () => {
     await page.goto(`${storefront}/en`);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(`Welcome to E2E Café ${run}`, { timeout: 1000 });
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(`E2E Café ${run}`, { timeout: 1000 });
   }).toPass({ timeout: 75_000, intervals: [2_000, 5_000] });
 
-  await expect(page.getByText("Small-batch coffee, big heart.")).toBeVisible();
+  await expect(page.locator("#main").getByText("Small-batch coffee, big heart.")).toBeVisible();
   // Decorative inside the named home link, so it has empty alt text.
   const logo = page.locator("header img");
   await expect(logo).toBeVisible();
@@ -210,5 +210,5 @@ test("platform admin activates the business and the storefront reflects its sett
   expect(primary).toBe("#1D4E89");
 
   await page.goto(`${storefront}/ar`);
-  await expect(page.getByText("قهوة بكميات صغيرة وقلب كبير.")).toBeVisible();
+  await expect(page.locator("#main").getByText("قهوة بكميات صغيرة وقلب كبير.")).toBeVisible();
 });

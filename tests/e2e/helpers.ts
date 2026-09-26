@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, type Page } from "@playwright/test";
+import { expect, type Browser, type Page } from "@playwright/test";
 
 export const STORE_A = "http://roasters.localhost:3000";
 export const STORE_B = "http://coffeehouse.localhost:3000";
@@ -34,4 +34,37 @@ export async function expectNoA11yViolations(page: Page) {
 export async function expectNoHorizontalOverflow(page: Page) {
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(0);
+}
+
+/**
+ * Creates a brand-new active business through the real UI (platform admin →
+ * owner invitation → sign-up → activation) and returns the owner's page.
+ */
+export async function createActiveTenant(browser: Browser, slug: string, plan = "professional") {
+  const password = "E2e-Password-2026";
+  const ownerEmail = `owner-${slug}@e2e.test`;
+  const admin = await (await browser.newContext({ locale: "en-US" })).newPage();
+  await signIn(admin, USERS.platform);
+  await admin.goto(`${CONSOLE}/en/platform/tenants/new`);
+  await admin.getByLabel("Business name").fill(`Store ${slug}`);
+  await admin.getByLabel("Store address").fill(slug);
+  await admin.getByLabel("Plan").selectOption(plan);
+  await admin.getByLabel("Default language").selectOption("en");
+  await admin.getByLabel("Owner’s email").fill(ownerEmail);
+  await admin.getByRole("button", { name: "Create business" }).click();
+  const invite = await admin.getByLabel("Owner invitation link").inputValue();
+  await admin.getByRole("link", { name: "Open business" }).click();
+  await admin.locator("#tenant-status").selectOption("active");
+  await admin.getByRole("button", { name: "Update" }).first().click();
+  await expect(admin.getByRole("status").filter({ hasText: "Changes saved." }).first()).toBeVisible();
+  await admin.context().close();
+
+  const owner = await (await browser.newContext({ locale: "en-US" })).newPage();
+  await owner.goto(invite);
+  await owner.getByLabel("Full name").fill("Owner");
+  await owner.getByLabel("Password", { exact: true }).fill(password);
+  await owner.getByLabel("Confirm password").fill(password);
+  await owner.getByRole("button", { name: "Create account and join" }).click();
+  await owner.waitForURL(`${CONSOLE}/en/t/${slug}`);
+  return { owner, storefront: `http://${slug}.localhost:3000` };
 }

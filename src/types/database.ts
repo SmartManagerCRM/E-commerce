@@ -171,6 +171,53 @@ export type Database = {
         };
         Relationships: [];
       };
+      newsletter_subscribers: {
+        Row: {
+          consent_at: string;
+          consent_source: string;
+          created_at: string;
+          email: string;
+          id: string;
+          locale: string;
+          status: string;
+          tenant_id: string;
+          unsubscribed_at: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          consent_at?: string;
+          consent_source?: string;
+          created_at?: string;
+          email: string;
+          id?: string;
+          locale: string;
+          status?: string;
+          tenant_id: string;
+          unsubscribed_at?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          consent_at?: string;
+          consent_source?: string;
+          created_at?: string;
+          email?: string;
+          id?: string;
+          locale?: string;
+          status?: string;
+          tenant_id?: string;
+          unsubscribed_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "newsletter_subscribers_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       permissions: {
         Row: {
           description: string | null;
@@ -856,6 +903,10 @@ export type Database = {
           tenant_id: string;
           tenant_status: string;
         }[];
+      };
+      newsletter_subscribe: {
+        Args: { p_email: string; p_locale: string; p_source?: string; p_tenant: string };
+        Returns: undefined;
       };
       platform_create_tenant: {
         Args: {

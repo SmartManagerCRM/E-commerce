@@ -18,16 +18,11 @@
     "nav": {
       "home": "Accueil",
       "shop": "Boutique",
-      "about": "À propos",
+      "about": "Notre histoire",
       "contact": "Contact",
-      "mainNavigation": "Navigation principale"
-    },
-    "home": {
-      "welcome": "Bienvenue chez {name}",
-      "openingSoonTitle": "Notre boutique en ligne est en préparation",
-      "openingSoonBody": "Les produits et la commande en ligne arrivent bientôt. En attendant, venez nous voir ou contactez-nous.",
-      "visitUs": "Nous rendre visite",
-      "contactUs": "Nous contacter"
+      "mainNavigation": "Navigation principale",
+      "visit": "Nous rendre visite",
+      "newsletter": "Newsletter"
     },
     "footer": {
       "contact": "Contact",
@@ -35,13 +30,36 @@
       "phone": "Téléphone",
       "email": "E-mail",
       "rights": "© {year} {name}. Tous droits réservés.",
-      "poweredBy": "Propulsé par SmartManager"
+      "poweredBy": "Propulsé par SmartManager",
+      "follow": "Suivez-nous"
     },
     "unavailable": {
       "suspendedTitle": "Cette boutique est temporairement indisponible",
       "suspendedBody": "Merci de revenir plus tard.",
       "onboardingTitle": "Ouverture prochaine",
       "onboardingBody": "{name} prépare sa boutique en ligne. Revenez très bientôt."
+    },
+    "sections": {
+      "testimonialsTitle": "Ce que disent nos clients",
+      "visitTitle": "Nous rendre visite",
+      "directions": "Itinéraire",
+      "openingHours": "Horaires d’ouverture",
+      "today": "Aujourd’hui",
+      "closed": "Fermé",
+      "newsletterTitle": "Restez informé",
+      "newsletterSubtitle": "Nouveautés, offres de saison et histoires — sans spam.",
+      "newsletterThanks": "Merci, vous êtes inscrit(e).",
+      "email": "Adresse e-mail",
+      "emailPlaceholder": "vous@exemple.com",
+      "subscribe": "S’inscrire",
+      "subscribing": "Inscription…",
+      "consent": "J’accepte de recevoir des e-mails de {business}. Je peux me désinscrire à tout moment.",
+      "errors": {
+        "generic": "Une erreur est survenue. Veuillez réessayer.",
+        "invalidEmail": "Saisissez une adresse e-mail valide.",
+        "consentRequired": "Veuillez confirmer votre accord pour recevoir des e-mails.",
+        "rateLimited": "Trop de tentatives. Réessayez plus tard."
+      }
     }
   },
   "platform": {
@@ -192,7 +210,12 @@
       "inviteNotFound": "Cette invitation n’est pas valide.",
       "passwordMismatch": "Les mots de passe ne correspondent pas.",
       "weakPassword": "Utilisez au moins 10 caractères avec majuscules, minuscules et un chiffre.",
-      "accountExists": "Un compte existe déjà pour cet e-mail. Connectez-vous pour accepter."
+      "accountExists": "Un compte existe déjà pour cet e-mail. Connectez-vous pour accepter.",
+      "tooManySections": "Une page d’accueil peut contenir 20 sections au maximum.",
+      "sectionExists": "Cette section ne peut être ajoutée qu’une fois.",
+      "invalidUrl": "Les liens doivent commencer par https://",
+      "invalidHours": "Vérifiez les horaires : chaque jour ouvert nécessite des heures d’ouverture et de fermeture différentes.",
+      "invalidLink": "Utilisez une page de la boutique (/…), une section (#…), une adresse https://, un lien tel: ou mailto:."
     }
   },
   "settings": {
@@ -242,6 +265,26 @@
       "empty": "Aucun domaine personnalisé.",
       "addLabel": "Ajouter un domaine",
       "add": "Ajouter"
+    },
+    "hours": {
+      "title": "Horaires d’ouverture",
+      "description": "Affichés sur votre boutique et dans les résultats de recherche.",
+      "days": {
+        "mon": "Lundi",
+        "tue": "Mardi",
+        "wed": "Mercredi",
+        "thu": "Jeudi",
+        "fri": "Vendredi",
+        "sat": "Samedi",
+        "sun": "Dimanche"
+      },
+      "open": "Ouvert",
+      "closed": "Fermé",
+      "unset": "Non affiché",
+      "statusFor": "Statut du {day}",
+      "opensAt": "Ouverture le {day}",
+      "closesAt": "Fermeture le {day}",
+      "hint": "Une heure de fermeture antérieure à l’ouverture signifie après minuit."
     }
   },
   "appearance": {
@@ -297,6 +340,53 @@
       "faviconAlt": "Icône actuelle",
       "upload": "Envoyer",
       "remove": "Supprimer"
+    },
+    "homepageTitle": "Page d’accueil et aperçu",
+    "homepageDescription": "Organisez les sections de votre page d’accueil et prévisualisez votre design avec des produits d’exemple.",
+    "editHomepage": "Modifier la page d’accueil",
+    "openPreview": "Aperçu du design",
+    "design": {
+      "title": "Détails du design",
+      "description": "Ajustez la typographie, les boutons, les fiches produits, l’en-tête et les réseaux sociaux.",
+      "typographyLabel": "Typographie",
+      "buttonsLabel": "Style des boutons",
+      "cardsLabel": "Fiches produits",
+      "headerLabel": "En-tête",
+      "typography": {
+        "theme": "Selon le thème",
+        "serif-display": "Serif moderne",
+        "classic-serif": "Serif classique",
+        "sans": "Sans serif"
+      },
+      "buttons": {
+        "theme": "Selon le thème",
+        "pill": "Pilule",
+        "rounded": "Arrondi",
+        "square": "Carré"
+      },
+      "cards": {
+        "theme": "Selon le thème",
+        "minimal": "Minimal",
+        "bordered": "Encadré",
+        "elevated": "En relief"
+      },
+      "header": {
+        "theme": "Selon le thème",
+        "classic": "Logo sur le côté",
+        "centered": "Logo centré"
+      },
+      "sticky": "Garder l’en-tête visible au défilement",
+      "announcement": "Bandeau d’annonce (facultatif)",
+      "social": "Réseaux sociaux",
+      "socialHint": "Liens complets commençant par https://. Affichés en pied de page.",
+      "networks": {
+        "instagram": "Instagram",
+        "tiktok": "TikTok",
+        "x": "X",
+        "snapchat": "Snapchat",
+        "facebook": "Facebook",
+        "whatsapp": "WhatsApp"
+      }
     }
   },
   "staff": {
@@ -427,6 +517,142 @@
       "forceOn": "Toujours activé",
       "forceOff": "Toujours désactivé",
       "limit": "Limite"
+    }
+  },
+  "catalog": {
+    "salePrice": "Prix soldé",
+    "originalPrice": "Prix initial",
+    "ratingLabel": "Noté {value} sur 5",
+    "reviews": "{count, plural, one {# avis} other {# avis}}",
+    "decrease": "Diminuer la quantité",
+    "increase": "Augmenter la quantité",
+    "quantity": "Quantité",
+    "size": "Format",
+    "soldOut": "Épuisé",
+    "lowStock": "Plus que quelques-uns",
+    "inStock": "En stock — prêt à expédier",
+    "badge": {
+      "sale": "Promo",
+      "new": "Nouveau",
+      "bestseller": "Meilleure vente"
+    },
+    "galleryLabel": "Images de {name}",
+    "thumbnails": "Choisir une image",
+    "showImage": "Afficher l’image {index} sur {total}",
+    "addToCart": "Ajouter au panier",
+    "buyNow": "Acheter maintenant",
+    "deliveryInfo": "Livraison en 1 à 3 jours · offerte dès un certain montant",
+    "pickupInfo": "Retrait gratuit en boutique"
+  },
+  "homepageEditor": {
+    "title": "Page d’accueil",
+    "subtitle": "Choisissez les sections de votre page d’accueil et leur ordre.",
+    "back": "Apparence",
+    "viewStore": "Voir la boutique",
+    "shown": "Visible",
+    "hidden": "Masqué",
+    "moveUpNamed": "Monter {name}",
+    "moveDownNamed": "Descendre {name}",
+    "hideNamed": "Masquer {name}",
+    "showNamed": "Afficher {name}",
+    "removeNamed": "Supprimer {name}",
+    "edit": "Modifier {name}",
+    "closeEditor": "Fermer l’éditeur",
+    "addTitle": "Ajouter une section",
+    "add": "Ajouter",
+    "sectionType": "Section",
+    "upcomingTitle": "Autres sections",
+    "upcomingDescription": "Ces sections deviennent disponibles avec les modules correspondants.",
+    "requires": {
+      "catalog": "Après l’ajout de produits",
+      "booking": "Avec le module réservations",
+      "loyalty": "Avec le module fidélité"
+    },
+    "types": {
+      "hero": "Bannière principale",
+      "promo_banner": "Bandeau promotionnel",
+      "brand_story": "Notre histoire",
+      "testimonials": "Témoignages",
+      "location": "Adresse et horaires",
+      "newsletter": "Newsletter",
+      "featured_categories": "Catégories à la une",
+      "featured_products": "Produits à la une",
+      "best_sellers": "Meilleures ventes",
+      "product_collection": "Collection de produits",
+      "loyalty": "Fidélité",
+      "booking_cta": "Réservation"
+    },
+    "fields": {
+      "button": "Bouton",
+      "buttonLabel": "Texte du bouton",
+      "buttonLink": "Lien du bouton",
+      "buttonLinkHint": "Une page de votre boutique (/…), une section (#visit), un site (https://…) ou un téléphone (tel:…). Laissez vide pour ne pas afficher de bouton.",
+      "image": "Image",
+      "imageCurrent": "Une image est définie.",
+      "imageNone": "Pas encore d’image.",
+      "imageHint": "PNG, JPEG ou WebP jusqu’à 8 Mo. Idéal : photo paysage d’au moins 2000 px.",
+      "removeImage": "Supprimer l’image actuelle",
+      "layout": "Mise en page",
+      "heroVariant": {
+        "split": "Texte et image côte à côte",
+        "centered": "Texte centré",
+        "image": "Image pleine largeur"
+      },
+      "eyebrow": "Surtitre",
+      "title": "Titre",
+      "subtitle": "Texte",
+      "message": "Message",
+      "tone": "Couleur",
+      "toneOption": {
+        "primary": "Couleur principale",
+        "accent": "Couleur d’accent",
+        "dark": "Sombre"
+      },
+      "storyVariant": {
+        "image_start": "Image d’abord",
+        "image_end": "Texte d’abord"
+      },
+      "body": "Récit",
+      "testimonial": "Témoignage {n}",
+      "quote": "Citation",
+      "author": "Nom",
+      "authorDetail": "Précision (ex. ville)",
+      "testimonialsHint": "Ne publiez que de vrais avis clients dont vous avez l’autorisation.",
+      "showHours": "Afficher les horaires",
+      "showDirections": "Afficher un lien « Itinéraire »",
+      "locationHint": "L’adresse, le téléphone et les horaires proviennent des Paramètres.",
+      "newsletterHint": "Les inscriptions sont enregistrées avec le consentement du client."
+    }
+  },
+  "designPreview": {
+    "title": "Aperçu du design",
+    "back": "Apparence",
+    "notice": "Contenu d’exemple montrant comment votre thème met en forme produits et pages. Les boutons sont inactifs et rien n’est publié.",
+    "typeEyebrow": "Typographie",
+    "typeHeadline": "Façonné lentement, servi avec soin",
+    "typeBody": "Le texte courant est réglé pour une lecture confortable sur tous les écrans, dans toutes les langues de votre boutique.",
+    "primaryButton": "Acheter",
+    "secondaryButton": "En savoir plus",
+    "ghostButton": "Discret",
+    "linkButton": "Lien texte",
+    "badgeSale": "Promo",
+    "badgeNew": "Nouveau",
+    "badgeOutline": "Édition limitée",
+    "badgeSuccess": "En stock",
+    "gridEyebrow": "Fiches produits",
+    "gridTitle": "À la une cette semaine",
+    "detailTitle": "Page produit",
+    "samples": {
+      "p1": "Éthiopie origine unique",
+      "p1Sub": "Floral · Agrumes · Miel",
+      "p1Description": "Un café lumineux des hauts plateaux de Guji, lavé et torréfié clair pour préserver ses notes de jasmin et de bergamote.",
+      "p2": "Assemblage espresso maison",
+      "p2Sub": "Chocolat · Caramel",
+      "p3": "Colombie décaféiné",
+      "p3Sub": "Pomme rouge · Cacao",
+      "p4": "Coffret cold brew",
+      "p4Sub": "Prêt en 12 heures",
+      "sizes": "{count} formats"
     }
   }
 }

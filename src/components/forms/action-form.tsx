@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, type ReactNode } from "react";
+import { type ReactNode } from "react";
 
 import type { ButtonProps } from "@/components/ui/button";
 import { cn } from "@/lib/cn";
@@ -8,6 +8,7 @@ import { idleState, type FormState } from "@/lib/validation/common";
 
 import { FormMessage } from "./form-message";
 import { SubmitButton } from "./submit-button";
+import { useActionForm } from "@/components/forms/use-action-form";
 
 type ActionFormProps = {
   action: (state: FormState, formData: FormData) => Promise<FormState>;
@@ -27,12 +28,16 @@ export function ActionForm({
   variant = "secondary",
   size = "sm",
 }: ActionFormProps) {
-  const [state, formAction] = useActionState(action, idleState as FormState);
+  const {
+    state: state,
+    pending: statePending,
+    formProps: formActionProps,
+  } = useActionForm(action, idleState as FormState);
   return (
-    <form action={formAction} className={cn("space-y-2", className)}>
+    <form {...formActionProps} className={cn("space-y-2", className)}>
       <div className="flex flex-wrap items-end gap-3">
         {children}
-        <SubmitButton variant={variant} size={size}>
+        <SubmitButton pending={statePending} variant={variant} size={size}>
           {submitLabel}
         </SubmitButton>
       </div>

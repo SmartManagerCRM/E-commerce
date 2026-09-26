@@ -23,6 +23,9 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
+    // Only for the local Supabase stack in development (127.0.0.1). The hosted
+    // project is public, so production never enables local-IP fetching (SSRF).
+    dangerouslyAllowLocalIP: supabaseUrl !== null && ["127.0.0.1", "localhost"].includes(supabaseUrl.hostname),
     remotePatterns: supabaseUrl
       ? [
           {

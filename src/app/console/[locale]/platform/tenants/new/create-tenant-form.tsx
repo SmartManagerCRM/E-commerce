@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useActionState } from "react";
 
 import { Select, TextInput } from "@/components/forms/controls";
 import { CopyLink } from "@/components/forms/copy-link";
@@ -11,6 +10,7 @@ import { buttonClasses } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { LOCALES, LOCALE_NATIVE_NAMES } from "@/i18n/locales";
 import { idleState, type FormState } from "@/lib/validation/common";
+import { useActionForm } from "@/components/forms/use-action-form";
 
 type Result = { tenantId: string; link: string };
 
@@ -25,7 +25,11 @@ type Props = {
 export function CreateTenantForm({ action, plans, currencies, businessTypes, timezones }: Props) {
   const t = useTranslations("platformAdmin.create");
   const tf = useTranslations("forms");
-  const [state, formAction] = useActionState(action, idleState as FormState<Result>);
+  const {
+    state: state,
+    pending: statePending,
+    formProps: formActionProps,
+  } = useActionForm(action, idleState as FormState<Result>);
   const err = (key: string) =>
     state.status === "error" && state.fieldErrors?.[key] ? tf("errors.invalidField") : undefined;
 
@@ -43,7 +47,7 @@ export function CreateTenantForm({ action, plans, currencies, businessTypes, tim
   }
 
   return (
-    <form action={formAction} className="space-y-6">
+    <form {...formActionProps} className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
         <TextInput
           label={t("businessName")}
@@ -119,7 +123,9 @@ export function CreateTenantForm({ action, plans, currencies, businessTypes, tim
       />
 
       <div className="flex flex-wrap items-center gap-4 border-t border-border pt-5">
-        <SubmitButton pendingLabel={tf("saving")}>{t("submit")}</SubmitButton>
+        <SubmitButton pending={statePending} pendingLabel={tf("saving")}>
+          {t("submit")}
+        </SubmitButton>
         <FormMessage state={state} />
       </div>
     </form>

@@ -8,6 +8,7 @@ import sharp from "sharp";
  */
 const ACCEPTED = new Set(["image/png", "image/jpeg", "image/webp"]);
 export const MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
+export const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
 
 export type ProcessedImage = { buffer: Buffer; contentType: string; extension: string };
 
@@ -17,9 +18,9 @@ export class ImageValidationError extends Error {
   }
 }
 
-async function readValidated(file: File | null): Promise<Buffer> {
+async function readValidated(file: File | null, maxBytes = MAX_UPLOAD_BYTES): Promise<Buffer> {
   if (!file || file.size === 0) throw new ImageValidationError("missing");
-  if (file.size > MAX_UPLOAD_BYTES) throw new ImageValidationError("too_large");
+  if (file.size > maxBytes) throw new ImageValidationError("too_large");
   if (!ACCEPTED.has(file.type)) throw new ImageValidationError("unsupported");
   const buffer = Buffer.from(await file.arrayBuffer());
   // Trust the decoded content, not the declared type.
@@ -49,4 +50,15 @@ export async function processFavicon(file: File | null): Promise<ProcessedImage>
     .png()
     .toBuffer();
   return { buffer, contentType: "image/png", extension: "png" };
+}
+
+/** Section photography: max 2400px on the long edge, WebP q82 (next/image serves smaller sizes). */
+export async function processSectionImage(file: File | null): Promise<ProcessedImage> {
+  const input = await readValidated(file, MAX_PHOTO_BYTES);
+  const buffer = await sharp(input)
+    .rotate()
+    .resize(2400, 2400, { fit: "inside", withoutEnlargement: true })
+    .webp({ quality: 82 })
+    .toBuffer();
+  return { buffer, contentType: "image/webp", extension: "webp" };
 }

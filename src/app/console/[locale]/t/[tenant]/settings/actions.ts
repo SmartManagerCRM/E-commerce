@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { formDataToObject } from "@/lib/form-data";
+import { DAYS, openingHoursStrictSchema } from "@/lib/storefront/hours";
 import { fieldErrorsFrom, type FormState } from "@/lib/validation/common";
 import { businessProfileSchema, customDomainSchema } from "@/lib/validation/tenant";
 import { actionContext, storefrontChanged } from "@/server/admin/guards";
@@ -133,4 +134,36 @@ export async function removeCustomDomain(slug: string, _prev: FormState, formDat
   storefrontChanged();
   revalidatePath(SETTINGS_PATH, "page");
   return { status: "success", message: "domainRemoved" };
+}
+
+/** Weekly opening hours of the default branch (one interval per day in the UI). */
+export async function updateOpeningHours(slug: string, _prev: FormState, formData: FormData): Promise<FormState> {
+  const context = await actionContext(slug, "settings.write");
+  if (!context) return { status: "error", error: "forbidden" };
+
+  const hours: Record<string, { open: string; close: string }[]> = {};
+  for (const day of DAYS) {
+    const status = formData.get(`${day}.status`);
+    if (status === "closed") hours[day] = [];
+    if (status === "open") {
+      hours[day] = [
+        { open: String(formData.get(`${day}.open`) ?? ""), close: String(formData.get(`${day}.close`) ?? "") },
+      ];
+    }
+  }
+  const parsed = openingHoursStrictSchema.safeParse(hours);
+  if (!parsed.success) return { status: "error", error: "invalidHours" };
+
+  const supabase = await createUserClient();
+  const { data, error } = await supabase
+    .from("branches")
+    .update({ opening_hours: parsed.data })
+    .eq("tenant_id", context.tenant.id)
+    .eq("is_default", true)
+    .select("id");
+  if (error || !data?.length) return { status: "error", error: error ? "generic" : "forbidden" };
+
+  storefrontChanged();
+  revalidatePath(SETTINGS_PATH, "page");
+  return { status: "success", message: "saved" };
 }

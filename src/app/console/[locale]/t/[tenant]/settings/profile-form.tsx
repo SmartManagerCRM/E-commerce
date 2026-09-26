@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useActionState } from "react";
 
 import { Select, TextInput } from "@/components/forms/controls";
 import { FormMessage } from "@/components/forms/form-message";
@@ -11,6 +10,7 @@ import type { LocalizedText } from "@/lib/localized";
 import { idleState, type FormState } from "@/lib/validation/common";
 
 import { LocalizedFields } from "@/components/forms/localized-fields";
+import { useActionForm } from "@/components/forms/use-action-form";
 
 export type ProfileDefaults = {
   business_name: string;
@@ -37,12 +37,16 @@ type Props = {
 export function ProfileForm({ action, defaults, timezones, canEdit }: Props) {
   const t = useTranslations("settings.profile");
   const tf = useTranslations("forms");
-  const [state, formAction] = useActionState(action, idleState as FormState);
+  const {
+    state: state,
+    pending: statePending,
+    formProps: formActionProps,
+  } = useActionForm(action, idleState as FormState);
   const err = (key: string) =>
     state.status === "error" && state.fieldErrors?.[key] ? tf("errors.invalidField") : undefined;
 
   return (
-    <form action={formAction} className="space-y-8">
+    <form {...formActionProps} className="space-y-8">
       <fieldset disabled={!canEdit} className="space-y-8">
         <div className="grid gap-4 md:grid-cols-2">
           <TextInput
@@ -156,7 +160,11 @@ export function ProfileForm({ action, defaults, timezones, canEdit }: Props) {
       </fieldset>
 
       <div className="flex flex-wrap items-center gap-4 border-t border-border pt-5">
-        {canEdit ? <SubmitButton pendingLabel={tf("saving")}>{tf("save")}</SubmitButton> : null}
+        {canEdit ? (
+          <SubmitButton pending={statePending} pendingLabel={tf("saving")}>
+            {tf("save")}
+          </SubmitButton>
+        ) : null}
         <FormMessage state={state} />
       </div>
     </form>

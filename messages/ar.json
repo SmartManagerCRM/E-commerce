@@ -18,16 +18,11 @@
     "nav": {
       "home": "الرئيسية",
       "shop": "المتجر",
-      "about": "من نحن",
+      "about": "قصتنا",
       "contact": "تواصل معنا",
-      "mainNavigation": "التنقل الرئيسي"
-    },
-    "home": {
-      "welcome": "أهلاً بكم في {name}",
-      "openingSoonTitle": "متجرنا الإلكتروني قيد التجهيز",
-      "openingSoonBody": "ستظهر المنتجات والطلب عبر الإنترنت هنا قريباً. وحتى ذلك الحين، يسعدنا استقبالكم أو تواصلكم معنا.",
-      "visitUs": "زورونا",
-      "contactUs": "تواصلوا معنا"
+      "mainNavigation": "التنقل الرئيسي",
+      "visit": "زورونا",
+      "newsletter": "النشرة البريدية"
     },
     "footer": {
       "contact": "التواصل",
@@ -35,13 +30,36 @@
       "phone": "الهاتف",
       "email": "البريد الإلكتروني",
       "rights": "© {year} {name}. جميع الحقوق محفوظة.",
-      "poweredBy": "مدعوم من SmartManager"
+      "poweredBy": "مدعوم من SmartManager",
+      "follow": "تابعونا"
     },
     "unavailable": {
       "suspendedTitle": "هذا المتجر غير متاح مؤقتاً",
       "suspendedBody": "يُرجى العودة لاحقاً.",
       "onboardingTitle": "قريباً",
       "onboardingBody": "يعمل {name} على تجهيز متجره الإلكتروني. يُرجى العودة قريباً."
+    },
+    "sections": {
+      "testimonialsTitle": "ماذا يقول عملاؤنا",
+      "visitTitle": "زورونا",
+      "directions": "الاتجاهات",
+      "openingHours": "ساعات العمل",
+      "today": "اليوم",
+      "closed": "مغلق",
+      "newsletterTitle": "ابقَ على اطلاع",
+      "newsletterSubtitle": "وصل حديثاً وعروض موسمية وقصص — دون رسائل مزعجة.",
+      "newsletterThanks": "شكراً لك — تم اشتراكك.",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "you@example.com",
+      "subscribe": "اشترك",
+      "subscribing": "جارٍ الاشتراك…",
+      "consent": "أوافق على تلقي رسائل بريد إلكتروني من {business}، ويمكنني إلغاء الاشتراك في أي وقت.",
+      "errors": {
+        "generic": "حدث خطأ ما. يُرجى المحاولة مرة أخرى.",
+        "invalidEmail": "أدخل بريداً إلكترونياً صالحاً.",
+        "consentRequired": "يُرجى تأكيد موافقتك على تلقي الرسائل.",
+        "rateLimited": "محاولات كثيرة. حاول لاحقاً."
+      }
     }
   },
   "platform": {
@@ -192,7 +210,12 @@
       "inviteNotFound": "هذه الدعوة غير صالحة.",
       "passwordMismatch": "كلمتا المرور غير متطابقتين.",
       "weakPassword": "استخدم 10 أحرف على الأقل تتضمن حروفاً كبيرة وصغيرة ورقماً.",
-      "accountExists": "يوجد حساب بهذا البريد الإلكتروني بالفعل. سجّل الدخول للقبول."
+      "accountExists": "يوجد حساب بهذا البريد الإلكتروني بالفعل. سجّل الدخول للقبول.",
+      "tooManySections": "يمكن أن تحتوي الصفحة الرئيسية على 20 قسماً كحد أقصى.",
+      "sectionExists": "يمكن إضافة هذا القسم مرة واحدة فقط.",
+      "invalidUrl": "يجب أن تبدأ الروابط بـ https://",
+      "invalidHours": "راجع ساعات العمل: كل يوم عمل يحتاج وقتي فتح وإغلاق مختلفين.",
+      "invalidLink": "استخدم صفحة من المتجر (/…) أو قسماً (#…) أو عنوان https:// أو رابط tel: أو mailto:."
     }
   },
   "settings": {
@@ -242,6 +265,26 @@
       "empty": "لا يوجد نطاق مخصص بعد.",
       "addLabel": "إضافة نطاق",
       "add": "إضافة النطاق"
+    },
+    "hours": {
+      "title": "ساعات العمل",
+      "description": "تظهر في متجرك وفي نتائج البحث.",
+      "days": {
+        "mon": "الاثنين",
+        "tue": "الثلاثاء",
+        "wed": "الأربعاء",
+        "thu": "الخميس",
+        "fri": "الجمعة",
+        "sat": "السبت",
+        "sun": "الأحد"
+      },
+      "open": "مفتوح",
+      "closed": "مغلق",
+      "unset": "غير معروض",
+      "statusFor": "حالة يوم {day}",
+      "opensAt": "يفتح يوم {day} الساعة",
+      "closesAt": "يغلق يوم {day} الساعة",
+      "hint": "وقت إغلاق أبكر من وقت الفتح يعني بعد منتصف الليل."
     }
   },
   "appearance": {
@@ -297,6 +340,53 @@
       "faviconAlt": "الأيقونة الحالية",
       "upload": "رفع",
       "remove": "إزالة"
+    },
+    "homepageTitle": "الصفحة الرئيسية والمعاينة",
+    "homepageDescription": "رتّب أقسام صفحتك الرئيسية وعاين تصميمك بمنتجات نموذجية.",
+    "editHomepage": "تعديل الصفحة الرئيسية",
+    "openPreview": "معاينة التصميم",
+    "design": {
+      "title": "تفاصيل التصميم",
+      "description": "اضبط الخطوط والأزرار وبطاقات المنتجات والترويسة وروابط التواصل.",
+      "typographyLabel": "الخطوط",
+      "buttonsLabel": "نمط الأزرار",
+      "cardsLabel": "بطاقات المنتجات",
+      "headerLabel": "الترويسة",
+      "typography": {
+        "theme": "حسب النمط",
+        "serif-display": "خط مذيّل عصري",
+        "classic-serif": "خط مذيّل كلاسيكي",
+        "sans": "خط بدون تذييل"
+      },
+      "buttons": {
+        "theme": "حسب النمط",
+        "pill": "بيضاوي",
+        "rounded": "مستدير الحواف",
+        "square": "مربع"
+      },
+      "cards": {
+        "theme": "حسب النمط",
+        "minimal": "بسيط",
+        "bordered": "بإطار",
+        "elevated": "بارز"
+      },
+      "header": {
+        "theme": "حسب النمط",
+        "classic": "الشعار على الجانب",
+        "centered": "الشعار في المنتصف"
+      },
+      "sticky": "إبقاء الترويسة ظاهرة أثناء التمرير",
+      "announcement": "شريط الإعلانات (اختياري)",
+      "social": "روابط التواصل الاجتماعي",
+      "socialHint": "روابط كاملة تبدأ بـ https://، تظهر في التذييل.",
+      "networks": {
+        "instagram": "إنستغرام",
+        "tiktok": "تيك توك",
+        "x": "إكس",
+        "snapchat": "سناب شات",
+        "facebook": "فيسبوك",
+        "whatsapp": "واتساب"
+      }
     }
   },
   "staff": {
@@ -427,6 +517,142 @@
       "forceOn": "مفعّل دائماً",
       "forceOff": "معطّل دائماً",
       "limit": "الحد"
+    }
+  },
+  "catalog": {
+    "salePrice": "سعر التخفيض",
+    "originalPrice": "السعر الأصلي",
+    "ratingLabel": "التقييم {value} من 5",
+    "reviews": "{count, plural, zero {لا توجد مراجعات} one {مراجعة واحدة} two {مراجعتان} few {# مراجعات} many {# مراجعة} other {# مراجعة}}",
+    "decrease": "إنقاص الكمية",
+    "increase": "زيادة الكمية",
+    "quantity": "الكمية",
+    "size": "الحجم",
+    "soldOut": "نفدت الكمية",
+    "lowStock": "بقي عدد قليل",
+    "inStock": "متوفر — جاهز للشحن",
+    "badge": {
+      "sale": "تخفيض",
+      "new": "جديد",
+      "bestseller": "الأكثر مبيعاً"
+    },
+    "galleryLabel": "صور {name}",
+    "thumbnails": "اختر صورة",
+    "showImage": "عرض الصورة {index} من {total}",
+    "addToCart": "أضف إلى السلة",
+    "buyNow": "اشترِ الآن",
+    "deliveryInfo": "التوصيل خلال 1–3 أيام · مجاني فوق مبلغ معيّن",
+    "pickupInfo": "استلام مجاني من المتجر"
+  },
+  "homepageEditor": {
+    "title": "الصفحة الرئيسية",
+    "subtitle": "اختر الأقسام التي تظهر في صفحتك الرئيسية وترتيبها.",
+    "back": "المظهر",
+    "viewStore": "عرض المتجر",
+    "shown": "ظاهر",
+    "hidden": "مخفي",
+    "moveUpNamed": "تحريك {name} للأعلى",
+    "moveDownNamed": "تحريك {name} للأسفل",
+    "hideNamed": "إخفاء {name}",
+    "showNamed": "إظهار {name}",
+    "removeNamed": "حذف {name}",
+    "edit": "تعديل {name}",
+    "closeEditor": "إغلاق المحرر",
+    "addTitle": "إضافة قسم",
+    "add": "إضافة القسم",
+    "sectionType": "القسم",
+    "upcomingTitle": "أقسام إضافية",
+    "upcomingDescription": "تتوفر هذه الأقسام عند تفعيل الوحدات المرتبطة بها.",
+    "requires": {
+      "catalog": "بعد إضافة المنتجات",
+      "booking": "مع وحدة الحجوزات",
+      "loyalty": "مع وحدة الولاء"
+    },
+    "types": {
+      "hero": "الواجهة الرئيسية",
+      "promo_banner": "شريط ترويجي",
+      "brand_story": "قصة العلامة",
+      "testimonials": "آراء العملاء",
+      "location": "الموقع وساعات العمل",
+      "newsletter": "النشرة البريدية",
+      "featured_categories": "فئات مميزة",
+      "featured_products": "منتجات مميزة",
+      "best_sellers": "الأكثر مبيعاً",
+      "product_collection": "مجموعة منتجات",
+      "loyalty": "الولاء",
+      "booking_cta": "الحجز"
+    },
+    "fields": {
+      "button": "الزر",
+      "buttonLabel": "نص الزر",
+      "buttonLink": "رابط الزر",
+      "buttonLinkHint": "صفحة في متجرك (/…) أو قسم (#visit) أو موقع (https://…) أو رقم هاتف (tel:…). اتركه فارغاً لإخفاء الزر.",
+      "image": "الصورة",
+      "imageCurrent": "تم تعيين صورة.",
+      "imageNone": "لا توجد صورة بعد.",
+      "imageHint": "PNG أو JPEG أو WebP حتى 8 ميغابايت. يُفضّل صورة أفقية بعرض 2000 بكسل على الأقل.",
+      "removeImage": "إزالة الصورة الحالية",
+      "layout": "التخطيط",
+      "heroVariant": {
+        "split": "نص وصورة جنباً إلى جنب",
+        "centered": "نص في المنتصف",
+        "image": "صورة بعرض كامل"
+      },
+      "eyebrow": "عنوان صغير",
+      "title": "العنوان",
+      "subtitle": "النص",
+      "message": "الرسالة",
+      "tone": "اللون",
+      "toneOption": {
+        "primary": "اللون الأساسي",
+        "accent": "اللون الثانوي",
+        "dark": "داكن"
+      },
+      "storyVariant": {
+        "image_start": "الصورة أولاً",
+        "image_end": "النص أولاً"
+      },
+      "body": "القصة",
+      "testimonial": "رأي {n}",
+      "quote": "الاقتباس",
+      "author": "الاسم",
+      "authorDetail": "تفاصيل (مثل المدينة)",
+      "testimonialsHint": "انشر فقط آراء حقيقية لعملاء أذنوا باستخدامها.",
+      "showHours": "إظهار ساعات العمل",
+      "showDirections": "إظهار رابط «الاتجاهات»",
+      "locationHint": "العنوان والهاتف وساعات العمل مأخوذة من الإعدادات.",
+      "newsletterHint": "تُحفظ الاشتراكات بموافقة العميل."
+    }
+  },
+  "designPreview": {
+    "title": "معاينة التصميم",
+    "back": "المظهر",
+    "notice": "محتوى نموذجي يوضح كيف يعرض نمطك المنتجات والصفحات. الأزرار هنا غير مفعّلة ولا يُنشر أي شيء.",
+    "typeEyebrow": "الخطوط",
+    "typeHeadline": "نصنعه بتأنٍّ ونقدّمه بعناية",
+    "typeBody": "يُضبط النص الأساسي لقراءة مريحة على كل الشاشات وبكل لغات متجرك.",
+    "primaryButton": "تسوّق الآن",
+    "secondaryButton": "اعرف المزيد",
+    "ghostButton": "بسيط",
+    "linkButton": "رابط نصي",
+    "badgeSale": "تخفيض",
+    "badgeNew": "جديد",
+    "badgeOutline": "كمية محدودة",
+    "badgeSuccess": "متوفر",
+    "gridEyebrow": "بطاقات المنتجات",
+    "gridTitle": "مميز هذا الأسبوع",
+    "detailTitle": "صفحة المنتج",
+    "samples": {
+      "p1": "إثيوبي أحادي المصدر",
+      "p1Sub": "زهري · حمضيات · عسل",
+      "p1Description": "قهوة مشرقة من مرتفعات غوجي، مغسولة ومحمّصة تحميصاً خفيفاً لتحتفظ بنكهات الياسمين والبرغموت.",
+      "p2": "خلطة الإسبريسو الخاصة",
+      "p2Sub": "شوكولاتة · كراميل",
+      "p3": "كولومبي منزوع الكافيين",
+      "p3Sub": "تفاح أحمر · كاكاو",
+      "p4": "عبوة القهوة الباردة",
+      "p4Sub": "جاهزة خلال 12 ساعة",
+      "sizes": "{count} أحجام"
     }
   }
 }

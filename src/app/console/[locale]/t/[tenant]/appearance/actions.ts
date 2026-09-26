@@ -6,6 +6,8 @@ import { revalidatePath } from "next/cache";
 
 import { PUBLIC_MEDIA_BUCKET } from "@/lib/storage";
 import type { FormState } from "@/lib/validation/common";
+import { formDataToObject } from "@/lib/form-data";
+import { designTokensSchema, footerConfigSchema, headerConfigSchema, SOCIAL_NETWORKS } from "@/lib/storefront/design";
 import { appearanceSchema } from "@/lib/validation/tenant";
 import { actionContext, storefrontChanged } from "@/server/admin/guards";
 import { ImageValidationError, processFavicon, processLogo } from "@/server/media/images";
@@ -123,4 +125,49 @@ export async function removeBranding(slug: string, kind: BrandingKind, _prev: Fo
   storefrontChanged();
   revalidatePath(PATH, "page");
   return { status: "success", message: "removed" };
+}
+
+/** Typography, buttons, cards, header and social links (colours are kept). */
+export async function updateDesignDetails(slug: string, _prev: FormState, formData: FormData): Promise<FormState> {
+  const context = await actionContext(slug, "appearance.write");
+  if (!context) return { status: "error", error: "forbidden" };
+  const input = formDataToObject(formData) as Record<string, unknown>;
+
+  const tokens = designTokensSchema.safeParse(input);
+  const header = headerConfigSchema.safeParse({
+    layout: input.header_layout,
+    sticky: input.sticky === "on",
+    announcement: input.announcement ?? {},
+  });
+  const social = (input.social ?? {}) as Record<string, string>;
+  const footer = footerConfigSchema.safeParse({
+    social: Object.fromEntries(SOCIAL_NETWORKS.map((n) => [n, (social[n] ?? "").trim()]).filter(([, v]) => v)),
+  });
+  // Reject (instead of silently dropping) malformed social URLs.
+  const invalidSocial = SOCIAL_NETWORKS.some(
+    (n) => (social[n] ?? "").trim() !== "" && !/^https:\/\/\S+$/.test(social[n].trim()),
+  );
+  if (!tokens.success || !header.success || !footer.success || invalidSocial) {
+    return { status: "error", error: invalidSocial ? "invalidUrl" : "invalid" };
+  }
+
+  const supabase = await createUserClient();
+  const { data: current } = await supabase
+    .from("storefront_configs")
+    .select("tokens")
+    .eq("tenant_id", context.tenant.id)
+    .single();
+  const { error } = await supabase
+    .from("storefront_configs")
+    .update({
+      tokens: { ...((current?.tokens ?? {}) as Record<string, unknown>), ...tokens.data },
+      header: header.data,
+      footer: footer.data,
+    })
+    .eq("tenant_id", context.tenant.id);
+  if (error) return { status: "error", error: "generic" };
+
+  storefrontChanged();
+  revalidatePath(PATH, "page");
+  return { status: "success", message: "saved" };
 }

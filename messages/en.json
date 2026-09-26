@@ -18,16 +18,11 @@
     "nav": {
       "home": "Home",
       "shop": "Shop",
-      "about": "About",
+      "about": "Our story",
       "contact": "Contact",
-      "mainNavigation": "Main navigation"
-    },
-    "home": {
-      "welcome": "Welcome to {name}",
-      "openingSoonTitle": "Our online store is being prepared",
-      "openingSoonBody": "Products and online ordering will appear here soon. In the meantime, visit us or get in touch.",
-      "visitUs": "Visit us",
-      "contactUs": "Contact us"
+      "mainNavigation": "Main navigation",
+      "visit": "Visit us",
+      "newsletter": "Newsletter"
     },
     "footer": {
       "contact": "Contact",
@@ -35,13 +30,36 @@
       "phone": "Phone",
       "email": "Email",
       "rights": "© {year} {name}. All rights reserved.",
-      "poweredBy": "Powered by SmartManager"
+      "poweredBy": "Powered by SmartManager",
+      "follow": "Follow us"
     },
     "unavailable": {
       "suspendedTitle": "This store is temporarily unavailable",
       "suspendedBody": "Please check back later.",
       "onboardingTitle": "Opening soon",
       "onboardingBody": "{name} is preparing its online store. Please check back soon."
+    },
+    "sections": {
+      "testimonialsTitle": "What our customers say",
+      "visitTitle": "Visit us",
+      "directions": "Get directions",
+      "openingHours": "Opening hours",
+      "today": "Today",
+      "closed": "Closed",
+      "newsletterTitle": "Stay in the loop",
+      "newsletterSubtitle": "New arrivals, seasonal offers and stories — no spam.",
+      "newsletterThanks": "Thank you — you’re subscribed.",
+      "email": "Email address",
+      "emailPlaceholder": "you@example.com",
+      "subscribe": "Subscribe",
+      "subscribing": "Subscribing…",
+      "consent": "I agree to receive emails from {business}. I can unsubscribe at any time.",
+      "errors": {
+        "generic": "Something went wrong. Please try again.",
+        "invalidEmail": "Enter a valid email address.",
+        "consentRequired": "Please confirm that you agree to receive emails.",
+        "rateLimited": "Too many attempts. Please try again later."
+      }
     }
   },
   "platform": {
@@ -192,7 +210,12 @@
       "inviteNotFound": "This invitation is not valid.",
       "passwordMismatch": "The passwords don’t match.",
       "weakPassword": "Use at least 10 characters with upper- and lower-case letters and a digit.",
-      "accountExists": "An account already exists for this email. Sign in to accept."
+      "accountExists": "An account already exists for this email. Sign in to accept.",
+      "tooManySections": "A homepage can have at most 20 sections.",
+      "sectionExists": "This section can only be added once.",
+      "invalidUrl": "Links must start with https://",
+      "invalidHours": "Check the opening hours: each open day needs different opening and closing times.",
+      "invalidLink": "Use a store page (/…), a section (#…), an https:// address, tel: or mailto: link."
     }
   },
   "settings": {
@@ -242,6 +265,26 @@
       "empty": "No custom domain yet.",
       "addLabel": "Add a domain",
       "add": "Add domain"
+    },
+    "hours": {
+      "title": "Opening hours",
+      "description": "Shown on your storefront and in search results.",
+      "days": {
+        "mon": "Monday",
+        "tue": "Tuesday",
+        "wed": "Wednesday",
+        "thu": "Thursday",
+        "fri": "Friday",
+        "sat": "Saturday",
+        "sun": "Sunday"
+      },
+      "open": "Open",
+      "closed": "Closed",
+      "unset": "Not shown",
+      "statusFor": "{day} status",
+      "opensAt": "{day} opens at",
+      "closesAt": "{day} closes at",
+      "hint": "A closing time earlier than the opening time means past midnight."
     }
   },
   "appearance": {
@@ -297,6 +340,53 @@
       "faviconAlt": "Current browser icon",
       "upload": "Upload",
       "remove": "Remove"
+    },
+    "homepageTitle": "Homepage and preview",
+    "homepageDescription": "Arrange your homepage sections and preview your design with sample products.",
+    "editHomepage": "Edit homepage",
+    "openPreview": "Design preview",
+    "design": {
+      "title": "Design details",
+      "description": "Fine-tune typography, buttons, product cards, header and social links.",
+      "typographyLabel": "Typography",
+      "buttonsLabel": "Button style",
+      "cardsLabel": "Product cards",
+      "headerLabel": "Header",
+      "typography": {
+        "theme": "Theme default",
+        "serif-display": "Modern serif",
+        "classic-serif": "Classic serif",
+        "sans": "Sans-serif"
+      },
+      "buttons": {
+        "theme": "Theme default",
+        "pill": "Pill",
+        "rounded": "Rounded",
+        "square": "Square"
+      },
+      "cards": {
+        "theme": "Theme default",
+        "minimal": "Minimal",
+        "bordered": "Bordered",
+        "elevated": "Elevated"
+      },
+      "header": {
+        "theme": "Theme default",
+        "classic": "Logo at the side",
+        "centered": "Centred logo"
+      },
+      "sticky": "Keep the header visible while scrolling",
+      "announcement": "Announcement bar (optional)",
+      "social": "Social links",
+      "socialHint": "Full links starting with https://. Shown in the footer.",
+      "networks": {
+        "instagram": "Instagram",
+        "tiktok": "TikTok",
+        "x": "X",
+        "snapchat": "Snapchat",
+        "facebook": "Facebook",
+        "whatsapp": "WhatsApp"
+      }
     }
   },
   "staff": {
@@ -427,6 +517,142 @@
       "forceOn": "Always on",
       "forceOff": "Always off",
       "limit": "Limit"
+    }
+  },
+  "catalog": {
+    "salePrice": "Sale price",
+    "originalPrice": "Original price",
+    "ratingLabel": "Rated {value} out of 5",
+    "reviews": "{count, plural, one {# review} other {# reviews}}",
+    "decrease": "Decrease quantity",
+    "increase": "Increase quantity",
+    "quantity": "Quantity",
+    "size": "Size",
+    "soldOut": "Sold out",
+    "lowStock": "Only a few left",
+    "inStock": "In stock — ready to ship",
+    "badge": {
+      "sale": "Sale",
+      "new": "New",
+      "bestseller": "Best seller"
+    },
+    "galleryLabel": "Images of {name}",
+    "thumbnails": "Choose an image",
+    "showImage": "Show image {index} of {total}",
+    "addToCart": "Add to cart",
+    "buyNow": "Buy now",
+    "deliveryInfo": "Delivery in 1–3 days · free over a set amount",
+    "pickupInfo": "Free pickup in store"
+  },
+  "homepageEditor": {
+    "title": "Homepage",
+    "subtitle": "Choose which sections appear on your homepage and in which order.",
+    "back": "Appearance",
+    "viewStore": "View store",
+    "shown": "Shown",
+    "hidden": "Hidden",
+    "moveUpNamed": "Move {name} up",
+    "moveDownNamed": "Move {name} down",
+    "hideNamed": "Hide {name}",
+    "showNamed": "Show {name}",
+    "removeNamed": "Remove {name}",
+    "edit": "Edit {name}",
+    "closeEditor": "Close editor",
+    "addTitle": "Add a section",
+    "add": "Add section",
+    "sectionType": "Section",
+    "upcomingTitle": "More sections",
+    "upcomingDescription": "These sections become available as the matching modules are enabled.",
+    "requires": {
+      "catalog": "After products are added",
+      "booking": "With the booking module",
+      "loyalty": "With the loyalty module"
+    },
+    "types": {
+      "hero": "Hero",
+      "promo_banner": "Promotional banner",
+      "brand_story": "Brand story",
+      "testimonials": "Testimonials",
+      "location": "Location & hours",
+      "newsletter": "Newsletter",
+      "featured_categories": "Featured categories",
+      "featured_products": "Featured products",
+      "best_sellers": "Best sellers",
+      "product_collection": "Product collection",
+      "loyalty": "Loyalty",
+      "booking_cta": "Booking"
+    },
+    "fields": {
+      "button": "Button",
+      "buttonLabel": "Button text",
+      "buttonLink": "Button link",
+      "buttonLinkHint": "A page on your store (/…), a section (#visit), a website (https://…) or a phone number (tel:…). Leave empty for no button.",
+      "image": "Image",
+      "imageCurrent": "An image is set.",
+      "imageNone": "No image yet.",
+      "imageHint": "PNG, JPEG or WebP up to 8 MB. Landscape photos of at least 2000 px look best.",
+      "removeImage": "Remove the current image",
+      "layout": "Layout",
+      "heroVariant": {
+        "split": "Text and image side by side",
+        "centered": "Centred text",
+        "image": "Full-width image"
+      },
+      "eyebrow": "Small heading",
+      "title": "Title",
+      "subtitle": "Text",
+      "message": "Message",
+      "tone": "Colour",
+      "toneOption": {
+        "primary": "Primary colour",
+        "accent": "Accent colour",
+        "dark": "Dark"
+      },
+      "storyVariant": {
+        "image_start": "Image first",
+        "image_end": "Text first"
+      },
+      "body": "Story",
+      "testimonial": "Testimonial {n}",
+      "quote": "Quote",
+      "author": "Name",
+      "authorDetail": "Detail (e.g. city)",
+      "testimonialsHint": "Only publish genuine customer quotes you have permission to use.",
+      "showHours": "Show opening hours",
+      "showDirections": "Show a “Get directions” link",
+      "locationHint": "Address, phone and hours come from Settings.",
+      "newsletterHint": "Sign-ups are stored with the customer’s consent."
+    }
+  },
+  "designPreview": {
+    "title": "Design preview",
+    "back": "Appearance",
+    "notice": "Sample content showing how your theme styles products and pages. Buttons here are not active and nothing is published.",
+    "typeEyebrow": "Typography",
+    "typeHeadline": "Crafted slowly, served with care",
+    "typeBody": "Body text is set for comfortable reading on every screen, in every language your store supports.",
+    "primaryButton": "Shop now",
+    "secondaryButton": "Learn more",
+    "ghostButton": "Ghost",
+    "linkButton": "Text link",
+    "badgeSale": "Sale",
+    "badgeNew": "New",
+    "badgeOutline": "Limited",
+    "badgeSuccess": "In stock",
+    "gridEyebrow": "Product cards",
+    "gridTitle": "Featured this week",
+    "detailTitle": "Product page",
+    "samples": {
+      "p1": "Ethiopian Single Origin",
+      "p1Sub": "Floral · Citrus · Honey",
+      "p1Description": "A bright, tea-like coffee from the Guji highlands, washed and light-roasted to keep its jasmine and bergamot notes.",
+      "p2": "House Espresso Blend",
+      "p2Sub": "Chocolate · Caramel",
+      "p3": "Colombian Decaf",
+      "p3Sub": "Red apple · Cocoa",
+      "p4": "Cold Brew Pack",
+      "p4Sub": "Ready in 12 hours",
+      "sizes": "{count} sizes"
     }
   }
 }
