@@ -14,7 +14,7 @@ export const ORDER_STATUSES = [
   "cancelled",
 ] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
-export type Fulfillment = "pickup" | "delivery";
+export type Fulfillment = "pickup" | "delivery" | "dine_in";
 export type PaymentMethod = "pay_on_fulfillment" | "online";
 
 export const OPEN_STATUSES: readonly OrderStatus[] = [

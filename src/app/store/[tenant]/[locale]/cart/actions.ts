@@ -19,9 +19,11 @@ import {
   resetCartCookie,
 } from "@/server/commerce/cart-cookie";
 import { commerceConfigured } from "@/server/commerce/storefront";
+import { notifyNewOrderStaff, notifyOrderPlaced } from "@/server/notifications/notify";
 import { clientIp, rateLimit } from "@/server/security/rate-limit";
 import { serviceClient } from "@/server/supabase/clients";
 import { requestStorefrontTenant } from "@/server/tenant/request-tenant";
+import { consoleOrigin, storefrontOrigin } from "@/server/tenant/urls";
 
 /**
  * Storefront cart and checkout actions. The store is always the one serving
@@ -125,9 +127,39 @@ export async function placeOrder(_prev: CheckoutState, formData: FormData): Prom
     return { status: "error", error: error && ORDER_ERRORS.has(error.message) ? error.message : "generic" };
   }
 
-  const order = data as { order_number: string; status: string };
+  const order = data as { order_id: string; order_number: string; status: string; payment_method: string; total_minor: string | number };
   await resetCartCookie();
   revalidatePath(CART_PAGE, "page");
+
+  const orderUrl = `${storefrontOrigin(tenant)}/${locale}/orders/${order.order_number}?t=${accessToken}`;
+  await notifyOrderPlaced({
+    tenantId: tenant.id,
+    orderNumber: order.order_number,
+    customerEmail: parsed.data.email,
+    locale,
+    businessName: tenant.business_name,
+    currency: tenant.currency,
+    currencyExponent: tenant.currency_exponent,
+    totalMinor: BigInt(order.total_minor),
+    orderUrl,
+  });
+  // A pay-on-fulfillment order is real (and actionable) immediately; an online
+  // order is only worth alerting the store about once payment is confirmed.
+  if (order.payment_method === "pay_on_fulfillment") {
+    await notifyNewOrderStaff({
+      tenantId: tenant.id,
+      businessName: tenant.business_name,
+      orderNumber: order.order_number,
+      orderId: order.order_id,
+      consoleUrl: `${consoleOrigin()}/${locale}/t/${tenant.slug}/orders/${order.order_id}`,
+      customerName: parsed.data.name,
+      fulfillment: parsed.data.fulfillment,
+      totalMinor: BigInt(order.total_minor),
+      currency: tenant.currency,
+      currencyExponent: tenant.currency_exponent,
+    });
+  }
+
   const href =
     order.status === "pending_payment"
       ? `/orders/${order.order_number}/pay?t=${accessToken}`

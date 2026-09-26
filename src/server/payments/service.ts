@@ -2,7 +2,10 @@ import "server-only";
 
 import { z } from "zod";
 
+import { isLocale } from "@/i18n/locales";
+import { notifyNewOrderStaff, notifyPaymentReceived } from "@/server/notifications/notify";
 import { serviceClient } from "@/server/supabase/clients";
+import { consoleOrigin } from "@/server/tenant/urls";
 
 import { moyasarProvider } from "./moyasar";
 import type { PaymentProvider, ProviderSecrets, VerifiedWebhookEvent } from "./types";
@@ -28,6 +31,52 @@ async function loadSecrets(tenantId: string, provider: string): Promise<Provider
   const row = secretRow.safeParse(data);
   if (!row.success) return null;
   return { secretKey: row.data.secret_key, webhookSecret: row.data.webhook_secret, mode: row.data.mode };
+}
+
+/** Once, right when an online order first becomes paid: receipt to the customer, alert to the store. */
+async function announceConfirmedPayment(tenantId: string, orderNumber: string): Promise<void> {
+  const client = serviceClient();
+  const { data: order } = await client
+    .from("orders")
+    .select("id, order_number, locale, contact, total_minor, currency, fulfillment_type")
+    .eq("tenant_id", tenantId)
+    .eq("order_number", orderNumber)
+    .maybeSingle();
+  if (!order) return;
+  const { data: tenant } = await client
+    .from("tenants")
+    .select("business_name, slug, default_language, currencies(exponent)")
+    .eq("id", tenantId)
+    .maybeSingle();
+  if (!tenant) return;
+  const contact = order.contact as { name?: string; email?: string };
+  const exponent = tenant.currencies?.exponent ?? 2;
+  const locale = isLocale(order.locale) ? order.locale : isLocale(tenant.default_language) ? tenant.default_language : "en";
+
+  if (contact.email) {
+    await notifyPaymentReceived({
+      tenantId,
+      orderNumber: order.order_number,
+      customerEmail: contact.email,
+      locale,
+      businessName: tenant.business_name,
+      currency: order.currency,
+      currencyExponent: exponent,
+      totalMinor: BigInt(order.total_minor),
+    });
+  }
+  await notifyNewOrderStaff({
+    tenantId,
+    businessName: tenant.business_name,
+    orderNumber: order.order_number,
+    orderId: order.id,
+    consoleUrl: `${consoleOrigin()}/${locale}/t/${tenant.slug}/orders/${order.id}`,
+    customerName: contact.name ?? "",
+    fulfillment: order.fulfillment_type as "pickup" | "delivery",
+    totalMinor: BigInt(order.total_minor),
+    currency: order.currency,
+    currencyExponent: exponent,
+  });
 }
 
 export type InitiatePaymentResult = { ok: true; redirectUrl: string } | { ok: false; error: string };
@@ -77,7 +126,7 @@ export async function resumeOrCreatePayment(
     try {
       const status = await impl.fetchPayment(order.paymentIntentRef, secrets);
       if (status.paid) {
-        await serviceClient().rpc("confirm_online_payment", {
+        const { data } = await serviceClient().rpc("confirm_online_payment", {
           p_provider: provider,
           p_provider_ref: status.ref,
           p_paid: true,
@@ -86,6 +135,10 @@ export async function resumeOrCreatePayment(
           p_event_id: undefined,
           p_method: status.method ?? undefined,
         });
+        const confirmResult = data as { result?: string; order_number?: string } | null;
+        if (confirmResult?.result === "confirmed" && confirmResult.order_number) {
+          await announceConfirmedPayment(tenantId, confirmResult.order_number);
+        }
         return { kind: "paid" };
       }
       if (status.redirectUrl) return { kind: "redirect", url: status.redirectUrl };
@@ -123,6 +176,9 @@ export async function verifyReturn(tenantId: string, ref: string, provider = "mo
     });
     if (error) return { orderNumber: null, confirmed: false };
     const result = data as { result: string; order_number?: string };
+    if (result.result === "confirmed" && result.order_number) {
+      await announceConfirmedPayment(tenantId, result.order_number);
+    }
     return { orderNumber: result.order_number ?? null, confirmed: result.result === "confirmed" || result.result === "already_paid" };
   } catch {
     return { orderNumber: null, confirmed: false };
@@ -153,7 +209,7 @@ export async function applyWebhookEvent(
   const event: VerifiedWebhookEvent | null = await impl.verifyWebhook(rawBody, headers, secrets);
   if (!event) return { handled: false };
 
-  await client.rpc("confirm_online_payment", {
+  const { data } = await client.rpc("confirm_online_payment", {
     p_provider: provider,
     p_provider_ref: event.ref,
     p_paid: event.paid,
@@ -162,6 +218,10 @@ export async function applyWebhookEvent(
     p_event_id: event.eventId,
     p_method: event.method ?? undefined,
   });
+  const result = data as { result?: string; order_number?: string } | null;
+  if (result?.result === "confirmed" && result.order_number) {
+    await announceConfirmedPayment(order.tenant_id, result.order_number);
+  }
   return { handled: true };
 }
 

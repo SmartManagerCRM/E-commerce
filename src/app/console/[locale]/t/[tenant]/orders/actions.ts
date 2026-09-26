@@ -3,10 +3,12 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { isLocale } from "@/i18n/locales";
 import { ORDER_STATUSES } from "@/lib/commerce/orders";
 import type { FormState } from "@/lib/validation/common";
 import { actionContext } from "@/server/admin/guards";
-import { catalogError } from "@/server/catalog/admin";
+import { catalogError, catalogSettings } from "@/server/catalog/admin";
+import { notifyOrderStatusChanged, notifyPaymentReceived } from "@/server/notifications/notify";
 import { createUserClient } from "@/server/supabase/clients";
 
 function changed() {
@@ -42,7 +44,7 @@ export async function changeOrderStatus(
   // Scope to this console's tenant (RLS also hides other tenants' orders).
   const { data: order } = await supabase
     .from("orders")
-    .select("id")
+    .select("id, order_number, locale, contact")
     .eq("tenant_id", context.tenant.id)
     .eq("id", orderId)
     .maybeSingle();
@@ -58,6 +60,20 @@ export async function changeOrderStatus(
       error: error.message === "invalid_transition" ? "invalidTransition" : catalogError(error.code),
     };
   changed();
+  const settings = await catalogSettings(context);
+  const contact = (order.contact ?? {}) as { name?: string; email?: string };
+  if (contact.email) {
+    await notifyOrderStatusChanged({
+      tenantId: context.tenant.id,
+      orderNumber: order.order_number,
+      customerEmail: contact.email,
+      locale: isLocale(order.locale) ? order.locale : settings.defaultLocale,
+      businessName: context.tenant.businessName,
+      currency: settings.currency,
+      currencyExponent: settings.exponent,
+      status: parsed.data.status,
+    });
+  }
   return { status: "success", message: "orderUpdated" };
 }
 
@@ -74,7 +90,7 @@ export async function recordPayment(
   const supabase = await createUserClient();
   const { data: order } = await supabase
     .from("orders")
-    .select("id")
+    .select("id, order_number, locale, contact, total_minor, currency")
     .eq("tenant_id", context.tenant.id)
     .eq("id", orderId)
     .maybeSingle();
@@ -86,5 +102,19 @@ export async function recordPayment(
       error: error.message === "already_paid_or_cancelled" ? "alreadyPaid" : catalogError(error.code),
     };
   changed();
+  const settings = await catalogSettings(context);
+  const contact = (order.contact ?? {}) as { name?: string; email?: string };
+  if (contact.email) {
+    await notifyPaymentReceived({
+      tenantId: context.tenant.id,
+      orderNumber: order.order_number,
+      customerEmail: contact.email,
+      locale: isLocale(order.locale) ? order.locale : settings.defaultLocale,
+      businessName: context.tenant.businessName,
+      currency: order.currency,
+      currencyExponent: settings.exponent,
+      totalMinor: BigInt(order.total_minor),
+    });
+  }
   return { status: "success", message: "paymentRecorded" };
 }

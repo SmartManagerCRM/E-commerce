@@ -29,7 +29,12 @@ export function OwnerInviteForm({ action }: { action: Action }) {
         </SubmitButton>
       </form>
       <FormMessage state={state} />
-      {state.status === "success" && state.data ? <CopyLink link={state.data.link} label={t("ownerLink")} /> : null}
+      {state.status === "success" && state.data ? (
+        <div className="space-y-2">
+          <p className="text-sm">{t("ownerLinkHint")}</p>
+          <CopyLink link={state.data.link} label={t("ownerLink")} />
+        </div>
+      ) : null}
     </div>
   );
 }

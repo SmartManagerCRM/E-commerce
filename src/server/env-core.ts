@@ -32,6 +32,12 @@ const serverEnvSchema = z.object({
   STOREFRONT_DNS_TARGET: z.string().trim().min(1).optional(),
   /** Optional port appended to generated URLs in development (e.g. `3000`). */
   PUBLIC_URL_PORT: z.string().regex(/^\d+$/).optional(),
+  /** Resend API key for transactional email. Server-only; without it, notifications are simply skipped. */
+  RESEND_API_KEY: z.string().min(10).optional(),
+  /** "Name <address>" the app sends as. Required alongside RESEND_API_KEY. */
+  RESEND_FROM_EMAIL: z.string().trim().min(3).optional(),
+  /** Shared secret the notifications worker route (cron-triggered) must present. */
+  JOBS_SECRET: z.string().min(16).optional(),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

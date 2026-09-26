@@ -503,6 +503,10 @@
     "paymentsLink": {
       "title": "Paiements en ligne",
       "description": "Acceptez Mada, les cartes et STC Pay en ligne avec Moyasar."
+    },
+    "notificationsLink": {
+      "title": "Notifications",
+      "description": "E-mails de commande et résumé quotidien."
     }
   },
   "appearance": {
@@ -616,7 +620,7 @@
     "email": "E-mail",
     "role": "Rôle",
     "invite": "Créer l’invitation",
-    "shareLink": "Envoyez ce lien à la personne invitée. Il ne fonctionne qu’avec son adresse e-mail.",
+    "shareLink": "Nous avons envoyé cette invitation par e-mail. Vous pouvez aussi partager le lien directement — il ne fonctionne qu'avec son adresse e-mail.",
     "inviteLink": "Lien d’invitation",
     "linkExpires": "Le lien expire dans 7 jours.",
     "membersTitle": "Membres de l’équipe",
@@ -692,7 +696,7 @@
       "ownerEmail": "E-mail du propriétaire",
       "ownerEmailHint": "Un lien d’invitation propriétaire est créé pour cette adresse.",
       "submit": "Créer l’établissement",
-      "shareOwnerLink": "Envoyez ce lien d’invitation au propriétaire :",
+      "shareOwnerLink": "Nous avons envoyé cette invitation par e-mail au propriétaire. Vous pouvez aussi partager le lien directement :",
       "ownerLink": "Lien d’invitation propriétaire",
       "openBusiness": "Ouvrir l’établissement"
     },
@@ -734,7 +738,8 @@
       "inherit": "Selon la formule",
       "forceOn": "Toujours activé",
       "forceOff": "Toujours désactivé",
-      "limit": "Limite"
+      "limit": "Limite",
+      "ownerLinkHint": "Nous avons envoyé cette invitation par e-mail. Vous pouvez aussi partager le lien directement :"
     }
   },
   "catalog": {
@@ -1111,7 +1116,8 @@
     "unpaid": "Non payée",
     "fulfillmentType": {
       "pickup": "Retrait",
-      "delivery": "Livraison"
+      "delivery": "Livraison",
+      "dine_in": "Sur place"
     },
     "noResults": "Aucune commande trouvée",
     "noResultsBody": "Essayez une autre recherche ou un autre filtre.",
@@ -1156,7 +1162,8 @@
     "keepOrder": "Conserver la commande",
     "collectHint": "Enregistrez les {total} perçus au retrait ou à la livraison.",
     "method": "Moyen de paiement",
-    "markPaid": "Marquer comme payée"
+    "markPaid": "Marquer comme payée",
+    "walkIn": "Client sur place"
   },
   "customers": {
     "title": "Clients",
@@ -1252,5 +1259,27 @@
     "methodStcpay": "STC Pay",
     "isActive": "Accepter les paiements en ligne au moment du paiement",
     "isActiveHint": "Les clients verront une option « payer en ligne » en plus du paiement au retrait/à la livraison."
+  },
+  "notificationSettings": {
+    "title": "Notifications",
+    "subtitle": "E-mails de commande aux clients et résumé quotidien pour l'équipe.",
+    "back": "Retour aux paramètres",
+    "notConfigured": "Le serveur n'est pas encore configuré pour envoyer des e-mails.",
+    "emailTitle": "E-mail",
+    "emailDescription": "Ce qui est envoyé, et à qui.",
+    "orderEmails": "E-mails de commande aux clients",
+    "orderEmailsHint": "Commande reçue, mises à jour du statut et reçus de paiement.",
+    "dailyBrief": "Résumé quotidien",
+    "dailyBriefHint": "Un court résumé des commandes, revenus et stock faible d'hier.",
+    "recipientEmail": "Envoyer les e-mails propriétaire à",
+    "recipientEmailHint": "Alertes de nouvelle commande et résumé quotidien. Par défaut, l'e-mail de l'entreprise.",
+    "logTitle": "Activité récente",
+    "logDescription": "Les 20 derniers e-mails envoyés par ce magasin.",
+    "noNotifications": "Rien envoyé pour l'instant.",
+    "status": {
+      "sent": "Envoyé",
+      "failed": "Échoué",
+      "skipped": "Ignoré"
+    }
   }
 }

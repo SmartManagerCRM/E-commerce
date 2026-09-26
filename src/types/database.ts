@@ -534,6 +534,95 @@ export type Database = {
           },
         ];
       };
+      notification_daily_briefs: {
+        Row: {
+          sent_at: string;
+          sent_on: string;
+          tenant_id: string;
+        };
+        Insert: {
+          sent_at?: string;
+          sent_on: string;
+          tenant_id: string;
+        };
+        Update: {
+          sent_at?: string;
+          sent_on?: string;
+          tenant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notification_daily_briefs_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      notifications: {
+        Row: {
+          channel: string;
+          created_at: string;
+          error: string | null;
+          id: string;
+          payload: NonNullable<Json>;
+          provider_message_id: string | null;
+          recipient_customer_id: string | null;
+          recipient_email: string | null;
+          recipient_user_id: string | null;
+          status: string;
+          subject: string;
+          template: string;
+          tenant_id: string;
+        };
+        Insert: {
+          channel?: string;
+          created_at?: string;
+          error?: string | null;
+          id?: string;
+          payload?: NonNullable<Json>;
+          provider_message_id?: string | null;
+          recipient_customer_id?: string | null;
+          recipient_email?: string | null;
+          recipient_user_id?: string | null;
+          status: string;
+          subject: string;
+          template: string;
+          tenant_id: string;
+        };
+        Update: {
+          channel?: string;
+          created_at?: string;
+          error?: string | null;
+          id?: string;
+          payload?: NonNullable<Json>;
+          provider_message_id?: string | null;
+          recipient_customer_id?: string | null;
+          recipient_email?: string | null;
+          recipient_user_id?: string | null;
+          status?: string;
+          subject?: string;
+          template?: string;
+          tenant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notifications_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notifications_tenant_id_recipient_customer_id_fkey";
+            columns: ["tenant_id", "recipient_customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customers";
+            referencedColumns: ["tenant_id", "id"];
+          },
+        ];
+      };
       order_items: {
         Row: {
           id: string;
@@ -658,7 +747,7 @@ export type Database = {
           cancelled_at: string | null;
           completed_at: string | null;
           confirmed_at: string | null;
-          contact: NonNullable<Json>;
+          contact: Json | null;
           currency: string;
           customer_id: string | null;
           delivery_fee_minor: number;
@@ -678,6 +767,7 @@ export type Database = {
           shipping_address: Json | null;
           status: string;
           subtotal_minor: number;
+          table_session_id: string | null;
           tax_included: boolean;
           tax_minor: number;
           tax_rate_bps: number;
@@ -693,7 +783,7 @@ export type Database = {
           cancelled_at?: string | null;
           completed_at?: string | null;
           confirmed_at?: string | null;
-          contact: NonNullable<Json>;
+          contact?: Json | null;
           currency: string;
           customer_id?: string | null;
           delivery_fee_minor?: number;
@@ -713,6 +803,7 @@ export type Database = {
           shipping_address?: Json | null;
           status?: string;
           subtotal_minor: number;
+          table_session_id?: string | null;
           tax_included?: boolean;
           tax_minor?: number;
           tax_rate_bps?: number;
@@ -728,7 +819,7 @@ export type Database = {
           cancelled_at?: string | null;
           completed_at?: string | null;
           confirmed_at?: string | null;
-          contact?: NonNullable<Json>;
+          contact?: Json | null;
           currency?: string;
           customer_id?: string | null;
           delivery_fee_minor?: number;
@@ -748,6 +839,7 @@ export type Database = {
           shipping_address?: Json | null;
           status?: string;
           subtotal_minor?: number;
+          table_session_id?: string | null;
           tax_included?: boolean;
           tax_minor?: number;
           tax_rate_bps?: number;
@@ -756,6 +848,13 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "orders_table_session_fk";
+            columns: ["tenant_id", "table_session_id"];
+            isOneToOne: false;
+            referencedRelation: "table_sessions";
+            referencedColumns: ["tenant_id", "id"];
+          },
           {
             foreignKeyName: "orders_tenant_id_branch_id_fkey";
             columns: ["tenant_id", "branch_id"];
@@ -1483,6 +1582,121 @@ export type Database = {
           },
         ];
       };
+      table_sessions: {
+        Row: {
+          branch_id: string;
+          closed_at: string | null;
+          id: string;
+          notes: string | null;
+          opened_at: string;
+          opened_by: string | null;
+          party_size: number | null;
+          status: string;
+          table_id: string;
+          tenant_id: string;
+        };
+        Insert: {
+          branch_id: string;
+          closed_at?: string | null;
+          id?: string;
+          notes?: string | null;
+          opened_at?: string;
+          opened_by?: string | null;
+          party_size?: number | null;
+          status?: string;
+          table_id: string;
+          tenant_id: string;
+        };
+        Update: {
+          branch_id?: string;
+          closed_at?: string | null;
+          id?: string;
+          notes?: string | null;
+          opened_at?: string;
+          opened_by?: string | null;
+          party_size?: number | null;
+          status?: string;
+          table_id?: string;
+          tenant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "table_sessions_tenant_id_branch_id_fkey";
+            columns: ["tenant_id", "branch_id"];
+            isOneToOne: false;
+            referencedRelation: "branches";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "table_sessions_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "table_sessions_tenant_id_table_id_fkey";
+            columns: ["tenant_id", "table_id"];
+            isOneToOne: false;
+            referencedRelation: "tables";
+            referencedColumns: ["tenant_id", "id"];
+          },
+        ];
+      };
+      tables: {
+        Row: {
+          active: boolean;
+          branch_id: string;
+          capacity: number | null;
+          created_at: string;
+          id: string;
+          label: string;
+          position: number;
+          status: string;
+          tenant_id: string;
+          updated_at: string;
+        };
+        Insert: {
+          active?: boolean;
+          branch_id: string;
+          capacity?: number | null;
+          created_at?: string;
+          id?: string;
+          label: string;
+          position?: number;
+          status?: string;
+          tenant_id: string;
+          updated_at?: string;
+        };
+        Update: {
+          active?: boolean;
+          branch_id?: string;
+          capacity?: number | null;
+          created_at?: string;
+          id?: string;
+          label?: string;
+          position?: number;
+          status?: string;
+          tenant_id?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "tables_tenant_id_branch_id_fkey";
+            columns: ["tenant_id", "branch_id"];
+            isOneToOne: false;
+            referencedRelation: "branches";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "tables_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       tenant_counters: {
         Row: {
           key: string;
@@ -1928,6 +2142,7 @@ export type Database = {
         Args: { p_fulfillment: string; p_tenant: string; p_token_hash: string; p_zone: string };
         Returns: Json;
       };
+      close_table_session: { Args: { p_session: string; p_tenant: string }; Returns: undefined };
       confirm_online_payment: {
         Args: {
           p_amount_minor: number;
@@ -1940,10 +2155,19 @@ export type Database = {
         };
         Returns: Json;
       };
+      create_dine_in_order: {
+        Args: { p_items: Json; p_notes?: string; p_session: string; p_tenant: string };
+        Returns: Json;
+      };
       create_order_from_cart: {
         Args: { p_checkout: Json; p_tenant: string; p_token_hash: string };
         Returns: Json;
       };
+      create_table: {
+        Args: { p_branch: string; p_capacity?: number; p_label: string; p_tenant: string };
+        Returns: string;
+      };
+      daily_brief_summary: { Args: { p_tenant: string }; Returns: Json };
       get_invitation: { Args: { p_token: string }; Returns: Json };
       invite_member: {
         Args: { p_email: string; p_role_key: string; p_tenant: string };
@@ -1977,6 +2201,11 @@ export type Database = {
       newsletter_subscribe: {
         Args: { p_email: string; p_locale: string; p_source?: string; p_tenant: string };
         Returns: undefined;
+      };
+      notification_settings: { Args: { p_tenant: string }; Returns: Json };
+      open_table_session: {
+        Args: { p_notes?: string; p_party_size?: number; p_table: string; p_tenant: string };
+        Returns: string;
       };
       payment_provider_secret: { Args: { p_provider: string; p_tenant: string }; Returns: Json };
       platform_create_tenant: {
@@ -2068,6 +2297,19 @@ export type Database = {
           role_name: Json;
           status: string;
           user_id: string;
+        }[];
+      };
+      tenants_due_daily_brief: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          business_name: string;
+          currency: string;
+          currency_exponent: number;
+          locale: string;
+          recipient_email: string;
+          slug: string;
+          tenant_id: string;
+          today: string;
         }[];
       };
       update_order_status: {

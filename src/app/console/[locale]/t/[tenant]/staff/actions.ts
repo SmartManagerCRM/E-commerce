@@ -7,8 +7,16 @@ import { z } from "zod";
 import type { FormState } from "@/lib/validation/common";
 import { inviteSchema } from "@/lib/validation/tenant";
 import { actionContext } from "@/server/admin/guards";
+import { notifyStaffInvited } from "@/server/notifications/notify";
 import { createUserClient } from "@/server/supabase/clients";
 import { consoleOrigin } from "@/server/tenant/urls";
+
+const ROLE_LABEL: Record<string, string> = {
+  tenant_owner: "an owner",
+  admin: "an admin",
+  manager: "a manager",
+  staff: "a staff member",
+};
 
 const PATH = "/console/[locale]/t/[tenant]/staff";
 
@@ -39,12 +47,17 @@ export async function inviteStaff(
   if (error || !token) return { status: "error", error: ERROR_BY_CODE[error?.code ?? ""] ?? "generic" };
 
   revalidatePath(PATH, "page");
-  // Until an email provider is configured (Phase 7) the link is shared manually.
-  return {
-    status: "success",
-    message: "inviteCreated",
-    data: { link: `${consoleOrigin()}/${await getLocale()}/invite/${token}` },
-  };
+  const link = `${consoleOrigin()}/${await getLocale()}/invite/${token}`;
+  await notifyStaffInvited({
+    tenantId: context.tenant.id,
+    businessName: context.tenant.businessName,
+    email: parsed.data.email,
+    roleLabel: ROLE_LABEL[parsed.data.role_key] ?? "a team member",
+    inviteUrl: link,
+  });
+  // The link is also shown in the console so it can be shared manually
+  // (the invitee's inbox may be slow, or the email may not be configured).
+  return { status: "success", message: "inviteCreated", data: { link } };
 }
 
 export async function revokeInvite(slug: string, _prev: FormState, formData: FormData): Promise<FormState> {

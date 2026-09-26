@@ -8,6 +8,7 @@ import { formDataToObject } from "@/lib/form-data";
 import { emailSchema, fieldErrorsFrom, type FormState } from "@/lib/validation/common";
 import { createTenantSchema } from "@/lib/validation/tenant";
 import { platformActionUser } from "@/server/auth/platform";
+import { notifyOwnerInvited } from "@/server/notifications/notify";
 import { createUserClient } from "@/server/supabase/clients";
 import { invalidateTenantCache } from "@/server/tenant/resolver";
 import { consoleOrigin } from "@/server/tenant/urls";
@@ -53,11 +54,14 @@ export async function createTenant(
   }
   const result = data as { tenant_id: string; invitation_token: string };
   revalidatePath("/console/[locale]/platform", "page");
-  return {
-    status: "success",
-    message: "tenantCreated",
-    data: { tenantId: result.tenant_id, link: await inviteLink(result.invitation_token) },
-  };
+  const link = await inviteLink(result.invitation_token);
+  await notifyOwnerInvited({
+    tenantId: result.tenant_id,
+    businessName: v.business_name,
+    email: v.owner_email,
+    inviteUrl: link,
+  });
+  return { status: "success", message: "tenantCreated", data: { tenantId: result.tenant_id, link } };
 }
 
 const statusSchema = z.enum(["onboarding", "active", "suspended", "closed"]);
@@ -146,7 +150,15 @@ export async function inviteOwner(
     };
   }
   revalidatePath(DETAIL, "page");
-  return { status: "success", message: "inviteCreated", data: { link: await inviteLink(token) } };
+  const link = await inviteLink(token);
+  const { data: tenant } = await supabase.from("tenants").select("business_name").eq("id", tenantId).maybeSingle();
+  await notifyOwnerInvited({
+    tenantId,
+    businessName: tenant?.business_name ?? "your business",
+    email: email.data,
+    inviteUrl: link,
+  });
+  return { status: "success", message: "inviteCreated", data: { link } };
 }
 
 /** Records that a storefront host has been attached in the hosting panel (Hostinger hPanel). */

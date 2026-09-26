@@ -177,7 +177,7 @@ async function Orders({
             </thead>
             <tbody className="divide-y divide-border">
               {orders.map((o) => {
-                const contact = o.contact as { name?: string; phone?: string | null };
+                const contact = (o.contact ?? {}) as { name?: string; phone?: string | null };
                 return (
                   <tr key={o.id} className="hover:bg-bg/60">
                     <td className="px-4 py-3">
@@ -189,7 +189,7 @@ async function Orders({
                       </p>
                     </td>
                     <td className="px-3 py-3">
-                      <p>{contact.name}</p>
+                      <p>{contact.name ?? t("walkIn")}</p>
                       {contact.phone ? (
                         <p className="text-xs text-muted" dir="ltr">
                           {contact.phone}

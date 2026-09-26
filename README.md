@@ -18,7 +18,8 @@ A multi-tenant SaaS e-commerce platform (storefront, ordering, booking, loyalty 
 | 4 | Products & inventory: catalog, options/variants, photos, categories, stock ledger, shop & product pages | ✅ Complete |
 | 5 | Cart & checkout: guest cart, pickup/delivery, VAT, pay on fulfillment, orders, customers, order tracking | ✅ Complete |
 | 6 | Online payments: Moyasar (card, Mada, STC Pay), payment holds, webhooks | ✅ Complete |
-| 7+ | Booking, loyalty, notifications… | Not started |
+| 7 | Notifications: order emails, daily brief, invitation emails (Resend); dine-in foundation (tables/sessions) and a commerce service layer for the future AI agent | ✅ Complete |
+| 8+ | Booking, loyalty, AI assistant… | Not started |
 
 ## Local development
 

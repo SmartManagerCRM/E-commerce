@@ -162,7 +162,7 @@ export default async function DashboardPage({ params }: PageProps<"/console/[loc
                   <Link href={`/t/${slug}/orders/${o.id}`} className="font-medium hover:underline">
                     #{o.order_number}
                   </Link>
-                  <span className="truncate text-muted">{(o.contact as { name?: string }).name}</span>
+                  <span className="truncate text-muted">{(o.contact as { name?: string } | null)?.name ?? ""}</span>
                 </span>
                 <span className="flex items-center gap-3">
                   <span className="text-xs text-muted">{format.relativeTime(new Date(o.placed_at))}</span>

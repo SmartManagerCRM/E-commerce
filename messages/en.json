@@ -503,6 +503,10 @@
     "paymentsLink": {
       "title": "Online payments",
       "description": "Accept Mada, cards and STC Pay online with Moyasar."
+    },
+    "notificationsLink": {
+      "title": "Notifications",
+      "description": "Order emails and the daily brief."
     }
   },
   "appearance": {
@@ -616,7 +620,7 @@
     "email": "Email",
     "role": "Role",
     "invite": "Create invitation",
-    "shareLink": "Send this link to the person you invited. It works only for their email address.",
+    "shareLink": "We've emailed this invitation. You can also share the link directly — it works only for their email address.",
     "inviteLink": "Invitation link",
     "linkExpires": "The link expires in 7 days.",
     "membersTitle": "Team members",
@@ -692,7 +696,7 @@
       "ownerEmail": "Owner’s email",
       "ownerEmailHint": "An owner invitation link is created for this address.",
       "submit": "Create business",
-      "shareOwnerLink": "Send this invitation link to the owner:",
+      "shareOwnerLink": "We've emailed this invitation to the owner. You can also share the link directly:",
       "ownerLink": "Owner invitation link",
       "openBusiness": "Open business"
     },
@@ -734,7 +738,8 @@
       "inherit": "Use plan",
       "forceOn": "Always on",
       "forceOff": "Always off",
-      "limit": "Limit"
+      "limit": "Limit",
+      "ownerLinkHint": "We've emailed this invitation. You can also share the link directly:"
     }
   },
   "catalog": {
@@ -1111,7 +1116,8 @@
     "unpaid": "Not paid yet",
     "fulfillmentType": {
       "pickup": "Pickup",
-      "delivery": "Delivery"
+      "delivery": "Delivery",
+      "dine_in": "Dine-in"
     },
     "noResults": "No orders found",
     "noResultsBody": "Try another search or filter.",
@@ -1156,7 +1162,8 @@
     "keepOrder": "Keep order",
     "collectHint": "Record the {total} collected at pickup or delivery.",
     "method": "Payment method",
-    "markPaid": "Mark as paid"
+    "markPaid": "Mark as paid",
+    "walkIn": "Walk-in"
   },
   "customers": {
     "title": "Customers",
@@ -1252,5 +1259,27 @@
     "methodStcpay": "STC Pay",
     "isActive": "Accept online payments at checkout",
     "isActiveHint": "Customers will see a “pay online” option alongside pay on pickup/delivery."
+  },
+  "notificationSettings": {
+    "title": "Notifications",
+    "subtitle": "Order emails to customers and a daily brief for the team.",
+    "back": "Back to settings",
+    "notConfigured": "The server isn't configured to send email yet.",
+    "emailTitle": "Email",
+    "emailDescription": "What gets emailed, and to whom.",
+    "orderEmails": "Order emails to customers",
+    "orderEmailsHint": "Order received, status updates and payment receipts.",
+    "dailyBrief": "Daily brief",
+    "dailyBriefHint": "A short summary of yesterday's orders, revenue and low stock.",
+    "recipientEmail": "Send owner emails to",
+    "recipientEmailHint": "New-order alerts and the daily brief. Defaults to the business email.",
+    "logTitle": "Recent activity",
+    "logDescription": "The last 20 emails this store has sent.",
+    "noNotifications": "Nothing sent yet.",
+    "status": {
+      "sent": "Sent",
+      "failed": "Failed",
+      "skipped": "Skipped"
+    }
   }
 }

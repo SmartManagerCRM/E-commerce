@@ -78,7 +78,7 @@ async function Detail({
   const money = (minor: number) =>
     formatMoney({ amountMinor: BigInt(minor), currency: order.currency }, settings.exponent, locale);
   const pick = (v: unknown) => pickLocalized(v, locale, settings.defaultLocale);
-  const contact = order.contact as { name: string; email: string; phone?: string | null };
+  const contact = order.contact as { name: string; email: string; phone?: string | null } | null;
   const address = order.shipping_address as Record<string, string> | null;
   const canWrite = context.permissions.includes("orders.write");
   const status = order.status as OrderStatus;
@@ -165,14 +165,16 @@ async function Detail({
         <div className="space-y-6">
           <SectionCard title={t("customer")}>
             <div className="space-y-1 text-sm">
-              <p className="font-medium">{contact.name}</p>
-              <p className="flex items-center gap-2">
-                <Mail className="size-4 text-muted" aria-hidden="true" />
-                <a href={`mailto:${contact.email}`} className="hover:underline" dir="ltr">
-                  {contact.email}
-                </a>
-              </p>
-              {contact.phone ? (
+              <p className="font-medium">{contact?.name ?? t("walkIn")}</p>
+              {contact?.email ? (
+                <p className="flex items-center gap-2">
+                  <Mail className="size-4 text-muted" aria-hidden="true" />
+                  <a href={`mailto:${contact.email}`} className="hover:underline" dir="ltr">
+                    {contact.email}
+                  </a>
+                </p>
+              ) : null}
+              {contact?.phone ? (
                 <p className="flex items-center gap-2">
                   <Phone className="size-4 text-muted" aria-hidden="true" />
                   <a href={`tel:${contact.phone.replace(/\s+/g, "")}`} className="hover:underline" dir="ltr">
