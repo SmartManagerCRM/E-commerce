@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useEffect, useRef } from "react";
 
 import { Select, TextInput } from "@/components/forms/controls";
 import { FormMessage } from "@/components/forms/form-message";
@@ -17,8 +18,13 @@ export function AdjustForm({ action, itemId }: { action: Action; itemId: string 
   const t = useTranslations("inventory");
   const tf = useTranslations("forms");
   const { state, pending, formProps } = useActionForm(action, idleState as FormState);
+  const form = useRef<HTMLFormElement>(null);
+  // Clear the quantity and note once a change is recorded (errors keep the input).
+  useEffect(() => {
+    if (state.status === "success") form.current?.reset();
+  }, [state]);
   return (
-    <form {...formProps} className="space-y-4">
+    <form ref={form} {...formProps} className="space-y-4">
       <input type="hidden" name="inventory_item_id" value={itemId} />
       <div className="grid gap-4 sm:grid-cols-3">
         <Select

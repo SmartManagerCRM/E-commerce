@@ -96,9 +96,10 @@ export function StoreHeader({
       ) : null}
       {layout === "centered" ? (
         <Container className="py-3 sm:py-4">
-          <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+          {/* On phones the brand takes the remaining width and truncates; from sm up it is truly centred. */}
+          <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 sm:grid-cols-[1fr_auto_1fr] sm:gap-4">
             <div className="flex items-center">{mobile}</div>
-            <div className="flex justify-center">{brand}</div>
+            <div className="flex min-w-0 justify-center">{brand}</div>
             <div className="flex justify-end">{language}</div>
           </div>
           {nav.length > 0 ? (

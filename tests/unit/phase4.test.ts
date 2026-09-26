@@ -11,6 +11,7 @@ import {
 } from "@/lib/catalog/variants";
 import {
   categorySchema,
+  inventorySettingsSchema,
   productDetailsSchema,
   productStructureSchema,
   slugify,
@@ -135,6 +136,13 @@ describe("catalog validation", () => {
     });
     expect(ok.featured).toBe(true);
     expect(ok.category_ids).toEqual([uuid(1)]);
+    // An unticked checkbox is simply absent from the form data.
+    expect(productDetailsSchema.parse({ ...base, name: { en: "x" } }).featured).toBe(false);
+    expect(inventorySettingsSchema(2).parse({ inventory_item_id: uuid(1), min_stock: "0", cost: "" })).toMatchObject({
+      track_stock: false,
+      allow_backorder: false,
+      cost: null,
+    });
   });
 
   it("converts prices exactly and rejects bad amounts", () => {

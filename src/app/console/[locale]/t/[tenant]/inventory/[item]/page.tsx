@@ -115,8 +115,7 @@ async function Item({
 
       {canWrite ? (
         <SectionCard title={t("adjustTitle")} description={t("adjustDescription")}>
-          {/* Remount (clear the form) whenever stock changes. */}
-          <AdjustForm key={item.on_hand} action={adjustStock.bind(null, slug)} itemId={item.id} />
+          <AdjustForm action={adjustStock.bind(null, slug)} itemId={item.id} />
         </SectionCard>
       ) : null}
 

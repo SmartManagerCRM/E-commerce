@@ -31,9 +31,15 @@ export async function expectNoA11yViolations(page: Page) {
   ).toEqual([]);
 }
 
+/**
+ * Compares the document against the device viewport, not window.innerWidth:
+ * mobile browsers widen the layout viewport to fit overflowing content, which
+ * would hide the problem.
+ */
 export async function expectNoHorizontalOverflow(page: Page) {
-  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-  expect(overflow).toBeLessThanOrEqual(0);
+  const viewport = page.viewportSize()?.width ?? (await page.evaluate(() => window.innerWidth));
+  const width = await page.evaluate(() => document.documentElement.scrollWidth);
+  expect(width - viewport).toBeLessThanOrEqual(0);
 }
 
 /**

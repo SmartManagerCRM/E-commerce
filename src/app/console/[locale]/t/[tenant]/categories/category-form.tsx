@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { useEffect, useRef } from "react";
 
 import { Select, TextInput } from "@/components/forms/controls";
 import { FormMessage } from "@/components/forms/form-message";
@@ -32,8 +33,13 @@ export function CategoryForm({ action, locales, parents, submitLabel, disabled, 
   const t = useTranslations("categories");
   const tf = useTranslations("forms");
   const { state, pending, formProps } = useActionForm(action, idleState as FormState);
+  const form = useRef<HTMLFormElement>(null);
+  // The "new category" form starts empty again after each create.
+  useEffect(() => {
+    if (!category && state.status === "success") form.current?.reset();
+  }, [state, category]);
   return (
-    <form {...formProps} encType="multipart/form-data" className="space-y-5">
+    <form ref={form} {...formProps} encType="multipart/form-data" className="space-y-5">
       <fieldset disabled={disabled} className="space-y-5">
         <LocalizedFields
           name="name"

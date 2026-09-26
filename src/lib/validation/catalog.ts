@@ -62,8 +62,10 @@ const optionalInt = (min: number, max: number) =>
     .optional()
     .transform((v) => (v === "" || v === undefined ? null : v));
 
+/** HTML checkbox: "on" when ticked, absent when not. */
 const checkbox = z
-  .union([z.literal("on"), z.literal("true"), z.literal(""), z.null(), z.undefined(), z.boolean()])
+  .union([z.literal("on"), z.literal("true"), z.literal(""), z.boolean()])
+  .optional()
   .transform((v) => v === "on" || v === "true" || v === true);
 
 const slugInput = (pattern: RegExp) =>

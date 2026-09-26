@@ -62,7 +62,8 @@ export function NewsletterForm({ businessName }: { businessName: string }) {
         tabIndex={-1}
         autoComplete="off"
         aria-hidden="true"
-        className="absolute -start-[9999px] h-px w-px opacity-0"
+        // Clipped in place (not pushed off-screen, which widens right-to-left pages).
+        className="pointer-events-none absolute size-px overflow-hidden opacity-0 [clip-path:inset(50%)]"
       />
       {state.status === "error" ? (
         <p role="alert" className="text-sm font-medium">

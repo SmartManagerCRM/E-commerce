@@ -95,8 +95,6 @@ async function Categories({ slug, locale, context }: { slug: string; locale: Loc
       {canWrite ? (
         <SectionCard title={t("newTitle")}>
           <CategoryForm
-            // Fresh (empty) form after each successful create.
-            key={tree.length}
             action={createCategory.bind(null, slug)}
             locales={settings.locales}
             parents={parents}
