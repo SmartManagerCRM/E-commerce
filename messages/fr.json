@@ -174,8 +174,8 @@
       "notes": "Remarques sur la commande (optionnel)",
       "consent": "M’envoyer les actualités et offres de {business} par e-mail. Je peux me désabonner à tout moment.",
       "paymentTitle": "Paiement",
-      "payOnDelivery": "Payez à la livraison (espèces ou carte, selon la boutique). Le paiement en ligne arrive bientôt.",
-      "payOnPickup": "Payez au retrait en boutique. Le paiement en ligne arrive bientôt.",
+      "payOnDelivery": "Payez à la réception de votre commande (espèces ou carte, selon ce que le magasin accepte).",
+      "payOnPickup": "Payez lors du retrait de votre commande en magasin.",
       "summary": "Résumé de la commande",
       "subtotal": "Sous-total",
       "deliveryFee": "Livraison",
@@ -197,7 +197,9 @@
         "invalid_address": "Vérifiez votre adresse de livraison.",
         "empty_cart": "Votre panier est vide.",
         "rateLimited": "Trop de tentatives. Réessayez dans quelques minutes.",
-        "checkoutInvalid": "Certaines informations sont manquantes ou invalides."
+        "checkoutInvalid": "Certaines informations sont manquantes ou invalides.",
+        "online_payment_unavailable": "Le paiement en ligne n'est pas disponible pour le moment. Veuillez payer au retrait ou à la livraison.",
+        "pay_on_fulfillment_unavailable": "Le paiement au retrait/à la livraison n'est pas disponible pour le moment. Veuillez payer en ligne."
       },
       "fieldErrors": {
         "required": "Requis.",
@@ -206,7 +208,9 @@
       "placing": "Envoi de la commande…",
       "placeOrder": "Commander · {total}",
       "placeOrderPlain": "Commander",
-      "placeHint": "Les prix, la livraison et le total sont confirmés par la boutique lors de la commande."
+      "placeHint": "Les prix, la livraison et le total sont confirmés par la boutique lors de la commande.",
+      "payOnline": "Payer en ligne maintenant",
+      "payNow": "Payer maintenant · {total}"
     },
     "order": {
       "title": "Commande n° {number}",
@@ -227,7 +231,10 @@
       "taxAdded": "TVA ({rate} %)",
       "total": "Total",
       "taxIncluded": "Prix TVA incluse ({rate} %)",
-      "questions": "Des questions sur votre commande ? Contactez {business} :"
+      "questions": "Des questions sur votre commande ? Contactez {business} :",
+      "awaitingPayment": "En attente de paiement",
+      "awaitingPaymentBody": "Cette commande est mise de côté le temps que vous finalisiez le paiement. Elle sera annulée automatiquement si le paiement n'est pas terminé à temps.",
+      "completePayment": "Finaliser le paiement"
     }
   },
   "platform": {
@@ -409,7 +416,11 @@
       "invalidTransition": "Cette commande ne peut pas passer à ce statut.",
       "alreadyPaid": "Un paiement est déjà enregistré pour cette commande.",
       "invalidRate": "Saisissez un taux de TVA entre 0 et 100.",
-      "needFulfillment": "Activez le retrait ou la livraison pour accepter des commandes."
+      "needFulfillment": "Activez le retrait ou la livraison pour accepter des commandes.",
+      "invalidPublishableKey": "Saisissez une clé publique valide.",
+      "secretKeyRequired": "Saisissez votre clé secrète Moyasar.",
+      "webhookSecretRequired": "Saisissez votre jeton secret de webhook Moyasar.",
+      "needMethod": "Choisissez au moins un mode de paiement."
     },
     "categoryCreated": "Catégorie créée.",
     "stockUpdated": "Stock mis à jour.",
@@ -488,6 +499,10 @@
     "checkoutLink": {
       "title": "Paiement et livraison",
       "description": "Commande en ligne, retrait, zones de livraison, paiement et TVA."
+    },
+    "paymentsLink": {
+      "title": "Paiements en ligne",
+      "description": "Acceptez Mada, les cartes et STC Pay en ligne avec Moyasar."
     }
   },
   "appearance": {
@@ -1072,7 +1087,8 @@
     "out_for_delivery": "En livraison",
     "completed": "Terminée",
     "cancelled": "Annulée",
-    "updated": "Commande mise à jour"
+    "updated": "Commande mise à jour",
+    "pending_payment": "En attente de paiement"
   },
   "orders": {
     "title": "Commandes",
@@ -1186,7 +1202,8 @@
     "paymentTitle": "Paiement",
     "payOnFulfillment": "Paiement au retrait ou à la livraison",
     "payOnFulfillmentHint": "Les clients paient à la réception ; vous enregistrez le paiement sur la commande.",
-    "onlinePaymentsLater": "Le paiement en ligne (Mada, Apple Pay…) arrive avec le module paiements.",
+    "onlinePaymentsLater": "Acceptez Mada, les cartes et STC Pay en ligne avec Moyasar.",
+    "onlinePaymentsLink": "Configurer le paiement en ligne →",
     "minOrder": "Commande minimum ({currency})",
     "minOrderHint": "Laissez vide pour aucun minimum.",
     "taxTitle": "TVA",
@@ -1209,5 +1226,31 @@
     "zoneActive": "Proposer cette zone",
     "addZone": "Ajouter la zone",
     "deleteZone": "Supprimer cette zone"
+  },
+  "paymentSettings": {
+    "title": "Paiements en ligne",
+    "subtitle": "Acceptez les paiements par carte, Mada et STC Pay en ligne avec Moyasar.",
+    "back": "Retour aux paramètres",
+    "notConfigured": "Le serveur n'est pas encore configuré pour les commandes en ligne.",
+    "moyasarTitle": "Moyasar",
+    "moyasarDescription": "Les données de carte ne touchent jamais nos serveurs — les clients paient sur la page hébergée par Moyasar.",
+    "configured": "Moyasar est configuré.",
+    "notConfiguredYet": "Moyasar n'est pas encore configuré. Ajoutez vos clés ci-dessous.",
+    "mode": "Mode",
+    "modeTest": "Test",
+    "modeLive": "Production",
+    "modeHint": "Utilisez les clés de test jusqu'à ce que vous soyez prêt à accepter de vrais paiements.",
+    "publishableKey": "Clé publique",
+    "secretKey": "Clé secrète",
+    "secretKeyHint": "Plus jamais affichée une fois enregistrée. Laissez vide pour conserver l'actuelle.",
+    "webhookSecret": "Jeton secret du webhook",
+    "webhookSecretHint": "Depuis votre configuration de webhook Moyasar. Laissez vide pour conserver l'actuel.",
+    "keepCurrent": "Laissez vide pour conserver la clé actuelle",
+    "methodsTitle": "Méthodes acceptées",
+    "methodCard": "Cartes (Visa, Mastercard)",
+    "methodMada": "Mada",
+    "methodStcpay": "STC Pay",
+    "isActive": "Accepter les paiements en ligne au moment du paiement",
+    "isActiveHint": "Les clients verront une option « payer en ligne » en plus du paiement au retrait/à la livraison."
   }
 }

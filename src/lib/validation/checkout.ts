@@ -14,6 +14,7 @@ const phone = z
 export const checkoutSchema = z
   .object({
     fulfillment: z.enum(["pickup", "delivery"]),
+    payment_method: z.enum(["pay_on_fulfillment", "online"]).default("pay_on_fulfillment"),
     zone_id: z
       .union([z.literal(""), z.uuid()])
       .optional()
@@ -49,6 +50,7 @@ export type CheckoutInput = z.infer<typeof checkoutSchema>;
 export function toOrderPayload(input: CheckoutInput, locale: string, accessTokenHash: string) {
   return {
     fulfillment: input.fulfillment,
+    payment_method: input.payment_method,
     zone_id: input.fulfillment === "delivery" ? input.zone_id : null,
     contact: { name: input.name, email: input.email, phone: input.phone },
     address:

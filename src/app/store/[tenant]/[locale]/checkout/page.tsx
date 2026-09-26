@@ -106,6 +106,7 @@ export default async function CheckoutPage({ params }: Props) {
           total: i.lineTotalMinor.toString(),
         }))}
         businessName={tenant.business_name}
+        payment={{ payOnFulfillment: checkout.payOnFulfillment, onlinePayment: checkout.onlinePayment }}
       />
     </Container>
   );

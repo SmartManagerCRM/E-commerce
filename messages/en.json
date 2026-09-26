@@ -174,8 +174,8 @@
       "notes": "Order notes (optional)",
       "consent": "Send me news and offers from {business} by email. I can unsubscribe at any time.",
       "paymentTitle": "Payment",
-      "payOnDelivery": "Pay when your order is delivered (cash or card, as the store accepts). Online payment is coming soon.",
-      "payOnPickup": "Pay when you pick up your order in store. Online payment is coming soon.",
+      "payOnDelivery": "Pay when your order is delivered (cash or card, as the store accepts).",
+      "payOnPickup": "Pay when you pick up your order in store.",
       "summary": "Order summary",
       "subtotal": "Subtotal",
       "deliveryFee": "Delivery",
@@ -197,7 +197,9 @@
         "invalid_address": "Check your delivery address.",
         "empty_cart": "Your cart is empty.",
         "rateLimited": "Too many attempts. Please wait a few minutes.",
-        "checkoutInvalid": "Some details are missing or invalid."
+        "checkoutInvalid": "Some details are missing or invalid.",
+        "online_payment_unavailable": "Online payment isn't available right now. Please choose to pay on pickup or delivery.",
+        "pay_on_fulfillment_unavailable": "Pay on pickup/delivery isn't available right now. Please pay online."
       },
       "fieldErrors": {
         "required": "Required.",
@@ -206,7 +208,9 @@
       "placing": "Placing order…",
       "placeOrder": "Place order · {total}",
       "placeOrderPlain": "Place order",
-      "placeHint": "Prices, delivery and totals are confirmed by the store when you place the order."
+      "placeHint": "Prices, delivery and totals are confirmed by the store when you place the order.",
+      "payOnline": "Pay online now",
+      "payNow": "Pay now · {total}"
     },
     "order": {
       "title": "Order #{number}",
@@ -227,7 +231,10 @@
       "taxAdded": "VAT ({rate}%)",
       "total": "Total",
       "taxIncluded": "Prices include VAT ({rate}%)",
-      "questions": "Questions about your order? Contact {business}:"
+      "questions": "Questions about your order? Contact {business}:",
+      "awaitingPayment": "Awaiting payment",
+      "awaitingPaymentBody": "This order is being held while you complete payment. It will be released automatically if payment isn't finished in time.",
+      "completePayment": "Complete payment"
     }
   },
   "platform": {
@@ -409,7 +416,11 @@
       "invalidTransition": "This order can’t move to that status.",
       "alreadyPaid": "A payment is already recorded for this order.",
       "invalidRate": "Enter a VAT rate between 0 and 100.",
-      "needFulfillment": "Turn on pickup or delivery to accept orders."
+      "needFulfillment": "Turn on pickup or delivery to accept orders.",
+      "invalidPublishableKey": "Enter a valid publishable key.",
+      "secretKeyRequired": "Enter your Moyasar secret key.",
+      "webhookSecretRequired": "Enter your Moyasar webhook secret token.",
+      "needMethod": "Choose at least one payment method."
     },
     "categoryCreated": "Category created.",
     "stockUpdated": "Stock updated.",
@@ -488,6 +499,10 @@
     "checkoutLink": {
       "title": "Checkout & delivery",
       "description": "Online ordering, pickup, delivery areas, payment and VAT."
+    },
+    "paymentsLink": {
+      "title": "Online payments",
+      "description": "Accept Mada, cards and STC Pay online with Moyasar."
     }
   },
   "appearance": {
@@ -1072,7 +1087,8 @@
     "out_for_delivery": "Out for delivery",
     "completed": "Completed",
     "cancelled": "Cancelled",
-    "updated": "Order updated"
+    "updated": "Order updated",
+    "pending_payment": "Awaiting payment"
   },
   "orders": {
     "title": "Orders",
@@ -1186,7 +1202,8 @@
     "paymentTitle": "Payment",
     "payOnFulfillment": "Pay on pickup or delivery",
     "payOnFulfillmentHint": "Customers pay when they receive the order; you record the payment in the order.",
-    "onlinePaymentsLater": "Online card payments (Mada, Apple Pay…) come with the payments module.",
+    "onlinePaymentsLater": "Accept Mada, cards and STC Pay online with Moyasar.",
+    "onlinePaymentsLink": "Set up online payments →",
     "minOrder": "Minimum order ({currency})",
     "minOrderHint": "Leave empty for no minimum.",
     "taxTitle": "VAT",
@@ -1209,5 +1226,31 @@
     "zoneActive": "Offer this area",
     "addZone": "Add area",
     "deleteZone": "Delete this area"
+  },
+  "paymentSettings": {
+    "title": "Online payments",
+    "subtitle": "Accept card, Mada and STC Pay payments online with Moyasar.",
+    "back": "Back to settings",
+    "notConfigured": "The server isn't configured for online orders yet.",
+    "moyasarTitle": "Moyasar",
+    "moyasarDescription": "Card data never touches our servers — customers pay on Moyasar's hosted page.",
+    "configured": "Moyasar is configured.",
+    "notConfiguredYet": "Moyasar isn't configured yet. Add your keys below.",
+    "mode": "Mode",
+    "modeTest": "Test",
+    "modeLive": "Live",
+    "modeHint": "Use test keys until you're ready to accept real payments.",
+    "publishableKey": "Publishable key",
+    "secretKey": "Secret key",
+    "secretKeyHint": "Never shown again once saved. Leave blank to keep the current one.",
+    "webhookSecret": "Webhook secret token",
+    "webhookSecretHint": "From your Moyasar webhook configuration. Leave blank to keep the current one.",
+    "keepCurrent": "Leave blank to keep the current key",
+    "methodsTitle": "Accepted methods",
+    "methodCard": "Cards (Visa, Mastercard)",
+    "methodMada": "Mada",
+    "methodStcpay": "STC Pay",
+    "isActive": "Accept online payments at checkout",
+    "isActiveHint": "Customers will see a “pay online” option alongside pay on pickup/delivery."
   }
 }

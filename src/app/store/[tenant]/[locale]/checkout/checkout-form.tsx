@@ -40,14 +40,18 @@ type Props = {
   quotes: Record<string, QuoteView | null>;
   lines: { id: string; name: string; options: string; image: string | null; qty: number; total: string }[];
   businessName: string;
+  payment: { payOnFulfillment: boolean; onlinePayment: boolean };
 };
 
-export function CheckoutForm({ action, currency, exponent, pickup, zones, tax, quotes, lines, businessName }: Props) {
+export function CheckoutForm({ action, currency, exponent, pickup, zones, tax, quotes, lines, businessName, payment }: Props) {
   const t = useTranslations("store.checkout");
   const locale = useLocale() as Locale;
   const money = (minor: string | bigint) => formatMoney({ amountMinor: BigInt(minor), currency }, exponent, locale);
   const [fulfillment, setFulfillment] = useState<"pickup" | "delivery">(pickup ? "pickup" : "delivery");
   const [zoneId, setZoneId] = useState(zones[0]?.id ?? "");
+  const [paymentMethod, setPaymentMethod] = useState<"pay_on_fulfillment" | "online">(
+    payment.payOnFulfillment ? "pay_on_fulfillment" : "online",
+  );
   const { state, pending, formProps } = useActionForm(action, { status: "idle" } as CheckoutState);
 
   const quote = quotes[fulfillment === "pickup" ? "pickup" : `delivery:${zoneId}`] ?? null;
@@ -213,14 +217,54 @@ export function CheckoutForm({ action, currency, exponent, pickup, zones, tax, q
           />
         </fieldset>
 
-        <section aria-labelledby="payment-title" className="space-y-2">
-          <h2 id="payment-title" className="text-lg font-semibold">
+        <fieldset aria-labelledby="payment-title" className="space-y-2">
+          <legend id="payment-title" className="mb-2 text-lg font-semibold">
             {t("paymentTitle")}
-          </h2>
-          <p className="rounded-lg border border-border bg-surface p-4 text-sm">
-            {fulfillment === "delivery" ? t("payOnDelivery") : t("payOnPickup")}
-          </p>
-        </section>
+          </legend>
+          {payment.payOnFulfillment && payment.onlinePayment ? (
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label
+                className={cn(
+                  "flex cursor-pointer gap-3 rounded-lg border p-4 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary",
+                  paymentMethod === "pay_on_fulfillment" ? "border-fg bg-surface" : "border-border",
+                )}
+              >
+                <input
+                  type="radio"
+                  name="payment_method"
+                  value="pay_on_fulfillment"
+                  checked={paymentMethod === "pay_on_fulfillment"}
+                  onChange={() => setPaymentMethod("pay_on_fulfillment")}
+                  className="mt-1 size-4 accent-primary"
+                />
+                <span className="text-sm">{fulfillment === "delivery" ? t("payOnDelivery") : t("payOnPickup")}</span>
+              </label>
+              <label
+                className={cn(
+                  "flex cursor-pointer gap-3 rounded-lg border p-4 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary",
+                  paymentMethod === "online" ? "border-fg bg-surface" : "border-border",
+                )}
+              >
+                <input
+                  type="radio"
+                  name="payment_method"
+                  value="online"
+                  checked={paymentMethod === "online"}
+                  onChange={() => setPaymentMethod("online")}
+                  className="mt-1 size-4 accent-primary"
+                />
+                <span className="text-sm">{t("payOnline")}</span>
+              </label>
+            </div>
+          ) : (
+            <>
+              <input type="hidden" name="payment_method" value={paymentMethod} />
+              <p className="rounded-lg border border-border bg-surface p-4 text-sm">
+                {payment.onlinePayment ? t("payOnline") : fulfillment === "delivery" ? t("payOnDelivery") : t("payOnPickup")}
+              </p>
+            </>
+          )}
+        </fieldset>
       </div>
 
       <aside
@@ -294,7 +338,11 @@ export function CheckoutForm({ action, currency, exponent, pickup, zones, tax, q
           disabled={pending || problems.length > 0 || !quote}
           className="inline-flex h-12 w-full items-center justify-center rounded-button bg-primary px-6 text-sm font-semibold text-primary-fg hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          {pending ? t("placing") : quote ? t("placeOrder", { total: money(quote.total) }) : t("placeOrderPlain")}
+          {pending
+            ? t("placing")
+            : quote
+              ? t(paymentMethod === "online" ? "payNow" : "placeOrder", { total: money(quote.total) })
+              : t("placeOrderPlain")}
         </button>
         <p className="text-xs text-muted">{t("placeHint")}</p>
       </aside>

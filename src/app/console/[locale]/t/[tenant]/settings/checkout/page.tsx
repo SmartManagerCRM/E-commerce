@@ -80,6 +80,7 @@ async function Content({ slug, context }: { slug: string; locale: Locale; contex
           hasDelivery={hasDelivery}
           currency={settings.currency}
           exponent={settings.exponent}
+          slug={slug}
           values={{
             acceptingOrders: checkout.accepting_orders === true,
             pickup: checkout.pickup !== false,

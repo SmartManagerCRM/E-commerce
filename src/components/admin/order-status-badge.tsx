@@ -4,6 +4,7 @@ import { Badge, type BadgeTone } from "@/components/ui/badge";
 import type { OrderStatus } from "@/lib/commerce/orders";
 
 const TONE: Record<OrderStatus, BadgeTone> = {
+  pending_payment: "accent",
   pending: "primary",
   confirmed: "outline",
   preparing: "outline",

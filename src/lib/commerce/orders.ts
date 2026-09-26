@@ -4,6 +4,7 @@
  * which buttons to show.
  */
 export const ORDER_STATUSES = [
+  "pending_payment",
   "pending",
   "confirmed",
   "preparing",
@@ -14,12 +15,23 @@ export const ORDER_STATUSES = [
 ] as const;
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 export type Fulfillment = "pickup" | "delivery";
+export type PaymentMethod = "pay_on_fulfillment" | "online";
 
-export const OPEN_STATUSES: readonly OrderStatus[] = ["pending", "confirmed", "preparing", "ready", "out_for_delivery"];
+export const OPEN_STATUSES: readonly OrderStatus[] = [
+  "pending_payment",
+  "pending",
+  "confirmed",
+  "preparing",
+  "ready",
+  "out_for_delivery",
+];
 
 export function nextStatuses(status: OrderStatus, fulfillment: Fulfillment): OrderStatus[] {
   const handOff: OrderStatus = fulfillment === "delivery" ? "out_for_delivery" : "ready";
   switch (status) {
+    // An unpaid online order can only be cancelled: it is never hand-advanced past payment.
+    case "pending_payment":
+      return ["cancelled"];
     case "pending":
       return ["confirmed", "cancelled"];
     case "confirmed":

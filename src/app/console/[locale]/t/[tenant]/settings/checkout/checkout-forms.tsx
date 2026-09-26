@@ -8,6 +8,7 @@ import { FormMessage } from "@/components/forms/form-message";
 import { LocalizedFields } from "@/components/forms/localized-fields";
 import { SubmitButton } from "@/components/forms/submit-button";
 import { useActionForm } from "@/components/forms/use-action-form";
+import { Link } from "@/i18n/navigation";
 import type { Locale } from "@/i18n/locales";
 import type { LocalizedText } from "@/lib/localized";
 import { idleState, type FormState } from "@/lib/validation/common";
@@ -53,11 +54,13 @@ export function CommerceSettingsForm({
   currency,
   exponent,
   values,
+  slug,
 }: {
   action: Action;
   disabled: boolean;
   hasDelivery: boolean;
   currency: string;
+  slug: string;
   exponent: number;
   values: {
     acceptingOrders: boolean;
@@ -101,7 +104,12 @@ export function CommerceSettingsForm({
             hint={t("payOnFulfillmentHint")}
             defaultChecked={values.payOnFulfillment}
           />
-          <p className="text-xs text-muted">{t("onlinePaymentsLater")}</p>
+          <p className="text-xs text-muted">
+            {t("onlinePaymentsLater")}{" "}
+            <Link href={`/t/${slug}/settings/payments`} className="font-medium text-fg underline">
+              {t("onlinePaymentsLink")}
+            </Link>
+          </p>
         </fieldset>
         <div className="grid gap-4 sm:grid-cols-2">
           <TextInput

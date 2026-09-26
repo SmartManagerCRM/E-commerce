@@ -34,6 +34,8 @@ const optionsRow = z.object({
   ordering_open: z.boolean().nullable(),
   pickup: z.boolean().nullable(),
   delivery: z.boolean().nullable(),
+  pay_on_fulfillment: z.boolean().nullable(),
+  online_payment: z.boolean().nullable(),
   min_order_minor: amount.nullable(),
   tax_rate_bps: z.number(),
   tax_included: z.boolean(),
@@ -62,6 +64,8 @@ export type CheckoutOptions = {
   orderingOpen: boolean;
   pickup: boolean;
   delivery: boolean;
+  payOnFulfillment: boolean;
+  onlinePayment: boolean;
   minOrderMinor: bigint | null;
   taxRateBps: number;
   taxIncluded: boolean;
@@ -72,6 +76,8 @@ const CLOSED: CheckoutOptions = {
   orderingOpen: false,
   pickup: false,
   delivery: false,
+  payOnFulfillment: false,
+  onlinePayment: false,
   minOrderMinor: null,
   taxRateBps: 0,
   taxIncluded: true,
@@ -89,6 +95,8 @@ export const getCheckoutOptions = cache(
       orderingOpen: row.ordering_open === true,
       pickup: row.pickup === true,
       delivery: row.delivery === true,
+      payOnFulfillment: row.pay_on_fulfillment === true,
+      onlinePayment: row.online_payment === true,
       minOrderMinor: row.min_order_minor,
       taxRateBps: row.tax_rate_bps,
       taxIncluded: row.tax_included,
@@ -227,9 +235,13 @@ export async function getQuote(
 // Customer order page
 // ---------------------------------------------------------------------------
 const orderRow = z.object({
+  id: z.uuid().optional(),
   order_number: z.string(),
   status: z.string(),
   payment_status: z.string(),
+  payment_method: z.string().optional(),
+  payment_intent_ref: z.string().nullable().optional(),
+  expires_at: z.string().nullable().optional(),
   fulfillment_type: z.enum(["pickup", "delivery"]),
   delivery_zone_name: localizedText.nullable(),
   subtotal_minor: amount,
@@ -270,9 +282,13 @@ export type OrderItemView = {
 };
 
 export type CustomerOrderView = {
+  id: string | null;
   number: string;
   status: OrderStatus;
   paid: boolean;
+  paymentMethod: string | null;
+  paymentIntentRef: string | null;
+  expiresAt: string | null;
   fulfillment: Fulfillment;
   zoneName: string | null;
   subtotalMinor: bigint;
@@ -318,9 +334,13 @@ export async function getCustomerOrder(
   const row = orderRow.parse(data);
   const ctx = { tenant, locale };
   return {
+    id: row.id ?? null,
     number: row.order_number,
     status: row.status as OrderStatus,
     paid: row.payment_status === "paid",
+    paymentMethod: row.payment_method ?? null,
+    paymentIntentRef: row.payment_intent_ref ?? null,
+    expiresAt: row.expires_at ?? null,
     fulfillment: row.fulfillment_type,
     zoneName: row.delivery_zone_name ? text(ctx, row.delivery_zone_name) : null,
     subtotalMinor: row.subtotal_minor,

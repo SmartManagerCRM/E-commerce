@@ -83,7 +83,14 @@ export async function updateCartLine(formData: FormData): Promise<void> {
 export type CheckoutState =
   FormState | { status: "error"; error: "checkoutProblems"; problems: CheckoutProblem[]; fieldErrors?: undefined };
 
-const ORDER_ERRORS = new Set(["phone_required", "invalid_contact", "invalid_address", "empty_cart"]);
+const ORDER_ERRORS = new Set([
+  "phone_required",
+  "invalid_contact",
+  "invalid_address",
+  "empty_cart",
+  "online_payment_unavailable",
+  "pay_on_fulfillment_unavailable",
+]);
 
 export async function placeOrder(_prev: CheckoutState, formData: FormData): Promise<CheckoutState> {
   const parsed = checkoutSchema.safeParse(formDataToObject(formData));
@@ -118,9 +125,13 @@ export async function placeOrder(_prev: CheckoutState, formData: FormData): Prom
     return { status: "error", error: error && ORDER_ERRORS.has(error.message) ? error.message : "generic" };
   }
 
-  const order = data as { order_number: string };
+  const order = data as { order_number: string; status: string };
   await resetCartCookie();
   revalidatePath(CART_PAGE, "page");
-  redirect({ href: `/orders/${order.order_number}?t=${accessToken}`, locale });
+  const href =
+    order.status === "pending_payment"
+      ? `/orders/${order.order_number}/pay?t=${accessToken}`
+      : `/orders/${order.order_number}?t=${accessToken}`;
+  redirect({ href, locale });
   return { status: "success" };
 }

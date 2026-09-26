@@ -6,6 +6,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 
 import { Money } from "@/components/store/money";
 import { Container } from "@/components/ui/container";
+import { Link } from "@/i18n/navigation";
 import { progressSteps } from "@/lib/commerce/orders";
 import { cn } from "@/lib/cn";
 import { hashToken } from "@/server/commerce/cart-cookie";
@@ -40,7 +41,9 @@ export default async function OrderPage({ params, searchParams }: Props) {
   const steps = progressSteps(order.fulfillment);
   const reached = new Set(order.history.map((h) => h.status));
   const cancelled = order.status === "cancelled";
-  const justPlaced = order.status === "pending" && order.history.length === 1;
+  const awaitingPayment = order.status === "pending_payment";
+  const justPlaced =
+    order.status === "pending" && order.history.every((h) => h.status === "pending" || h.status === "pending_payment");
   const rate = (order.taxRateBps / 100).toLocaleString(locale);
 
   return (
@@ -75,6 +78,17 @@ export default async function OrderPage({ params, searchParams }: Props) {
               {order.cancelReason ? ` — ${order.cancelReason}` : ""}
             </span>
           </p>
+        ) : awaitingPayment ? (
+          <div role="status" className="rounded-lg border border-accent/30 bg-accent/10 p-4">
+            <p className="font-medium">{t("awaitingPayment")}</p>
+            <p className="mt-1 text-sm text-muted">{t("awaitingPaymentBody")}</p>
+            <Link
+              href={`/orders/${order.number}/pay?t=${token}`}
+              className="mt-3 inline-flex h-10 items-center rounded-button bg-primary px-4 text-sm font-semibold text-primary-fg hover:opacity-90"
+            >
+              {t("completePayment")}
+            </Link>
+          </div>
         ) : (
           <ol className="grid grid-cols-5 gap-2">
             {steps.map((step) => {
@@ -116,7 +130,13 @@ export default async function OrderPage({ params, searchParams }: Props) {
             {t("payment")}
           </h2>
           <p className="mt-2 text-sm">
-            {order.paid ? t("paid") : order.fulfillment === "delivery" ? t("payOnDelivery") : t("payOnPickup")}
+            {order.paid
+              ? t("paid")
+              : order.paymentMethod === "online"
+                ? t("awaitingPayment")
+                : order.fulfillment === "delivery"
+                  ? t("payOnDelivery")
+                  : t("payOnPickup")}
           </p>
         </section>
       </div>
