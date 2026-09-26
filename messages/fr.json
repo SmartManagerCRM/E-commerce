@@ -59,7 +59,54 @@
         "invalidEmail": "Saisissez une adresse e-mail valide.",
         "consentRequired": "Veuillez confirmer votre accord pour recevoir des e-mails.",
         "rateLimited": "Trop de tentatives. Réessayez plus tard."
-      }
+      },
+      "featuredProductsTitle": "Produits en vedette",
+      "featuredCategoriesTitle": "Acheter par catégorie",
+      "viewAll": "Tout voir",
+      "productCount": "{count, plural, one {# produit} other {# produits}}"
+    },
+    "shop": {
+      "title": "Boutique",
+      "allProducts": "Tous les produits",
+      "categories": "Catégories",
+      "breadcrumb": "Fil d’Ariane",
+      "filters": "Filtres",
+      "searchLabel": "Rechercher des produits",
+      "searchPlaceholder": "Rechercher…",
+      "price": "Prix ({currency})",
+      "min": "Min",
+      "max": "Max",
+      "availableOnly": "En stock uniquement",
+      "apply": "Appliquer",
+      "clear": "Effacer les filtres",
+      "sort": "Trier par",
+      "sortOptions": {
+        "featured": "En vedette",
+        "newest": "Nouveautés",
+        "price_asc": "Prix croissant",
+        "price_desc": "Prix décroissant",
+        "name": "Nom"
+      },
+      "results": "{count, plural, =0 {Aucun produit} one {# produit} other {# produits}}",
+      "emptyTitle": "Aucun produit trouvé",
+      "emptyBody": "Essayez une autre recherche ou retirez des filtres.",
+      "emptyStoreTitle": "Les produits arrivent bientôt",
+      "emptyStoreBody": "Cette boutique n’a pas encore publié de produits. Revenez bientôt.",
+      "pagination": "Pagination",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "pageOf": "Page {page} sur {total}"
+    },
+    "product": {
+      "available": "En stock",
+      "sku": "Réf. :",
+      "unavailableCombination": "Cette combinaison n’est pas disponible.",
+      "orderingSoonTitle": "La commande en ligne arrive bientôt",
+      "orderingSoonBody": "La commande en ligne n’est pas encore disponible dans cette boutique.",
+      "orderingSoonContact": "La commande en ligne n’est pas encore disponible — contactez {business} pour commander.",
+      "emailUs": "Nous écrire",
+      "description": "Description",
+      "related": "Vous aimerez aussi"
     }
   },
   "platform": {
@@ -542,7 +589,8 @@
     "addToCart": "Ajouter au panier",
     "buyNow": "Acheter maintenant",
     "deliveryInfo": "Livraison en 1 à 3 jours · offerte dès un certain montant",
-    "pickupInfo": "Retrait gratuit en boutique"
+    "pickupInfo": "Retrait gratuit en boutique",
+    "from": "À partir de"
   },
   "homepageEditor": {
     "title": "Page d’accueil",
@@ -564,9 +612,9 @@
     "upcomingTitle": "Autres sections",
     "upcomingDescription": "Ces sections deviennent disponibles avec les modules correspondants.",
     "requires": {
-      "catalog": "Après l’ajout de produits",
       "booking": "Avec le module réservations",
-      "loyalty": "Avec le module fidélité"
+      "loyalty": "Avec le module fidélité",
+      "orders": "Dès que votre boutique reçoit des commandes"
     },
     "types": {
       "hero": "Bannière principale",
@@ -621,7 +669,14 @@
       "showHours": "Afficher les horaires",
       "showDirections": "Afficher un lien « Itinéraire »",
       "locationHint": "L’adresse, le téléphone et les horaires proviennent des Paramètres.",
-      "newsletterHint": "Les inscriptions sont enregistrées avec le consentement du client."
+      "newsletterHint": "Les inscriptions sont enregistrées avec le consentement du client.",
+      "productLimit": "Nombre de produits",
+      "productLimitOption": "{count} produits",
+      "featuredProductsHint": "Les produits « En vedette » apparaissent d’abord, puis le reste du catalogue dans l’ordre choisi.",
+      "featuredCategoriesHint": "Affiche vos catégories principales qui contiennent des produits.",
+      "category": "Catégorie",
+      "chooseCategory": "Choisir une catégorie…",
+      "noCategories": "Créez d’abord une catégorie dans Catalogue → Catégories."
     }
   },
   "designPreview": {

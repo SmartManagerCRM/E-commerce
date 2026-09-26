@@ -14,7 +14,7 @@ describe("homepage sections", () => {
       { id: uuid(1), type: "hero", enabled: true, props: { title: { en: "Hi", de: "x" }, variant: "centered" } },
       { id: "not-a-uuid", type: "hero", enabled: true, props: {} },
       { id: uuid(2), type: "unknown", enabled: true, props: {} },
-      { id: uuid(3), type: "featured_products", enabled: true, props: {} },
+      { id: uuid(3), type: "best_sellers", enabled: true, props: {} },
       { id: uuid(4), type: "location", enabled: false, props: { show_hours: "yes" } },
       "garbage",
     ]);
@@ -59,7 +59,8 @@ describe("homepage sections", () => {
   });
 
   it("marks module-dependent sections as unavailable until their phase", () => {
-    expect(SECTION_REGISTRY.featured_products.available).toBe(false);
+    expect(SECTION_REGISTRY.best_sellers.available).toBe(false);
+    expect(SECTION_REGISTRY.featured_products.available).toBe(true);
     expect(SECTION_REGISTRY.booking_cta.available).toBe(false);
     expect(SECTION_REGISTRY.hero.available).toBe(true);
   });

@@ -15,6 +15,21 @@ export const optionalText = (max: number) =>
     .optional()
     .transform((v) => v ?? null);
 
+/** Localized text from `<field>.<locale>` inputs; empty translations are dropped. */
+export const localizedInput = (max: number) =>
+  z
+    .preprocess(
+      (v) => v ?? {},
+      z.object(Object.fromEntries(LOCALES.map((l) => [l, z.string().trim().max(max).optional()]))),
+    )
+    .transform((value) =>
+      Object.fromEntries(Object.entries(value).filter((entry): entry is [string, string] => Boolean(entry[1]))),
+    );
+
+/** Same, but at least one language must be filled in. */
+export const requiredLocalized = (max: number) =>
+  localizedInput(max).refine((value) => Object.keys(value).length > 0, "required");
+
 export const hexColor = z.string().regex(/^#[0-9a-fA-F]{6}$/);
 
 export const emailSchema = z.string().trim().toLowerCase().pipe(z.email().max(254));

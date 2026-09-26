@@ -59,7 +59,54 @@
         "invalidEmail": "Enter a valid email address.",
         "consentRequired": "Please confirm that you agree to receive emails.",
         "rateLimited": "Too many attempts. Please try again later."
-      }
+      },
+      "featuredProductsTitle": "Featured products",
+      "featuredCategoriesTitle": "Shop by category",
+      "viewAll": "View all",
+      "productCount": "{count, plural, one {# product} other {# products}}"
+    },
+    "shop": {
+      "title": "Shop",
+      "allProducts": "All products",
+      "categories": "Categories",
+      "breadcrumb": "Breadcrumb",
+      "filters": "Filters",
+      "searchLabel": "Search products",
+      "searchPlaceholder": "Search…",
+      "price": "Price ({currency})",
+      "min": "Min",
+      "max": "Max",
+      "availableOnly": "In stock only",
+      "apply": "Apply",
+      "clear": "Clear filters",
+      "sort": "Sort by",
+      "sortOptions": {
+        "featured": "Featured",
+        "newest": "Newest",
+        "price_asc": "Price: low to high",
+        "price_desc": "Price: high to low",
+        "name": "Name"
+      },
+      "results": "{count, plural, =0 {No products} one {# product} other {# products}}",
+      "emptyTitle": "No products found",
+      "emptyBody": "Try another search or remove some filters.",
+      "emptyStoreTitle": "Products are coming soon",
+      "emptyStoreBody": "This store hasn’t published any products yet. Please check back soon.",
+      "pagination": "Pagination",
+      "previous": "Previous",
+      "next": "Next",
+      "pageOf": "Page {page} of {total}"
+    },
+    "product": {
+      "available": "In stock",
+      "sku": "SKU:",
+      "unavailableCombination": "This combination isn’t available.",
+      "orderingSoonTitle": "Online ordering opens soon",
+      "orderingSoonBody": "Online ordering isn’t available in this store yet.",
+      "orderingSoonContact": "Online ordering isn’t available yet — contact {business} to order.",
+      "emailUs": "Email us",
+      "description": "Description",
+      "related": "You may also like"
     }
   },
   "platform": {
@@ -542,7 +589,8 @@
     "addToCart": "Add to cart",
     "buyNow": "Buy now",
     "deliveryInfo": "Delivery in 1–3 days · free over a set amount",
-    "pickupInfo": "Free pickup in store"
+    "pickupInfo": "Free pickup in store",
+    "from": "From"
   },
   "homepageEditor": {
     "title": "Homepage",
@@ -564,9 +612,9 @@
     "upcomingTitle": "More sections",
     "upcomingDescription": "These sections become available as the matching modules are enabled.",
     "requires": {
-      "catalog": "After products are added",
       "booking": "With the booking module",
-      "loyalty": "With the loyalty module"
+      "loyalty": "With the loyalty module",
+      "orders": "Once your store takes orders"
     },
     "types": {
       "hero": "Hero",
@@ -621,7 +669,14 @@
       "showHours": "Show opening hours",
       "showDirections": "Show a “Get directions” link",
       "locationHint": "Address, phone and hours come from Settings.",
-      "newsletterHint": "Sign-ups are stored with the customer’s consent."
+      "newsletterHint": "Sign-ups are stored with the customer’s consent.",
+      "productLimit": "Number of products",
+      "productLimitOption": "{count} products",
+      "featuredProductsHint": "Products marked “Featured” are shown first, then the rest of your catalog in your chosen order.",
+      "featuredCategoriesHint": "Shows your main categories that contain products.",
+      "category": "Category",
+      "chooseCategory": "Choose a category…",
+      "noCategories": "Create a category in Catalog → Categories first."
     }
   },
   "designPreview": {

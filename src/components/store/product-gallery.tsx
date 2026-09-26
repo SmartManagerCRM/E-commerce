@@ -11,10 +11,26 @@ import type { ImageView } from "@/lib/storefront/catalog-types";
  * Large product gallery: main image + thumbnail strip on desktop, swipeable
  * scroll-snap strip on mobile. Thumbnails are buttons with pressed state.
  */
-export function ProductGallery({ images, productName }: { images: ImageView[]; productName: string }) {
+export function ProductGallery({
+  images,
+  productName,
+  focusIndex,
+}: {
+  images: ImageView[];
+  productName: string;
+  /** Image to show when it changes (e.g. the selected variant's image). */
+  focusIndex?: number;
+}) {
   const t = useTranslations("catalog");
-  const [active, setActive] = useState(0);
+  const [active, setActive] = useState(focusIndex ?? 0);
+  const [lastFocus, setLastFocus] = useState(focusIndex);
   const scroller = useRef<HTMLDivElement>(null);
+
+  // Follow the variant image without an effect: adjust state during render.
+  if (focusIndex !== lastFocus) {
+    setLastFocus(focusIndex);
+    if (focusIndex !== undefined) setActive(focusIndex);
+  }
 
   if (images.length === 0) {
     return <div className="aspect-square w-full rounded-lg bg-fg/[0.04]" aria-hidden="true" />;

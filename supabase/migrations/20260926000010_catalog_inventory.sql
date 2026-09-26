@@ -179,7 +179,8 @@ create table public.product_options (
   name       jsonb not null check (app.is_localized_text(name) and name <> '{}'::jsonb),
   position   smallint not null default 0 check (position between 0 and 2),
   unique (tenant_id, id),
-  unique (product_id, position),
+  -- Deferred so options can be reordered inside one transaction.
+  unique (product_id, position) deferrable initially deferred,
   foreign key (tenant_id, product_id) references public.products (tenant_id, id) on delete cascade
 );
 
@@ -238,7 +239,8 @@ create table public.product_variants (
   foreign key (tenant_id, image_id) references public.product_images (tenant_id, id) on delete set null (image_id)
 );
 
-create unique index product_variants_sku on public.product_variants (tenant_id, lower(sku)) where sku is not null;
+-- SKUs are unique among active variants (an archived variant keeps its SKU for history).
+create unique index product_variants_sku on public.product_variants (tenant_id, lower(sku)) where sku is not null and status = 'active';
 create unique index product_variants_combination on public.product_variants (product_id, option_value_ids) where status = 'active';
 create index product_variants_product on public.product_variants (product_id, position);
 
@@ -698,3 +700,182 @@ $$;
 
 revoke all on function public.low_stock_items(uuid, integer) from public;
 grant execute on function public.low_stock_items(uuid, integer) to authenticated;
+
+-- =============================================================================
+-- Product structure editor: options, option values and variants are saved
+-- together in one transaction. SECURITY INVOKER, so every write is still
+-- checked by the RLS policies above (catalog.write) and initial stock goes
+-- through adjust_stock() (inventory.write).
+--
+--   p_options  = [{ "id"?: uuid, "name": {..}, "values": [{ "id"?: uuid, "key": text, "label": {..} }] }]
+--   p_variants = [{ "id"?: uuid, "keys": [value key per option], "price": int, "compare_at"?: int,
+--                   "sku"?: text, "weight_g"?: int, "initial_stock"?: int }]
+--
+-- Variants left out are archived (not deleted) so order history keeps them.
+-- =============================================================================
+create or replace function public.save_product_structure(p_product uuid, p_options jsonb, p_variants jsonb)
+returns void
+language plpgsql
+security invoker
+set search_path = ''
+as $$
+declare
+  v_tenant     uuid;
+  v_opt        jsonb;
+  v_val        jsonb;
+  v_var        jsonb;
+  v_opt_id     uuid;
+  v_val_id     uuid;
+  v_var_id     uuid;
+  v_ids        uuid[];
+  v_key        text;
+  v_keys       jsonb := '{}'::jsonb;
+  v_opt_count  integer := jsonb_array_length(coalesce(p_options, '[]'::jsonb));
+  v_opt_pos    integer := 0;
+  v_val_pos    integer;
+  v_var_pos    integer := 0;
+  v_stock      integer;
+  v_item       uuid;
+begin
+  select p.tenant_id into v_tenant from public.products p where p.id = p_product for update;
+  if v_tenant is null then
+    raise exception 'Product not found' using errcode = 'P0002';
+  end if;
+  if not app.has_permission(v_tenant, 'catalog.write') then
+    raise exception 'Not allowed' using errcode = '42501';
+  end if;
+  if jsonb_typeof(coalesce(p_options, '[]'::jsonb)) <> 'array' or jsonb_typeof(p_variants) <> 'array'
+     or v_opt_count > 3 or jsonb_array_length(p_variants) not between 1 and 100
+     or (v_opt_count = 0 and jsonb_array_length(p_variants) <> 1) then
+    raise exception 'Invalid product structure' using errcode = '22023';
+  end if;
+
+  -- 1. Archive variants that are no longer listed, then drop removed options/values.
+  update public.product_variants v set status = 'archived'
+  where v.product_id = p_product and v.status = 'active'
+    and v.id not in (select (e ->> 'id')::uuid from jsonb_array_elements(p_variants) e where e ->> 'id' is not null);
+
+  delete from public.product_options o
+  where o.product_id = p_product
+    and o.id not in (select (e ->> 'id')::uuid from jsonb_array_elements(coalesce(p_options, '[]'::jsonb)) e where e ->> 'id' is not null);
+
+  delete from public.product_option_values ov
+  using public.product_options o
+  where o.id = ov.option_id and o.product_id = p_product
+    and ov.id not in (select (val ->> 'id')::uuid
+                        from jsonb_array_elements(coalesce(p_options, '[]'::jsonb)) opt,
+                             jsonb_array_elements(opt -> 'values') val
+                       where val ->> 'id' is not null);
+
+  -- 2. Upsert options and values; remember each value's client key.
+  for v_opt in select * from jsonb_array_elements(coalesce(p_options, '[]'::jsonb)) loop
+    if jsonb_typeof(v_opt -> 'values') <> 'array' or jsonb_array_length(v_opt -> 'values') not between 1 and 30 then
+      raise exception 'Every option needs values' using errcode = '22023';
+    end if;
+    v_opt_id := (v_opt ->> 'id')::uuid;
+    if v_opt_id is not null then
+      update public.product_options set name = v_opt -> 'name', position = v_opt_pos
+      where id = v_opt_id and product_id = p_product;
+      if not found then
+        raise exception 'Option not found' using errcode = 'P0002';
+      end if;
+    else
+      insert into public.product_options (tenant_id, product_id, name, position)
+      values (v_tenant, p_product, v_opt -> 'name', v_opt_pos)
+      returning id into v_opt_id;
+    end if;
+
+    v_val_pos := 0;
+    for v_val in select * from jsonb_array_elements(v_opt -> 'values') loop
+      v_val_id := (v_val ->> 'id')::uuid;
+      if v_val_id is not null then
+        update public.product_option_values set label = v_val -> 'label', position = v_val_pos
+        where id = v_val_id and option_id = v_opt_id;
+        if not found then
+          raise exception 'Option value not found' using errcode = 'P0002';
+        end if;
+      else
+        insert into public.product_option_values (tenant_id, option_id, label, position)
+        values (v_tenant, v_opt_id, v_val -> 'label', v_val_pos)
+        returning id into v_val_id;
+      end if;
+      if coalesce(v_val ->> 'key', '') = '' or v_keys ? (v_val ->> 'key') then
+        raise exception 'Option values need unique keys' using errcode = '22023';
+      end if;
+      v_keys := v_keys || jsonb_build_object(v_val ->> 'key', v_val_id);
+      v_val_pos := v_val_pos + 1;
+    end loop;
+    v_opt_pos := v_opt_pos + 1;
+  end loop;
+
+  -- 3. Upsert variants: exactly one value of every option each.
+  for v_var in select * from jsonb_array_elements(p_variants) loop
+    v_ids := '{}';
+    for v_key in select jsonb_array_elements_text(coalesce(v_var -> 'keys', '[]'::jsonb)) loop
+      if not v_keys ? v_key then
+        raise exception 'Unknown option value' using errcode = '22023';
+      end if;
+      v_ids := v_ids || (v_keys ->> v_key)::uuid;
+    end loop;
+    if cardinality(v_ids) <> v_opt_count
+       or (select count(distinct ov.option_id) from public.product_option_values ov where ov.id = any (v_ids)) <> v_opt_count then
+      raise exception 'A variant needs one value of every option' using errcode = '22023';
+    end if;
+
+    v_var_id := (v_var ->> 'id')::uuid;
+    if v_var_id is not null then
+      update public.product_variants set
+        option_value_ids = v_ids,
+        price_minor = (v_var ->> 'price')::bigint,
+        compare_at_minor = (v_var ->> 'compare_at')::bigint,
+        sku = nullif(btrim(v_var ->> 'sku'), ''),
+        weight_g = (v_var ->> 'weight_g')::integer,
+        position = v_var_pos
+      where id = v_var_id and product_id = p_product and status = 'active';
+      if not found then
+        raise exception 'Variant not found' using errcode = 'P0002';
+      end if;
+    else
+      insert into public.product_variants (tenant_id, product_id, option_value_ids, price_minor, compare_at_minor, sku, weight_g, position)
+      values (v_tenant, p_product, v_ids, (v_var ->> 'price')::bigint, (v_var ->> 'compare_at')::bigint,
+              nullif(btrim(v_var ->> 'sku'), ''), (v_var ->> 'weight_g')::integer, v_var_pos)
+      returning id into v_var_id;
+
+      v_stock := coalesce((v_var ->> 'initial_stock')::integer, 0);
+      if v_stock < 0 then
+        raise exception 'Initial stock cannot be negative' using errcode = '22023';
+      elsif v_stock > 0 then
+        select i.id into v_item from public.inventory_items i
+        join public.branches b on b.id = i.branch_id and b.is_default
+        where i.variant_id = v_var_id;
+        perform public.adjust_stock(v_item, v_stock, 'initial', null);
+      end if;
+    end if;
+    v_var_pos := v_var_pos + 1;
+  end loop;
+end;
+$$;
+
+revoke all on function public.save_product_structure(uuid, jsonb, jsonb) from public;
+grant execute on function public.save_product_structure(uuid, jsonb, jsonb) to authenticated;
+
+-- Sitemap entries: slugs and last-modified dates of public products/categories.
+create or replace function public.storefront_sitemap(p_tenant uuid)
+returns jsonb
+language sql stable security definer
+set search_path = ''
+as $$
+  select jsonb_build_object(
+    'products', coalesce((select jsonb_agg(jsonb_build_object('slug', p.slug, 'updated_at', p.updated_at) order by p.position, p.created_at)
+                          from (select * from public.products p
+                                where p.tenant_id = p_tenant and p.status = 'active' and p.price_min_minor is not null
+                                order by p.position, p.created_at limit 10000) p), '[]'::jsonb),
+    'categories', coalesce((select jsonb_agg(jsonb_build_object('slug', c.slug, 'updated_at', c.updated_at) order by c.position)
+                            from public.categories c where c.tenant_id = p_tenant and c.status = 'active'), '[]'::jsonb)
+  )
+  from public.tenants t
+  where t.id = p_tenant and t.status = 'active'
+$$;
+
+revoke all on function public.storefront_sitemap(uuid) from public;
+grant execute on function public.storefront_sitemap(uuid) to anon, authenticated, service_role;

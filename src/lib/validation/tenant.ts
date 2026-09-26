@@ -1,16 +1,8 @@
 import { z } from "zod";
 
-import { LOCALES } from "@/i18n/locales";
 import { THEMES } from "@/themes/definitions";
 
-import { emailSchema, hexColor, localeSchema, optionalText, slugSchema } from "./common";
-
-const localizedInput = (max: number) =>
-  z
-    .object(Object.fromEntries(LOCALES.map((l) => [l, z.string().trim().max(max).optional()])))
-    .transform((value) =>
-      Object.fromEntries(Object.entries(value).filter((entry): entry is [string, string] => Boolean(entry[1]))),
-    );
+import { emailSchema, hexColor, localeSchema, localizedInput, optionalText, slugSchema } from "./common";
 
 const BUSINESS_TYPES = ["cafe", "restaurant", "retail", "food", "beauty", "salon", "spa", "gym", "other"] as const;
 export const businessTypeSchema = z.enum(BUSINESS_TYPES);

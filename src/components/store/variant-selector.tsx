@@ -30,7 +30,9 @@ export function VariantSelector({ legend, name, options, value, onChange, unavai
                 "relative inline-flex h-11 min-w-16 cursor-pointer items-center justify-center rounded-button border px-4 text-sm transition-colors",
                 "has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-primary has-[:focus-visible]:ring-offset-2",
                 checked ? "border-fg bg-fg text-bg" : "border-border bg-surface hover:border-fg/50",
-                !option.available && "cursor-not-allowed text-muted line-through decoration-1",
+                !option.available && "line-through decoration-1",
+                !option.available && !checked && "text-muted",
+                (option.disabled ?? !option.available) && "cursor-not-allowed opacity-60",
               )}
             >
               <input
@@ -38,7 +40,7 @@ export function VariantSelector({ legend, name, options, value, onChange, unavai
                 name={name}
                 value={option.id}
                 checked={checked}
-                disabled={!option.available}
+                disabled={option.disabled ?? !option.available}
                 onChange={() => onChange(option.id)}
                 className="sr-only"
               />

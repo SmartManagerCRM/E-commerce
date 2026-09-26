@@ -16,6 +16,7 @@ import { publicMediaUrl } from "@/lib/storage";
 import { isActiveTenant, tenantLocales } from "@/lib/tenant";
 import { businessJsonLd, jsonLdScript } from "@/lib/storefront/structured-data";
 import { getTheme } from "@/themes/definitions";
+import { hasProducts } from "@/server/catalog/storefront";
 import { storefrontFontClasses } from "@/themes/fonts";
 import { themeCssVariables } from "@/themes/tokens";
 import { homepageSections, storefrontDesign } from "@/server/storefront/homepage";
@@ -87,6 +88,7 @@ export default async function StoreLayout({ children, params }: LayoutProps<"/st
   const anchors = new Set(anchorsFor(homepageSections(tenant)).values());
   const nav = [
     { label: tNav("home"), href: "/" },
+    ...((await hasProducts(tenant)) ? [{ label: tNav("shop"), href: "/shop" }] : []),
     ...(anchors.has("story") ? [{ label: tNav("about"), href: "/", hash: "story" }] : []),
     ...(anchors.has("visit") ? [{ label: tNav("visit"), href: "/", hash: "visit" }] : []),
     ...(anchors.has("newsletter") ? [{ label: tNav("newsletter"), href: "/", hash: "newsletter" }] : []),

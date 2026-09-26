@@ -1,9 +1,12 @@
 import type { Section, SectionType } from "@/lib/storefront/sections";
 
 import { BrandStorySection } from "./brand-story-section";
+import { FeaturedCategoriesSection } from "./featured-categories-section";
+import { FeaturedProductsSection } from "./featured-products-section";
 import { HeroSection } from "./hero-section";
 import { LocationSection } from "./location-section";
 import { NewsletterSection } from "./newsletter-section";
+import { ProductCollectionSection } from "./product-collection-section";
 import { PromoBannerSection } from "./promo-banner-section";
 import { TestimonialsSection } from "./testimonials-section";
 import type { SectionContext } from "./types";
@@ -50,6 +53,12 @@ export function RenderSections({ sections, ctx }: { sections: Section[]; ctx: Om
               return <LocationSection key={s.id} props={s.props} ctx={sctx} />;
             case "newsletter":
               return <NewsletterSection key={s.id} props={s.props} ctx={sctx} />;
+            case "featured_products":
+              return <FeaturedProductsSection key={s.id} props={s.props} ctx={sctx} />;
+            case "featured_categories":
+              return <FeaturedCategoriesSection key={s.id} props={s.props} ctx={sctx} />;
+            case "product_collection":
+              return <ProductCollectionSection key={s.id} sectionId={s.id} props={s.props} ctx={sctx} />;
             default:
               return null;
           }

@@ -50,3 +50,63 @@ export function businessJsonLd(tenant: ActiveStorefrontTenant, locale: Locale, o
 export function jsonLdScript(data: unknown): string {
   return JSON.stringify(data).replace(/</g, "\\u003c");
 }
+
+export type ProductJsonLdInput = {
+  url: string;
+  name: string;
+  description: string;
+  images: string[];
+  sku: string | null;
+  currency: string;
+  /** Decimal strings, one per purchasable variant. */
+  prices: { price: string; sku: string | null; available: boolean }[];
+  brand: string;
+};
+
+/** schema.org Product with an Offer (one variant) or AggregateOffer (several). */
+export function productJsonLd(input: ProductJsonLdInput) {
+  const availability = (ok: boolean) => (ok ? "https://schema.org/InStock" : "https://schema.org/OutOfStock");
+  const numeric = input.prices.map((p) => Number(p.price));
+  const offers =
+    input.prices.length === 1
+      ? {
+          "@type": "Offer",
+          url: input.url,
+          price: input.prices[0].price,
+          priceCurrency: input.currency,
+          availability: availability(input.prices[0].available),
+        }
+      : {
+          "@type": "AggregateOffer",
+          url: input.url,
+          priceCurrency: input.currency,
+          lowPrice: input.prices[numeric.indexOf(Math.min(...numeric))].price,
+          highPrice: input.prices[numeric.indexOf(Math.max(...numeric))].price,
+          offerCount: input.prices.length,
+          availability: availability(input.prices.some((p) => p.available)),
+        };
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: input.name,
+    description: input.description || undefined,
+    image: input.images.length > 0 ? input.images : undefined,
+    sku: input.sku ?? undefined,
+    url: input.url,
+    brand: { "@type": "Brand", name: input.brand },
+    offers,
+  };
+}
+
+export function breadcrumbJsonLd(items: { name: string; url: string }[]) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}

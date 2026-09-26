@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { SectionCard } from "@/components/ui/card";
 import { Link } from "@/i18n/navigation";
 import { isLocale, type Locale } from "@/i18n/locales";
+import { pickLocalized } from "@/lib/localized";
 import { SECTION_REGISTRY, SECTION_TYPES } from "@/lib/storefront/sections";
 import { requireTenantAdmin, type TenantAdminContext } from "@/server/admin/context";
 import { createUserClient } from "@/server/supabase/clients";
@@ -45,12 +46,20 @@ async function Editor({ slug, locale, context }: { slug: string; locale: Locale;
   const canEdit = context.permissions.includes("appearance.write");
   const sections = await loadEditableSections(context);
   const supabase = await createUserClient();
-  const { data: tenant } = await supabase
-    .from("tenants")
-    .select("enabled_languages")
-    .eq("id", context.tenant.id)
-    .single();
+  const [{ data: tenant }, { data: categoryRows }] = await Promise.all([
+    supabase.from("tenants").select("enabled_languages, default_language").eq("id", context.tenant.id).single(),
+    supabase
+      .from("categories")
+      .select("slug, name")
+      .eq("tenant_id", context.tenant.id)
+      .order("position")
+      .order("created_at"),
+  ]);
   const locales = (tenant?.enabled_languages ?? [locale]) as Locale[];
+  const categories = (categoryRows ?? []).map((c) => ({
+    value: c.slug,
+    label: pickLocalized(c.name, locale, (tenant?.default_language as Locale | undefined) ?? locale),
+  }));
 
   const addable = SECTION_TYPES.filter(
     (type) =>
@@ -135,7 +144,12 @@ async function Editor({ slug, locale, context }: { slug: string; locale: Locale;
                     <span className="hidden group-open:inline">{t("closeEditor")}</span>
                   </summary>
                   <div className="px-4 pb-5 sm:px-5">
-                    <SectionForm section={section} action={updateSection.bind(null, slug)} locales={locales} />
+                    <SectionForm
+                      section={section}
+                      action={updateSection.bind(null, slug)}
+                      locales={locales}
+                      categories={categories}
+                    />
                   </div>
                 </details>
               ) : null}

@@ -3,7 +3,7 @@ begin;
 create extension if not exists pgtap with schema extensions;
 set search_path = public, extensions;
 
-select plan(33);
+select plan(40);
 
 create function pg_temp.act_as(uid uuid, role text default 'authenticated') returns void language plpgsql as $$
 begin
@@ -63,6 +63,7 @@ select is(public.storefront_product('a0000000-0000-4000-8000-00000000000a', 'a-d
 select is(public.storefront_product('a0000000-0000-4000-8000-00000000000a', 'b-active'), null, 'Another tenant''s product is not reachable through this tenant');
 select ok(public.storefront_product('a0000000-0000-4000-8000-00000000000a', 'a-active')::text !~ 'cost|on_hand|reserved', 'Product payload never contains cost or quantities');
 select is(public.storefront_product('a0000000-0000-4000-8000-00000000000a', 'a-active') -> 'variants' -> 0 ->> 'availability', 'out_of_stock', 'Tracked variant with no stock is out of stock');
+select is(jsonb_path_query_array(public.storefront_sitemap('a0000000-0000-4000-8000-00000000000a'), '$.products[*].slug'), '["a-active"]'::jsonb, 'Sitemap lists only active products');
 reset role;
 
 update public.tenants set status = 'suspended' where id = :B;
@@ -114,6 +115,28 @@ reset role;
 select pg_temp.act_as(null, 'anon');
 set local role anon;
 select is(public.storefront_product('a0000000-0000-4000-8000-00000000000a', 'a-active') -> 'variants' -> 0 ->> 'availability', 'in_stock', 'Stocked variant becomes available');
+reset role;
+
+-- ---------------------------------------------------------------------------
+-- Product structure editor (options -> variants in one transaction)
+-- ---------------------------------------------------------------------------
+select pg_temp.act_as('11111111-0000-4000-8000-0000000000d1');
+set local role authenticated;
+select lives_ok($$ select public.save_product_structure('d1000000-0000-4000-8000-000000000002',
+  '[{"name":{"en":"Size"},"values":[{"key":"s","label":{"en":"S"}},{"key":"m","label":{"en":"M"}}]}]',
+  '[{"keys":["s"],"price":1500,"sku":"A-2-S","initial_stock":4},{"keys":["m"],"price":2500,"sku":"A-2"}]') $$,
+  'Owner A saves options and variants atomically');
+select is((select count(*)::int from public.product_variants where product_id = 'd1000000-0000-4000-8000-000000000002' and status = 'active'), 2,
+  'The option combinations replace the old default variant');
+select is((select array[price_min_minor, price_max_minor] from public.products where id = 'd1000000-0000-4000-8000-000000000002'), array[1500::bigint, 2500::bigint],
+  'Price range follows the variants');
+select is((select i.on_hand from public.inventory_items i join public.product_variants v on v.id = i.variant_id where v.sku = 'A-2-S'), 4,
+  'Initial stock is recorded through the ledger');
+select throws_ok($$ select public.save_product_structure('d1000000-0000-4000-8000-000000000002',
+  '[{"name":{"en":"Size"},"values":[{"key":"s","label":{"en":"S"}}]}]', '[{"keys":[],"price":1}]') $$,
+  '22023', null, 'Every variant needs a value of every option');
+select throws_ok($$ select public.save_product_structure('d2000000-0000-4000-8000-000000000001', '[]', '[{"keys":[],"price":1}]') $$,
+  'P0002', null, 'Owner A cannot restructure B''s product');
 reset role;
 
 -- ---------------------------------------------------------------------------

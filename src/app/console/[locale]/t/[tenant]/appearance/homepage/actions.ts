@@ -145,6 +145,10 @@ export async function updateSection(slug: string, _prev: FormState, formData: Fo
       const cta = raw.cta as { href: string } | null;
       if (cta && !hrefSchema.safeParse(cta.href).success) return { status: "error", error: "invalidLink" };
     }
+    if (type === "featured_products" || type === "product_collection") {
+      raw.limit = Number(raw.limit);
+      if (type === "product_collection") raw.category = raw.category ? raw.category : null;
+    }
     if (type === "location") {
       raw.show_hours = raw.show_hours === "on";
       raw.show_map = raw.show_map === "on";

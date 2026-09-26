@@ -75,6 +75,27 @@ export const newsletterPropsSchema = z.object({
   subtitle: localizedSchema,
 });
 
+const productLimit = z.union([z.literal(4), z.literal(8), z.literal(12)]).catch(8);
+
+export const featuredProductsPropsSchema = z.object({
+  title: localizedSchema,
+  limit: productLimit,
+});
+
+export const featuredCategoriesPropsSchema = z.object({
+  title: localizedSchema,
+});
+
+export const productCollectionPropsSchema = z.object({
+  title: localizedSchema,
+  category: z
+    .string()
+    .regex(/^[a-z0-9](?:[a-z0-9-]{0,78}[a-z0-9])?$/)
+    .nullable()
+    .catch(null),
+  limit: productLimit,
+});
+
 const emptyProps = z.object({}).catch({});
 
 export const SECTION_SCHEMAS = {
@@ -84,10 +105,10 @@ export const SECTION_SCHEMAS = {
   testimonials: testimonialsPropsSchema,
   location: locationPropsSchema,
   newsletter: newsletterPropsSchema,
-  featured_categories: emptyProps,
-  featured_products: emptyProps,
+  featured_categories: featuredCategoriesPropsSchema,
+  featured_products: featuredProductsPropsSchema,
   best_sellers: emptyProps,
-  product_collection: emptyProps,
+  product_collection: productCollectionPropsSchema,
   loyalty: emptyProps,
   booking_cta: emptyProps,
 } as const;
@@ -101,7 +122,7 @@ export type Section<T extends SectionType = SectionType> = {
   [K in T]: { id: string; type: K; enabled: boolean; props: SectionProps<K> };
 }[T];
 
-type Availability = { available: true } | { available: false; reason: "catalog" | "booking" | "loyalty" };
+type Availability = { available: true } | { available: false; reason: "orders" | "booking" | "loyalty" };
 
 /** Which sections can be used today. Unavailable ones become usable in their phase. */
 export const SECTION_REGISTRY: Record<SectionType, Availability & { multiple: boolean }> = {
@@ -111,10 +132,11 @@ export const SECTION_REGISTRY: Record<SectionType, Availability & { multiple: bo
   testimonials: { available: true, multiple: false },
   location: { available: true, multiple: false },
   newsletter: { available: true, multiple: false },
-  featured_categories: { available: false, reason: "catalog", multiple: false },
-  featured_products: { available: false, reason: "catalog", multiple: false },
-  best_sellers: { available: false, reason: "catalog", multiple: false },
-  product_collection: { available: false, reason: "catalog", multiple: true },
+  featured_categories: { available: true, multiple: false },
+  featured_products: { available: true, multiple: false },
+  // Needs real sales data: available once orders exist (Phase 5).
+  best_sellers: { available: false, reason: "orders", multiple: false },
+  product_collection: { available: true, multiple: true },
   loyalty: { available: false, reason: "loyalty", multiple: false },
   booking_cta: { available: false, reason: "booking", multiple: false },
 };

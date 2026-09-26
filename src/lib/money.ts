@@ -40,3 +40,13 @@ export function formatMoney(money: Money, exponent: number, locale: Locale): str
     maximumFractionDigits: exponent,
   }).format(decimal as unknown as number);
 }
+
+/** Minor units → plain decimal string ("4500", 2 → "45.00"), e.g. for schema.org prices or form fields. */
+export function minorToDecimal(minor: bigint, exponent: number): string {
+  const negative = minor < BigInt(0);
+  const abs = negative ? -minor : minor;
+  const divisor = BigInt(10) ** BigInt(exponent);
+  const whole = abs / divisor;
+  const fraction = (abs % divisor).toString().padStart(exponent, "0");
+  return `${negative ? "-" : ""}${whole}${exponent > 0 ? `.${fraction}` : ""}`;
+}

@@ -59,7 +59,54 @@
         "invalidEmail": "أدخل بريداً إلكترونياً صالحاً.",
         "consentRequired": "يُرجى تأكيد موافقتك على تلقي الرسائل.",
         "rateLimited": "محاولات كثيرة. حاول لاحقاً."
-      }
+      },
+      "featuredProductsTitle": "منتجات مميزة",
+      "featuredCategoriesTitle": "تسوّق حسب الفئة",
+      "viewAll": "عرض الكل",
+      "productCount": "{count, plural, one {منتج واحد} two {منتجان} few {# منتجات} many {# منتجًا} other {# منتج}}"
+    },
+    "shop": {
+      "title": "المتجر",
+      "allProducts": "كل المنتجات",
+      "categories": "الفئات",
+      "breadcrumb": "مسار التنقل",
+      "filters": "التصفية",
+      "searchLabel": "ابحث عن منتج",
+      "searchPlaceholder": "بحث…",
+      "price": "السعر ({currency})",
+      "min": "الأدنى",
+      "max": "الأعلى",
+      "availableOnly": "المتوفر فقط",
+      "apply": "تطبيق",
+      "clear": "مسح التصفية",
+      "sort": "الترتيب حسب",
+      "sortOptions": {
+        "featured": "المميزة",
+        "newest": "الأحدث",
+        "price_asc": "السعر: من الأقل للأعلى",
+        "price_desc": "السعر: من الأعلى للأقل",
+        "name": "الاسم"
+      },
+      "results": "{count, plural, =0 {لا توجد منتجات} one {منتج واحد} two {منتجان} few {# منتجات} many {# منتجًا} other {# منتج}}",
+      "emptyTitle": "لم يتم العثور على منتجات",
+      "emptyBody": "جرّب بحثًا آخر أو أزل بعض عوامل التصفية.",
+      "emptyStoreTitle": "المنتجات قادمة قريبًا",
+      "emptyStoreBody": "لم ينشر هذا المتجر أي منتجات بعد. عُد قريبًا.",
+      "pagination": "التنقل بين الصفحات",
+      "previous": "السابق",
+      "next": "التالي",
+      "pageOf": "صفحة {page} من {total}"
+    },
+    "product": {
+      "available": "متوفر",
+      "sku": "رمز المنتج:",
+      "unavailableCombination": "هذا الاختيار غير متوفر.",
+      "orderingSoonTitle": "الطلب عبر الإنترنت قريبًا",
+      "orderingSoonBody": "الطلب عبر الإنترنت غير متاح في هذا المتجر بعد.",
+      "orderingSoonContact": "الطلب عبر الإنترنت غير متاح بعد — تواصل مع {business} للطلب.",
+      "emailUs": "راسلنا",
+      "description": "الوصف",
+      "related": "قد يعجبك أيضًا"
     }
   },
   "platform": {
@@ -542,7 +589,8 @@
     "addToCart": "أضف إلى السلة",
     "buyNow": "اشترِ الآن",
     "deliveryInfo": "التوصيل خلال 1–3 أيام · مجاني فوق مبلغ معيّن",
-    "pickupInfo": "استلام مجاني من المتجر"
+    "pickupInfo": "استلام مجاني من المتجر",
+    "from": "ابتداءً من"
   },
   "homepageEditor": {
     "title": "الصفحة الرئيسية",
@@ -564,9 +612,9 @@
     "upcomingTitle": "أقسام إضافية",
     "upcomingDescription": "تتوفر هذه الأقسام عند تفعيل الوحدات المرتبطة بها.",
     "requires": {
-      "catalog": "بعد إضافة المنتجات",
       "booking": "مع وحدة الحجوزات",
-      "loyalty": "مع وحدة الولاء"
+      "loyalty": "مع وحدة الولاء",
+      "orders": "بعد أن يبدأ متجرك باستقبال الطلبات"
     },
     "types": {
       "hero": "الواجهة الرئيسية",
@@ -621,7 +669,14 @@
       "showHours": "إظهار ساعات العمل",
       "showDirections": "إظهار رابط «الاتجاهات»",
       "locationHint": "العنوان والهاتف وساعات العمل مأخوذة من الإعدادات.",
-      "newsletterHint": "تُحفظ الاشتراكات بموافقة العميل."
+      "newsletterHint": "تُحفظ الاشتراكات بموافقة العميل.",
+      "productLimit": "عدد المنتجات",
+      "productLimitOption": "{count, plural, few {# منتجات} many {# منتجًا} other {# منتج}}",
+      "featuredProductsHint": "تظهر المنتجات «المميزة» أولًا، ثم بقية الكتالوج حسب الترتيب الذي اخترته.",
+      "featuredCategoriesHint": "يعرض فئاتك الرئيسية التي تحتوي على منتجات.",
+      "category": "الفئة",
+      "chooseCategory": "اختر فئة…",
+      "noCategories": "أنشئ فئة أولًا من الكتالوج ← الفئات."
     }
   },
   "designPreview": {

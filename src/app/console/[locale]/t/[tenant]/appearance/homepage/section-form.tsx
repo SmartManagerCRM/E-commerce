@@ -72,14 +72,28 @@ function ImageField({ current }: { current: string | null }) {
   );
 }
 
+function LimitSelect({ value }: { value: number }) {
+  const t = useTranslations("homepageEditor.fields");
+  return (
+    <Select
+      label={t("productLimit")}
+      name="props.limit"
+      defaultValue={String(value)}
+      options={[4, 8, 12].map((n) => ({ value: String(n), label: t("productLimitOption", { count: n }) }))}
+    />
+  );
+}
+
 export function SectionForm({
   section,
   action,
   locales,
+  categories,
 }: {
   section: Section;
   action: Action;
   locales: readonly Locale[];
+  categories: { value: string; label: string }[];
 }) {
   const t = useTranslations("homepageEditor.fields");
   const tf = useTranslations("forms");
@@ -210,6 +224,41 @@ export function SectionForm({
             {t("showDirections")}
           </label>
           <p className="text-xs text-muted">{t("locationHint")}</p>
+        </>
+      );
+      break;
+    case "featured_products":
+      fields = (
+        <>
+          {L("title", t("title"), section.props.title, { max: 120 })}
+          <LimitSelect value={section.props.limit} />
+          <p className="text-xs text-muted">{t("featuredProductsHint")}</p>
+        </>
+      );
+      break;
+    case "featured_categories":
+      fields = (
+        <>
+          {L("title", t("title"), section.props.title, { max: 120 })}
+          <p className="text-xs text-muted">{t("featuredCategoriesHint")}</p>
+        </>
+      );
+      break;
+    case "product_collection":
+      fields = (
+        <>
+          {L("title", t("title"), section.props.title, { max: 120 })}
+          {categories.length > 0 ? (
+            <Select
+              label={t("category")}
+              name="props.category"
+              defaultValue={section.props.category ?? ""}
+              options={[{ value: "", label: t("chooseCategory") }, ...categories]}
+            />
+          ) : (
+            <p className="text-sm text-muted">{t("noCategories")}</p>
+          )}
+          <LimitSelect value={section.props.limit} />
         </>
       );
       break;

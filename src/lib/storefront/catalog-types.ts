@@ -8,6 +8,8 @@ export type PriceView = {
   compareAtMinor: bigint | null;
   currency: string;
   exponent: number;
+  /** Variants have different prices: shown as "From …". */
+  from?: boolean;
 };
 
 export type ImageView = { src: string; alt: string; width?: number; height?: number };
@@ -32,5 +34,18 @@ export type ProductCardView = {
 export type VariantOption = {
   id: string;
   label: string;
+  /** Purchasable with the other current choices (otherwise shown struck through). */
   available: boolean;
+  /** Cannot be chosen at all; defaults to `!available`. */
+  disabled?: boolean;
+};
+
+export type CategoryView = {
+  id: string;
+  slug: string;
+  name: string;
+  description: string;
+  imagePath: string | null;
+  parentId: string | null;
+  productCount: number;
 };

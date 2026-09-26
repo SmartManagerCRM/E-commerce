@@ -24,6 +24,7 @@ export function Price({
   return (
     <p className={cn("flex flex-wrap items-baseline gap-x-2", sizes[size], className)}>
       <span className={cn("font-semibold tabular-nums", onSale && "text-danger")}>
+        {price.from ? <span className="font-normal text-muted">{t("from")} </span> : null}
         {onSale ? <span className="sr-only">{t("salePrice")} </span> : null}
         {fmt(price.amountMinor)}
       </span>
