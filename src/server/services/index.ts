@@ -23,10 +23,12 @@ import "server-only";
  *
  * What's covered: products, inventory, carts, customers, tables, table
  * sessions, orders (both online and dine-in), payments (Moyasar), bookings
- * (branches → booking_resources → bookings) and loyalty (program settings,
- * tiers, rewards, a customer's points ledger). Subscriptions and marketing
- * campaigns remain architecture-planned (see ARCHITECTURE.md §7.4) but not
- * built yet.
+ * (branches → booking_resources → bookings), loyalty (program settings,
+ * tiers, rewards, a customer's points ledger) and the AI foundation
+ * (entitlements, tenant settings, usage). The AI ordering assistant and
+ * business copilot themselves are a later phase — this only exposes what
+ * exists so far. Subscriptions and marketing campaigns remain
+ * architecture-planned (see ARCHITECTURE.md §7.4) but not built yet.
  */
 export * as products from "./products";
 export * as inventory from "./inventory";
@@ -37,3 +39,4 @@ export * as orders from "./orders";
 export * as payments from "./payments";
 export * as bookings from "./bookings";
 export * as loyalty from "./loyalty";
+export * as ai from "./ai";

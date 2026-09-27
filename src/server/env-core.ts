@@ -38,6 +38,14 @@ const serverEnvSchema = z.object({
   RESEND_FROM_EMAIL: z.string().trim().min(3).optional(),
   /** Shared secret the notifications worker route (cron-triggered) must present. */
   JOBS_SECRET: z.string().min(16).optional(),
+  /**
+   * Platform's own Anthropic API key — one account meters usage across every
+   * tenant (like the platform's own Resend account), not a per-tenant
+   * BYO key. Server-only; without it, AI features degrade to "not
+   * configured" rather than failing.
+   */
+  ANTHROPIC_API_KEY: z.string().min(10).optional(),
+  ANTHROPIC_MODEL: z.string().trim().min(1).default("claude-sonnet-5"),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;

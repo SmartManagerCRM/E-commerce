@@ -21,7 +21,8 @@ A multi-tenant SaaS e-commerce platform (storefront, ordering, booking, loyalty 
 | 7 | Notifications: order emails, daily brief, invitation emails (Resend); dine-in foundation (tables/sessions) and a commerce service layer for the future AI agent | ✅ Complete |
 | 8 | Booking: reservable resources, availability, guest requests, staff confirm/reject workflow, booking notifications | ✅ Complete |
 | 9 | Loyalty: points program, tiers, staff-redeemed rewards, automatic accrual on paid orders | ✅ Complete |
-| 10+ | AI assistant… | Not started |
+| 10 | AI Operating System — Phase 1 (foundation): provider abstraction, entitlements, tenant AI settings, usage metering, conversation storage | ✅ Complete |
+| 11+ | AI ordering assistant, business copilot, marketing/operations intelligence, knowledge base… | Not started |
 
 ## Local development
 

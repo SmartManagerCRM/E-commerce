@@ -560,6 +560,10 @@
     "bookingLink": {
       "title": "Réservation",
       "description": "Acceptez les demandes de réservation et gérez tables, espaces ou salles."
+    },
+    "aiLink": {
+      "title": "Assistant IA",
+      "description": "Activez l'assistant IA et consultez son utilisation."
     }
   },
   "appearance": {
@@ -1506,5 +1510,33 @@
     "valueFixedHint": "Montant de la réduction, en {currency}.",
     "rewardActive": "Active",
     "deleteReward": "Supprimer"
+  },
+  "settingsAI": {
+    "title": "Assistant IA",
+    "subtitle": "La couche du système d'exploitation IA pour votre entreprise — désactivée par défaut.",
+    "back": "Paramètres",
+    "notEntitled": "L'assistant IA n'est pas inclus dans votre offre actuelle.",
+    "notConfigured": "L'IA n'est pas encore connectée sur ce serveur. Les paramètres peuvent être enregistrés, mais l'assistant ne peut pas fonctionner tant que cela n'est pas configuré.",
+    "assistantTitle": "Assistant",
+    "assistantDescription": "Identité et ton de base. Les fonctionnalités de commande et de copilote sont activées séparément selon votre offre.",
+    "active": "Activer l'assistant IA",
+    "activeHint": "Rien n'est montré aux clients ou au personnel tant que ce n'est pas activé et inclus dans votre offre.",
+    "assistantName": "Nom de l'assistant",
+    "tone": "Ton",
+    "tones": {
+      "professional": "Professionnel",
+      "friendly": "Amical",
+      "premium": "Premium",
+      "casual": "Décontracté",
+      "minimal": "Minimal"
+    },
+    "greeting": "Message d'accueil (optionnel)",
+    "greetingHint": "Affiché au début d'une conversation, une fois construite.",
+    "usageTitle": "Utilisation",
+    "usageDescription": "Ce mois civil.",
+    "requests": "Requêtes",
+    "tokens": "Jetons",
+    "creditLimit": "Crédits inclus",
+    "unlimited": "Illimité"
   }
 }

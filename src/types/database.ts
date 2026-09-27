@@ -20,6 +20,199 @@ export type Database = {
   };
   public: {
     Tables: {
+      ai_conversations: {
+        Row: {
+          channel: string;
+          customer_id: string | null;
+          ended_at: string | null;
+          feature_key: string;
+          id: string;
+          locale: string;
+          order_id: string | null;
+          started_at: string;
+          status: string;
+          tenant_id: string;
+          user_id: string | null;
+        };
+        Insert: {
+          channel: string;
+          customer_id?: string | null;
+          ended_at?: string | null;
+          feature_key: string;
+          id?: string;
+          locale?: string;
+          order_id?: string | null;
+          started_at?: string;
+          status?: string;
+          tenant_id: string;
+          user_id?: string | null;
+        };
+        Update: {
+          channel?: string;
+          customer_id?: string | null;
+          ended_at?: string | null;
+          feature_key?: string;
+          id?: string;
+          locale?: string;
+          order_id?: string | null;
+          started_at?: string;
+          status?: string;
+          tenant_id?: string;
+          user_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ai_conversations_feature_key_fkey";
+            columns: ["feature_key"];
+            isOneToOne: false;
+            referencedRelation: "features";
+            referencedColumns: ["key"];
+          },
+          {
+            foreignKeyName: "ai_conversations_tenant_id_customer_id_fkey";
+            columns: ["tenant_id", "customer_id"];
+            isOneToOne: false;
+            referencedRelation: "customers";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "ai_conversations_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "ai_conversations_tenant_id_order_id_fkey";
+            columns: ["tenant_id", "order_id"];
+            isOneToOne: false;
+            referencedRelation: "orders";
+            referencedColumns: ["tenant_id", "id"];
+          },
+        ];
+      };
+      ai_messages: {
+        Row: {
+          content: string;
+          conversation_id: string;
+          created_at: string;
+          id: number;
+          role: string;
+          tenant_id: string;
+        };
+        Insert: {
+          content: string;
+          conversation_id: string;
+          created_at?: string;
+          id?: never;
+          role: string;
+          tenant_id: string;
+        };
+        Update: {
+          content?: string;
+          conversation_id?: string;
+          created_at?: string;
+          id?: never;
+          role?: string;
+          tenant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ai_messages_tenant_id_conversation_id_fkey";
+            columns: ["tenant_id", "conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "ai_conversations";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "ai_messages_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      ai_tool_calls: {
+        Row: {
+          arguments: NonNullable<Json>;
+          conversation_id: string;
+          created_at: string;
+          id: number;
+          result: Json | null;
+          status: string;
+          tenant_id: string;
+          tool_name: string;
+        };
+        Insert: {
+          arguments?: NonNullable<Json>;
+          conversation_id: string;
+          created_at?: string;
+          id?: never;
+          result?: Json | null;
+          status?: string;
+          tenant_id: string;
+          tool_name: string;
+        };
+        Update: {
+          arguments?: NonNullable<Json>;
+          conversation_id?: string;
+          created_at?: string;
+          id?: never;
+          result?: Json | null;
+          status?: string;
+          tenant_id?: string;
+          tool_name?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ai_tool_calls_tenant_id_conversation_id_fkey";
+            columns: ["tenant_id", "conversation_id"];
+            isOneToOne: false;
+            referencedRelation: "ai_conversations";
+            referencedColumns: ["tenant_id", "id"];
+          },
+          {
+            foreignKeyName: "ai_tool_calls_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      ai_usage: {
+        Row: {
+          input_tokens: number;
+          output_tokens: number;
+          period_start: string;
+          requests: number;
+          tenant_id: string;
+        };
+        Insert: {
+          input_tokens?: number;
+          output_tokens?: number;
+          period_start: string;
+          requests?: number;
+          tenant_id: string;
+        };
+        Update: {
+          input_tokens?: number;
+          output_tokens?: number;
+          period_start?: string;
+          requests?: number;
+          tenant_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "ai_usage_tenant_id_fkey";
+            columns: ["tenant_id"];
+            isOneToOne: false;
+            referencedRelation: "tenants";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       audit_logs: {
         Row: {
           action: string;
@@ -2295,6 +2488,7 @@ export type Database = {
       };
       tenant_settings: {
         Row: {
+          ai: NonNullable<Json>;
           booking: NonNullable<Json>;
           checkout: NonNullable<Json>;
           consent: NonNullable<Json>;
@@ -2307,6 +2501,7 @@ export type Database = {
           updated_at: string;
         };
         Insert: {
+          ai?: NonNullable<Json>;
           booking?: NonNullable<Json>;
           checkout?: NonNullable<Json>;
           consent?: NonNullable<Json>;
@@ -2319,6 +2514,7 @@ export type Database = {
           updated_at?: string;
         };
         Update: {
+          ai?: NonNullable<Json>;
           booking?: NonNullable<Json>;
           checkout?: NonNullable<Json>;
           consent?: NonNullable<Json>;
@@ -2482,6 +2678,8 @@ export type Database = {
         Returns: Json;
       };
       adjust_stock: { Args: { p_delta: number; p_item: string; p_note?: string; p_reason: string }; Returns: number };
+      ai_settings: { Args: { p_tenant: string }; Returns: Json };
+      ai_usage_summary: { Args: { p_tenant: string }; Returns: Json };
       booking_settings: { Args: { p_tenant: string }; Returns: Json };
       cancel_booking_by_customer: { Args: { p_id: string; p_tenant: string; p_token_hash: string }; Returns: boolean };
       cart_update: {
@@ -2586,6 +2784,10 @@ export type Database = {
       };
       platform_invite_owner: { Args: { p_email: string; p_tenant: string }; Returns: string };
       platform_set_plan: { Args: { p_plan_key: string; p_status?: string; p_tenant: string }; Returns: undefined };
+      record_ai_usage: {
+        Args: { p_input_tokens: number; p_output_tokens: number; p_tenant: string };
+        Returns: undefined;
+      };
       record_domain_check: {
         Args: { p_actor: string; p_domain: string; p_error?: string; p_verified: boolean };
         Returns: undefined;

@@ -560,6 +560,10 @@
     "bookingLink": {
       "title": "Booking",
       "description": "Accept booking requests and manage tables, areas or rooms."
+    },
+    "aiLink": {
+      "title": "AI assistant",
+      "description": "Turn on the AI assistant and see its usage."
     }
   },
   "appearance": {
@@ -1506,5 +1510,33 @@
     "valueFixedHint": "Amount off, in {currency}.",
     "rewardActive": "Active",
     "deleteReward": "Remove"
+  },
+  "settingsAI": {
+    "title": "AI assistant",
+    "subtitle": "The AI Operating System layer for your business — off by default.",
+    "back": "Settings",
+    "notEntitled": "The AI assistant isn't included in your current plan.",
+    "notConfigured": "AI isn't connected yet on this server. Settings can be saved, but the assistant can't run until this is configured.",
+    "assistantTitle": "Assistant",
+    "assistantDescription": "Basic identity and tone. Ordering and copilot capabilities are enabled separately by your plan.",
+    "active": "Turn on the AI assistant",
+    "activeHint": "Nothing is shown to customers or staff until this is on and your plan includes it.",
+    "assistantName": "Assistant name",
+    "tone": "Tone",
+    "tones": {
+      "professional": "Professional",
+      "friendly": "Friendly",
+      "premium": "Premium",
+      "casual": "Casual",
+      "minimal": "Minimal"
+    },
+    "greeting": "Greeting (optional)",
+    "greetingHint": "Shown at the start of a conversation, once built.",
+    "usageTitle": "Usage",
+    "usageDescription": "This calendar month.",
+    "requests": "Requests",
+    "tokens": "Tokens",
+    "creditLimit": "Included credits",
+    "unlimited": "Unlimited"
   }
 }
