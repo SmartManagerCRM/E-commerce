@@ -26,7 +26,7 @@ export default defineConfig({
       name: "mobile",
       use: { ...devices["Pixel 7"], launchOptions: { args: chromiumArgs } },
       // Lifecycle tests create data; run them once (desktop).
-      testIgnore: /(management|storefront-design|catalog-admin|checkout)\.spec\.ts/,
+      testIgnore: /(management|storefront-design|catalog-admin|checkout|ai-ordering)\.spec\.ts/,
     },
     {
       name: "iphone-size",

@@ -22,51 +22,77 @@ export type Database = {
     Tables: {
       ai_conversations: {
         Row: {
+          cart_token_hash: string | null;
           channel: string;
           customer_id: string | null;
+          delivery_zone_id: string | null;
           ended_at: string | null;
           feature_key: string;
+          fulfillment_type: string | null;
           id: string;
           locale: string;
           order_id: string | null;
           started_at: string;
           status: string;
+          table_session_id: string | null;
           tenant_id: string;
           user_id: string | null;
         };
         Insert: {
+          cart_token_hash?: string | null;
           channel: string;
           customer_id?: string | null;
+          delivery_zone_id?: string | null;
           ended_at?: string | null;
           feature_key: string;
+          fulfillment_type?: string | null;
           id?: string;
           locale?: string;
           order_id?: string | null;
           started_at?: string;
           status?: string;
+          table_session_id?: string | null;
           tenant_id: string;
           user_id?: string | null;
         };
         Update: {
+          cart_token_hash?: string | null;
           channel?: string;
           customer_id?: string | null;
+          delivery_zone_id?: string | null;
           ended_at?: string | null;
           feature_key?: string;
+          fulfillment_type?: string | null;
           id?: string;
           locale?: string;
           order_id?: string | null;
           started_at?: string;
           status?: string;
+          table_session_id?: string | null;
           tenant_id?: string;
           user_id?: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "ai_conversations_delivery_zone_fkey";
+            columns: ["tenant_id", "delivery_zone_id"];
+            isOneToOne: false;
+            referencedRelation: "delivery_zones";
+            referencedColumns: ["tenant_id", "id"];
+          },
           {
             foreignKeyName: "ai_conversations_feature_key_fkey";
             columns: ["feature_key"];
             isOneToOne: false;
             referencedRelation: "features";
             referencedColumns: ["key"];
+          },
+          {
+            foreignKeyName: "ai_conversations_table_session_fkey";
+            columns: ["tenant_id", "table_session_id"];
+            isOneToOne: false;
+            referencedRelation: "table_sessions";
+            referencedColumns: ["tenant_id", "id"];
           },
           {
             foreignKeyName: "ai_conversations_tenant_id_customer_id_fkey";
@@ -2839,6 +2865,8 @@ export type Database = {
       };
       storefront_categories: { Args: { p_tenant: string }; Returns: Json };
       storefront_checkout_options: { Args: { p_tenant: string }; Returns: Json };
+      storefront_find_table: { Args: { p_label: string; p_tenant: string }; Returns: Json };
+      storefront_open_table_session: { Args: { p_table: string; p_tenant: string }; Returns: string };
       storefront_order: { Args: { p_number: string; p_tenant: string; p_token_hash: string }; Returns: Json };
       storefront_payment_options: { Args: { p_tenant: string }; Returns: Json };
       storefront_product: { Args: { p_slug: string; p_tenant: string }; Returns: Json };

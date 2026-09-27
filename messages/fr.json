@@ -275,6 +275,17 @@
         "required": "Requis.",
         "invalid": "Vérifiez ce champ."
       }
+    },
+    "ai": {
+      "openLabel": "Discuter avec nous",
+      "closeLabel": "Fermer la discussion",
+      "title": "Assistant",
+      "placeholder": "Écrivez un message…",
+      "send": "Envoyer",
+      "thinking": "Réflexion…",
+      "endedNotice": "Cette conversation est terminée.",
+      "errorGeneric": "Une erreur s'est produite. Veuillez réessayer.",
+      "rateLimited": "Vous envoyez des messages trop rapidement. Veuillez patienter un instant."
     }
   },
   "platform": {

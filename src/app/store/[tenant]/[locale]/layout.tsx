@@ -5,6 +5,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import type { CSSProperties } from "react";
 
 import "../../../globals.css";
+import { AiChatWidget } from "@/components/store/ai-chat-widget";
 import { StoreFooter } from "@/components/store/store-footer";
 import { StoreHeader } from "@/components/store/store-header";
 import { StoreUnavailable } from "@/components/store/store-unavailable";
@@ -16,6 +17,7 @@ import { publicMediaUrl } from "@/lib/storage";
 import { isActiveTenant, tenantLocales } from "@/lib/tenant";
 import { businessJsonLd, jsonLdScript } from "@/lib/storefront/structured-data";
 import { getTheme } from "@/themes/definitions";
+import { getAISettings } from "@/server/ai/ordering-agent";
 import { hasProducts } from "@/server/catalog/storefront";
 import { cartTokenHash } from "@/server/commerce/cart-cookie";
 import { getCart, getCheckoutOptions } from "@/server/commerce/storefront";
@@ -102,6 +104,9 @@ export default async function StoreLayout({ children, params }: LayoutProps<"/st
   const checkout = await getCheckoutOptions(tenant, locale);
   const cart = checkout.orderingOpen ? await getCart(tenant, locale, await cartTokenHash()) : null;
   const tCart = await getTranslations("store.cart");
+  const tAi = await getTranslations("store.ai");
+  const aiSettings = checkout.orderingOpen ? await getAISettings(tenant.id) : null;
+  const aiActive = Boolean(aiSettings?.active && aiSettings.ordering_enabled);
 
   return (
     <html lang={locale} dir={dir} style={style} className={storefrontFontClasses(design.fontRole, rtl)}>
@@ -137,6 +142,23 @@ export default async function StoreLayout({ children, params }: LayoutProps<"/st
               {children}
             </main>
             <StoreFooter tenant={tenant} locale={locale} social={design.social} />
+            {aiActive && aiSettings && (
+              <AiChatWidget
+                assistantName={aiSettings.assistant_name}
+                greeting={aiSettings.greeting}
+                labels={{
+                  openLabel: tAi("openLabel"),
+                  closeLabel: tAi("closeLabel"),
+                  title: tAi("title"),
+                  placeholder: tAi("placeholder"),
+                  send: tAi("send"),
+                  thinking: tAi("thinking"),
+                  endedNotice: tAi("endedNotice"),
+                  errorGeneric: tAi("errorGeneric"),
+                  rateLimited: tAi("rateLimited"),
+                }}
+              />
+            )}
           </ToastProvider>
         </NextIntlClientProvider>
       </body>

@@ -5,8 +5,18 @@ import "server-only";
  * should import a specific vendor SDK or call a model API directly — every
  * caller goes through this shape, the same way `PaymentProvider` decouples
  * the app from Moyasar specifically.
+ *
+ * Content is block-based (text / tool_use / tool_result) rather than plain
+ * strings, because that's what a real tool-calling turn needs to express —
+ * any provider that supports tool calling can produce/consume these same
+ * three block shapes.
  */
-export type AIMessage = { role: "system" | "user" | "assistant"; content: string };
+export type ContentBlock =
+  | { type: "text"; text: string }
+  | { type: "tool_use"; id: string; name: string; input: Record<string, unknown> }
+  | { type: "tool_result"; toolUseId: string; content: string; isError?: boolean };
+
+export type AITurnMessage = { role: "user" | "assistant"; content: ContentBlock[] };
 
 export type AIToolDefinition = {
   name: string;
@@ -15,23 +25,19 @@ export type AIToolDefinition = {
   parameters: Record<string, unknown>;
 };
 
-export type AIToolCall = { name: string; arguments: Record<string, unknown> };
-
 export type AIUsage = { inputTokens: number; outputTokens: number };
-
-export type ChatResult = {
-  /** Present when the model replied in plain text (no tool call). */
-  text: string | null;
-  /** Present when the model chose to call a tool instead of replying directly. */
-  toolCall: AIToolCall | null;
-  usage: AIUsage;
-};
 
 export type ChatInput = {
   system: string;
-  messages: AIMessage[];
+  messages: AITurnMessage[];
   tools?: AIToolDefinition[];
   maxTokens?: number;
+};
+
+export type ChatResult = {
+  content: ContentBlock[];
+  stopReason: "end_turn" | "tool_use" | "max_tokens" | "other";
+  usage: AIUsage;
 };
 
 export type StructuredOutputInput = {
@@ -45,7 +51,7 @@ export type StructuredOutputInput = {
 export type AIProviderResult<T> = { ok: true; value: T } | { ok: false; error: string };
 
 export type AIProvider = {
-  /** One request/response turn. Used for both the ordering assistant and the business copilot. */
+  /** One model turn. May return text, a tool call, or both. */
   chat(input: ChatInput): Promise<AIProviderResult<ChatResult>>;
   /** A single structured (JSON-schema-constrained) generation, no conversation or tools. */
   generateStructuredOutput<T>(input: StructuredOutputInput): Promise<AIProviderResult<{ data: T; usage: AIUsage }>>;

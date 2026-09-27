@@ -275,6 +275,17 @@
         "required": "Required.",
         "invalid": "Check this field."
       }
+    },
+    "ai": {
+      "openLabel": "Chat with us",
+      "closeLabel": "Close chat",
+      "title": "Assistant",
+      "placeholder": "Type a message…",
+      "send": "Send",
+      "thinking": "Thinking…",
+      "endedNotice": "This conversation has ended.",
+      "errorGeneric": "Something went wrong. Please try again.",
+      "rateLimited": "You're sending messages too quickly. Please wait a moment."
     }
   },
   "platform": {
