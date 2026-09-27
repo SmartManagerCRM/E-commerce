@@ -46,6 +46,14 @@ const serverEnvSchema = z.object({
    */
   ANTHROPIC_API_KEY: z.string().min(10).optional(),
   ANTHROPIC_MODEL: z.string().trim().min(1).default("claude-sonnet-5"),
+  /**
+   * Google AI Studio (Gemini) API key — a free-tier alternative to Anthropic
+   * behind the same `AIProvider` interface. When both are configured, Gemini
+   * is used (it's the free option); when neither is, AI features degrade to
+   * "not configured" rather than failing.
+   */
+  GEMINI_API_KEY: z.string().min(10).optional(),
+  GEMINI_MODEL: z.string().trim().min(1).default("gemini-2.0-flash"),
 });
 
 export type ServerEnv = z.infer<typeof serverEnvSchema>;
